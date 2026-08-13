@@ -154,6 +154,7 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
+  seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
   pinch:'Pinça para aproximar · arraste para girar',
   findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
   askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
@@ -190,6 +191,7 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
+  seeHistory:'See history',histTitle:'Activity history',
   pinch:'Pinch to zoom · drag to rotate',
   findPh:'Find a collector by name or @',noMember:'No collector by that name.',
   askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
@@ -340,20 +342,58 @@ function renderAdded(){
   document.getElementById('addedSub').textContent = t('addedIn')+' '+S.year;
 }
 
+/* historico completo da atividade, em ordem cronologica inversa */
+function activityLog(){
+  const A=active(); if(!A.length) return [];
+  const out=[];
+  A.forEach(w=>{
+    out.push({d:w.date, kind:'add', b:`${w.brand} ${w.model}`, s:t('actAdded')});
+    const up=(w.mkt-w.paid)/w.paid*100;
+    if(up>=12){
+      const d=new Date(w.date); d.setMonth(d.getMonth()+Math.min(18,Math.round(up/6)));
+      out.push({d:d.toISOString().slice(0,10), kind:'up',
+                b:`${w.brand} ${w.model}`, s:`${t('actUp')} +${up.toFixed(0)}% ${t('since')}`});
+    }
+  });
+  GRAILS.forEach((g,i)=>out.push({d:`2024-0${Math.min(9,i+3)}-12`, kind:'grail', b:g.model, s:t('actGrail')}));
+  MEMBERS.slice(0,3).forEach((m,i)=>out.push({d:`2024-0${Math.min(9,i+2)}-0${i+4}`, kind:'friend',
+                                              b:m.u, s:t('actFriend')}));
+  return out.sort((a,b)=>b.d.localeCompare(a.d));
+}
+
+const fmtDate=d=>new Date(d).toLocaleDateString(S.lang==='pt'?'pt-BR':'en-GB',
+  {day:'2-digit',month:'short',year:'numeric'});
+
 function renderFeed(){
-  const A=active(), f=document.getElementById('feed');
-  if(!A.length){ f.innerHTML=`<span class="hint">${t('noAct')}</span>`; f.style.paddingLeft='0'; return; }
+  const f=document.getElementById('feed');
+  const btn=document.getElementById('feedMore');
+  const log=activityLog();
+  if(!log.length){
+    f.innerHTML=`<span class="hint">${t('noAct')}</span>`; f.style.paddingLeft='0';
+    if(btn) btn.style.display='none'; return;
+  }
   f.style.paddingLeft='26px';
-  const last=[...A].sort((a,b)=>b.date.localeCompare(a.date))[0];
-  const best=[...A].sort((a,b)=>(b.mkt-b.paid)/b.paid-(a.mkt-a.paid)/a.paid)[0];
-  const fmt=d=>new Date(d).toLocaleDateString(S.lang==='pt'?'pt-BR':'en-GB',{day:'2-digit',month:'short',year:'numeric'});
-  const items=[
-    {hot:true, b:`${last.brand} ${last.model}`, s:`${t('actAdded')} · ${fmt(last.date)}`},
-    {hot:false,b:`${best.brand} ${best.model}`, s:`${t('actUp')} +${((best.mkt-best.paid)/best.paid*100).toFixed(0)}% ${t('since')}`},
-    {hot:false,b:GRAILS[0]?GRAILS[0].model:'—', s:t('actGrail')},
-    {hot:false,b:MEMBERS[0].u, s:t('actFriend')}
-  ];
-  f.innerHTML=items.map(i=>`<div class="act-item ${i.hot?'hot':''}"><b>${i.b}</b><span>${i.s}</span></div>`).join('');
+  if(btn) btn.style.display = log.length>4 ? '' : 'none';
+  f.innerHTML=log.slice(0,4).map((i,n)=>
+    `<div class="act-item ${n===0?'hot':''}"><b>${i.b}</b><span>${i.s} · ${fmtDate(i.d)}</span></div>`
+  ).join('');
+}
+
+/* folha com o historico completo */
+function openActivity(){
+  const log=activityLog();
+  const byYear={};
+  log.forEach(i=>{ const y=i.d.slice(0,4); (byYear[y]=byYear[y]||[]).push(i); });
+  document.getElementById('actTitle').textContent=t('histTitle');
+  document.getElementById('actBody').innerHTML =
+    Object.keys(byYear).sort((a,b)=>b.localeCompare(a)).map(y=>`
+      <h2 class="sec">${y}</h2>
+      <div class="card"><div class="feed" style="padding-left:26px">
+        ${byYear[y].map(i=>`<div class="act-item ${i.kind==='add'?'hot':''}">
+          <b>${i.b}</b><span>${i.s} · ${fmtDate(i.d)}</span></div>`).join('')}
+      </div></div>`).join('')
+    || `<div class="card hint">${t('noAct')}</div>`;
+  document.getElementById('activity').classList.add('on');
 }
 
 function renderBars(){
@@ -498,7 +538,8 @@ function go(id){
   const dock = document.getElementById('dock');
   if(dock) dock.classList.remove('mini');
 }
-const close_ = id => document.getElementById(id).classList.remove('on');
+const close_ = id => { document.getElementById(id).classList.remove('on');
+  if(id==='detail') disposeMini(); };
 
 /* preferências */
 function setLang(l){ S.lang=l; applyLang(); }
@@ -556,7 +597,7 @@ function openDetailFromBox(){ closeBox(); openDetail(focused.userData.id); }
 function drawLine(h){
   const c=document.getElementById('lineC'); if(!c)return;
   const dpr=devicePixelRatio||1, W=c.clientWidth, H=150;
-  c.width=W*dpr; c.height=H*dpr; const x=c.getContext('2d'); x.scale(dpr,dpr);
+  c.width=W*dpr; c.height=H*dpr; const x=c.getContext('2d'); if(!x) return; x.scale(dpr,dpr);
   const min=Math.min(...h), max=Math.max(...h), pad=14;
   const px=i=>pad+i/(h.length-1)*(W-pad*2), py=v=>H-pad-(v-min)/(max-min||1)*(H-pad*2);
   const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'rgba(201,162,39,.28)'); g.addColorStop(1,'rgba(201,162,39,0)');
@@ -637,15 +678,29 @@ const GREY = {tray:0x8E9096, wall:0x74767C, cushion:0xA8AAB0, floor:0x5C5E64};
 
 function initBox(){
   const canvas=document.getElementById('c3d');
-  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  if(typeof disposeMini==='function') disposeMini();
+  try{
+    renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  }catch(err){
+    renderer=null;
+    const sub=document.getElementById('boxSub');
+    if(sub) sub.textContent='3D indisponivel neste ambiente';
+    console.warn('WebGL indisponivel:',err.message);
+    return;
+  }
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  canvas.addEventListener('webglcontextlost',e=>e.preventDefault(),false);
+  canvas.addEventListener('webglcontextrestored',()=>{ buildBox(); sizeBox(); },false);
   scene=new THREE.Scene();
   scene.fog=new THREE.Fog(0x050506,22,44);
   cam3=new THREE.PerspectiveCamera(38,1,0.1,100);
 
-  scene.add(new THREE.HemisphereLight(0xC8CCD4,0x0A0A0C,1.05));
-  const key=new THREE.DirectionalLight(0xFFF3D6,1.5); key.position.set(6,12,8); scene.add(key);
-  const rim=new THREE.DirectionalLight(0xC9A227,0.65); rim.position.set(-8,4,-7); scene.add(rim);
+  /* three 0.185 usa iluminacao fisicamente correta; o r128 original nao usava.
+     Se a maquete aparecer escura demais, suba LIGHT para 2 ou 3. */
+  const LIGHT = 1;
+  scene.add(new THREE.HemisphereLight(0xC8CCD4,0x0A0A0C,1.05*LIGHT));
+  const key=new THREE.DirectionalLight(0xFFF3D6,1.5*LIGHT); key.position.set(6,12,8); scene.add(key);
+  const rim=new THREE.DirectionalLight(0xC9A227,0.65*LIGHT); rim.position.set(-8,4,-7); scene.add(rim);
 
   pivot=new THREE.Group(); scene.add(pivot);
   raycaster=new THREE.Raycaster(); pointer=new THREE.Vector2();
@@ -1103,10 +1158,22 @@ function closeBox(){
   }
 }
 
+let miniR=null, miniToken=0;
+function disposeMini(){
+  if(!miniR)return;
+  try{ miniR.forceContextLoss(); }catch(e){}
+  try{ miniR.dispose(); }catch(e){}
+  miniR=null;
+}
+
 /* mini cena no detalhe (slot do Sketchfab) */
 function miniScene(canvas,w){
   if(!canvas)return;
-  const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  disposeMini();
+  const my=++miniToken;
+  try{ miniR=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); }
+  catch(err){ console.warn('mini 3D indisponivel:',err.message); return; }
+  const r=miniR;
   r.setPixelRatio(Math.min(devicePixelRatio,2));
   const sc=new THREE.Scene(), c=new THREE.PerspectiveCamera(34,canvas.clientWidth/230,0.1,50);
   sc.add(new THREE.HemisphereLight(0xCED3DB,0x101014,1.1));
@@ -1120,7 +1187,9 @@ function miniScene(canvas,w){
     g.rotation.y+=(e.clientX-lx)/120; g.rotation.x=Math.max(-1.2,Math.min(1.2,g.rotation.x+(e.clientY-ly)/150));
     lx=e.clientX; ly=e.clientY; });
   canvas.addEventListener('pointerup',()=>dragL=false);
-  (function loop(){ if(!document.getElementById('detail').classList.contains('on'))return;
+  (function loop(){
+    if(my!==miniToken) return;
+    if(!document.getElementById('detail').classList.contains('on')){ disposeMini(); return; }
     requestAnimationFrame(loop); if(spin) g.rotation.y+=0.006; r.render(sc,c); })();
 }
 
@@ -1254,7 +1323,7 @@ function initDockScroll(){
   /* mini caixa animada no botão herói */
   const hc=document.getElementById('heroC');
   hc.width=340; hc.height=240;
-  const x=hc.getContext('2d');
+  const x=hc.getContext('2d'); if(!x) return;
   let a=0;
   (function tick(){ requestAnimationFrame(tick); a+=0.006;
     x.clearRect(0,0,340,240); x.save(); x.translate(170,130);
@@ -1270,6 +1339,7 @@ function initDockScroll(){
   // Expor funções no escopo global para funcionar com os atributos onclick do HTML
   Object.assign(window, {
     go,
+    openActivity,
     openBox,
     closeBox,
     resetView,
