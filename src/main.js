@@ -168,7 +168,7 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
-  goColl:'Ir pra minha coleção',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
+  goColl:'Ir pra minha coleção',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
   pinch:'Pinça para aproximar · arraste para girar',
   findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
   askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
@@ -206,7 +206,7 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
-  goColl:'Go to my collection',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
+  goColl:'Go to my collection',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
   pinch:'Pinch to zoom · drag to rotate',
   findPh:'Find a collector by name or @',noMember:'No collector by that name.',
   askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
@@ -750,9 +750,9 @@ function openDetailFromBox(){
   openDetail(id); 
 }
 
-function drawLine(h){
-  const c=document.getElementById('lineC'); if(!c)return;
-  const dpr=devicePixelRatio||1, W=c.clientWidth, H=150;
+function drawLine(h, canvas){
+  const c = canvas || document.getElementById('lineC'); if(!c)return;
+  const dpr=devicePixelRatio||1, W=c.clientWidth, H=c.clientHeight||150;
   c.width=W*dpr; c.height=H*dpr; const x=c.getContext('2d'); if(!x) return; x.scale(dpr,dpr);
   const min=Math.min(...h), max=Math.max(...h), pad=14;
   const px=i=>pad+i/(h.length-1)*(W-pad*2), py=v=>H-pad-(v-min)/(max-min||1)*(H-pad*2);
@@ -762,6 +762,75 @@ function drawLine(h){
   x.beginPath(); h.forEach((v,i)=>i?x.lineTo(px(i),py(v)):x.moveTo(px(i),py(v)));
   x.strokeStyle='#C9A227'; x.lineWidth=2.2; x.lineJoin='round'; x.stroke();
   x.beginPath(); x.arc(px(h.length-1),py(h[h.length-1]),4.2,0,7); x.fillStyle='#EBD27C'; x.fill();
+}
+
+/* =========================================================
+   DESEMPENHO DA COLEÇÃO — um gráfico por peça, em rolagem
+   ========================================================= */
+function ensurePerfSheet(){
+  if(document.getElementById('perf')) return;
+  const sh=document.createElement('div');
+  sh.className='sheet'; sh.id='perf';
+  sh.innerHTML=`<div class="shead">
+      <button class="iconbtn" id="perfBack">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F4F4F6"
+             stroke-width="2.8" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg>
+      </button>
+      <b id="perfTitle"></b>
+    </div>
+    <div class="sbody" id="perfBody"></div>`;
+  document.getElementById('phone').appendChild(sh);
+  sh.querySelector('#perfBack').addEventListener('click',()=>close_('perf'));
+}
+
+function openPerformance(){
+  ensurePerfSheet();
+  const L=[...active()].sort((a,b)=>
+    ((b.mkt-b.paid)/b.paid) - ((a.mkt-a.paid)/a.paid));
+  document.getElementById('perfTitle').textContent=t('perfTitle');
+
+  if(!L.length){
+    document.getElementById('perfBody').innerHTML=`<div class="card hint">${t('emptyS')}</div>`;
+    document.getElementById('perf').classList.add('on'); return;
+  }
+
+  const tot=L.reduce((s,w)=>s+w.mkt,0), pag=L.reduce((s,w)=>s+w.paid,0);
+  const geral=((tot-pag)/pag*100);
+
+  document.getElementById('perfBody').innerHTML = `
+    <div class="kpis" style="margin-bottom:6px">
+      <div class="kpi"><div class="lab">${t('kMarket')}</div>
+        <div class="val sm">${money(tot,true)}</div>
+        <div class="sub" style="color:var(--muted)">${moneyAlt(tot)}</div></div>
+      <div class="kpi"><div class="lab">${t('kPieces')}</div>
+        <div class="val">${L.length}</div>
+        <div class="sub ${geral>=0?'up':'down'}">${geral>=0?'+':''}${geral.toFixed(1)}%</div></div>
+    </div>
+    ` + L.map(w=>{
+      const d=(w.mkt-w.paid)/w.paid*100, up=d>=0;
+      return `<div class="perfcard" onclick="openDetail('${w.id}')">
+        <div class="perfhead">
+          <div class="wpic">${pic(w)}</div>
+          <div class="perfname">
+            <b>${w.brand} ${w.model}</b>
+            <span>${w.ref} · ${w.year}</span>
+          </div>
+          <div class="perfval">
+            <b>${money(w.mkt,true)}</b>
+            <span class="${up?'up':'down'}">${up?'+':''}${d.toFixed(1)}%</span>
+          </div>
+        </div>
+        <canvas class="perfchart" id="pc_${w.id}"></canvas>
+        <div class="perffoot">
+          <span>${t('paid')} ${money(w.paid,true)}</span>
+          <span>${t('perfSub')}</span>
+        </div>
+      </div>`;
+    }).join('');
+
+  document.getElementById('perf').classList.add('on');
+  requestAnimationFrame(()=>L.forEach(w=>
+    drawLine(history(w), document.getElementById('pc_'+w.id))));
 }
 
 /* =========================================================
@@ -1466,6 +1535,17 @@ function initDockScroll(){
   mark.innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
   document.getElementById('s-prof').appendChild(mark);
 
+  /* link sublinhado no rodape do card "Valor de mercado" */
+  const mktCard = document.getElementById('kMkt')?.closest('.kpi');
+  if(mktCard && !mktCard.querySelector('.kpilink')){
+    const a=document.createElement('button');
+    a.className='kpilink';
+    a.dataset.i='seeCharts';
+    a.textContent=t('seeCharts');
+    a.addEventListener('click',openPerformance);
+    mktCard.appendChild(a);
+  }
+
   /* botao dourado dentro do card "Peças", criado por JS para nao mexer no HTML */
   const pecasCard = document.getElementById('kQty')?.closest('.kpi');
   if(pecasCard && !pecasCard.querySelector('.kpibtn')){
@@ -1512,6 +1592,7 @@ function initDockScroll(){
 
   Object.assign(window, {
     go,
+    openPerformance,
     openActivity,
     openBox,
     closeBox,
