@@ -150,7 +150,7 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 
 /* botão herói -> caixa 3d / Grails */
 .hero{position:relative;width:100%;margin-top:14px;border-radius:26px;overflow:hidden;
-  background:linear-gradient(160deg,#1E1E24,#0E0E11 65%);border:1px solid var(--line);
+  background:linear-gradient(120deg,#1A1710,#131316 60%);border:1px solid #2E2716;
   padding:20px;display:flex;align-items:center;gap:16px;text-align:left}
 .hero:active{transform:scale(.985)}
 .hero .t{flex:1}
