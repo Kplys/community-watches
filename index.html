@@ -40,8 +40,16 @@
         <div class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#181200" stroke-width="3" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></div>
       </button>
 
-      <h2 class="sec" data-i="secGrails">Grails</h2>
-      <div id="grailList"></div>
+      <!-- BOTÃO DEDICADO GRAILS -->
+      <button class="hero" style="margin-top:12px; background: linear-gradient(120deg,#1A1710,#131316 60%); border: 1px solid #2E2716;" onclick="openGrails()">
+        <div class="t">
+          <b data-i="secGrails" style="color:var(--gold-hi)">Grails</b>
+          <span data-i="secGrailsSub">Ver seus grails</span>
+        </div>
+        <div class="arrow" style="background:var(--gold)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#181200" stroke-width="3" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg>
+        </div>
+      </button>
 
       <h2 class="sec" data-i="secSpend">Gastos por mês</h2>
       <div class="card">
@@ -72,6 +80,13 @@
         <div class="cardfoot">
           <button class="linkbtn" id="feedMore" onclick="openActivity()" data-i="seeHistory">Ver histórico</button>
         </div>
+      </div>
+
+      <!-- CARROSSEL DE NOTÍCIAS -->
+      <h2 class="sec" data-i="secNews">Notícias da Relojoaria</h2>
+      <div class="news-carousel-wrap">
+        <div class="news-carousel" id="newsCarousel"></div>
+        <div class="news-dots" id="newsDots"></div>
       </div>
     </div>
 
@@ -176,6 +191,18 @@
       <b id="dTitle"></b>
     </div>
     <div class="sbody" id="dBody"></div>
+  </div>
+
+  <!-- ============ PÁGINA DEDICADA DE GRAILS ============ -->
+  <div class="sheet" id="grailsSheet">
+    <div class="shead">
+      <button class="iconbtn" onclick="close_('grailsSheet')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F4F4F6" stroke-width="2.8" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <b data-i="secGrails">Grails</b>
+      <button class="addbtn" onclick="openCatalog()" style="font-size:12px">+ Catálogo</button>
+    </div>
+    <div class="sbody">
+      <div id="grailSheetList"></div>
+    </div>
   </div>
 
   <!-- ============ CATÁLOGO ============ -->

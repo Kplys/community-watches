@@ -70,6 +70,33 @@ let GRAILS = [
   {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000}
 ];
 
+const NEWS = [
+  {
+    id: 'n1',
+    tag: 'Lançamento',
+    title: 'Rolex divulga novidades e atualizações em modelos icônicos',
+    desc: 'A marca apresentou variações em ligas metálicas exclusivas e novos mostradores para a temporada.',
+    source: 'Hodinkee',
+    time: 'Há 2 horas'
+  },
+  {
+    id: 'n2',
+    tag: 'Mercado',
+    title: 'Alta demanda impulsiona valorização de relógios clássicos',
+    desc: 'Relatórios recentes mostram aumento significativo na procura por peças vintage dos anos 60 e 70.',
+    source: 'Revolution Watch',
+    time: 'Há 5 horas'
+  },
+  {
+    id: 'n3',
+    tag: 'Inovação',
+    title: 'Avanços em calibres automáticos aumentam reserva de marcha',
+    desc: 'Mecanismos modernos priorizam maior autonomia e resistência a campos magnéticos intensos.',
+    source: 'Fratello Watches',
+    time: 'Há 1 dia'
+  }
+];
+
 const MEMBERS = [
   {u:'@leo.horology', n:'Leonardo M.', i:'LM', g:'#EBD27C,#8A7423', priv:false,
    owns:['w1','w2','w3','w4','w7'], city:'São Paulo'},
@@ -125,7 +152,7 @@ const LOGO_SVG = `<svg viewBox="0 0 120 96" fill="none" stroke="#C9A227" stroke-
 
 const T = {
  pt:{searchPh:'Buscar relógios no catálogo',kPieces:'Peças',kMarket:'Valor de mercado',heroT:'Abrir minha caixa',
-  heroS:'Veja a coleção em 3D',secGrails:'Grails',secSpend:'Gastos por mês',tabHome:'Home',tabColl:'Coleção',
+  heroS:'Veja a coleção em 3D',secGrails:'Grails',secGrailsSub:'Ver seus grails',secSpend:'Gastos por mês',tabHome:'Home',tabColl:'Coleção',
   tabComm:'Comunidade',tabProf:'Perfil',cMembers:'Colecionadores',cReviews:'Reviews',secPrefs:'Preferências',
   prefLang:'Idioma',prefLangS:'Interface do app',prefCur:'Moeda principal',prefCurS:'A outra aparece abaixo',
   prefPriv:'Modo privacidade',prefPrivS:'Esconde valores no seu perfil público',prefDemo:'Coleção de demonstração',
@@ -143,12 +170,13 @@ const T = {
   addToColl:'Adicionar à coleção',scanning:'Lendo a caixa e o mostrador…',noData:'Sem dados de mercado para esta referência',
   noDataSub:'Nossa equipe vai analisar as fotos e atualizar o catálogo. Você recebe um aviso quando o histórico estiver disponível.',
   emptyT:'Sua caixa está vazia',emptyS:'Escaneie o primeiro relógio para começar a montar a coleção.',
+  emptyGrails:'Sua lista de Grails está vazia.',
   scanFirst:'Escanear meu primeiro relógio',tapEmpty:'Toque num espaço vazio para escanear',
   drag:'Arraste para girar · toque num relógio',mkt12:'Mercado nos últimos 12 meses',since:'desde a compra',
-  friendAdd:'Adicionar',friendOk:'Amigos',pieces:'peças',ownerOf:'Coleção de',added:'Adicionado aos Grails',
+  friendAdd:'Adicionar',friendOk:'Amigos',pieces:'peças',ownerOf:'Coleção de',added:'Adicionado aos Grails',removed:'Removido dos Grails',
   hidden:'Relógio oculto da caixa',shown:'Relógio de volta na caixa',confirmQ:'Julios quer fazer isso:',
   yesDo:'Confirmar',noDo:'Agora não',done:'Feito',
-  secProfile:'Perfil da coleção',secAdded:'Peças adicionadas por mês',secActivity:'Atividade recente',
+  secProfile:'Perfil da coleção',secAdded:'Peças adicionadas por mês',secActivity:'Atividade recente',secNews:'Notícias da Relojoaria',
   spotCat:'Categoria com mais peças',spotBrand:'Marca com mais peças',seeWatches:'Ver relógios',
   ofColl:'da coleção',tieNote:'desempate pelo maior valor',clearFilter:'Limpar filtro',
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
@@ -162,7 +190,7 @@ const T = {
   reqOk:'Acesso liberado. A coleção já pode ser vista.',
   openTheirBox:'Abrir a caixa dele em 3D',privOn:'Este colecionador mantém os valores privados. As peças aparecem, os preços não.',welcome:'Oi, Rafa. Sua coleção tem 8 peças e valorizou 26% desde a compra. Posso separar por categoria, avaliar uma peça ou sugerir a próxima compra dentro de uma faixa de preço.'},
  en:{searchPh:'Search watches in the catalogue',kPieces:'Pieces',kMarket:'Market value',heroT:'Open my box',
-  heroS:'See the collection in 3D',secGrails:'Grails',secSpend:'Spending by month',tabHome:'Home',tabColl:'Collection',
+  heroS:'See the collection in 3D',secGrails:'Grails',secGrailsSub:'See your grails',secSpend:'Spending by month',tabHome:'Home',tabColl:'Collection',
   tabComm:'Community',tabProf:'Profile',cMembers:'Collectors',cReviews:'Reviews',secPrefs:'Preferences',
   prefLang:'Language',prefLangS:'App interface',prefCur:'Main currency',prefCurS:'The other one shows below',
   prefPriv:'Privacy mode',prefPrivS:'Hides values on your public profile',prefDemo:'Demo collection',
@@ -180,12 +208,13 @@ const T = {
   addToColl:'Add to collection',scanning:'Reading the case and dial…',noData:'No market data for this reference',
   noDataSub:'Our team will review your photos and update the catalogue. You will be notified when the history is ready.',
   emptyT:'Your box is empty',emptyS:'Scan your first watch to start building the collection.',
+  emptyGrails:'Your Grails list is empty.',
   scanFirst:'Scan my first watch',tapEmpty:'Tap an empty slot to scan',
   drag:'Drag to rotate · tap a watch',mkt12:'Market over the last 12 months',since:'since purchase',
-  friendAdd:'Add',friendOk:'Friends',pieces:'pieces',ownerOf:'Collection of',added:'Added to Grails',
+  friendAdd:'Add',friendOk:'Friends',pieces:'pieces',ownerOf:'Collection of',added:'Added to Grails',removed:'Removed from Grails',
   hidden:'Watch hidden from the box',shown:'Watch back in the box',confirmQ:'Julios wants to do this:',
   yesDo:'Confirm',noDo:'Not now',done:'Done',
-  secProfile:'Collection profile',secAdded:'Pieces added by month',secActivity:'Recent activity',
+  secProfile:'Collection profile',secAdded:'Pieces added by month',secActivity:'Recent activity',secNews:'Watch News',
   spotCat:'Category with most pieces',spotBrand:'Brand with most pieces',seeWatches:'See watches',
   ofColl:'of the collection',tieNote:'ties broken by highest value',clearFilter:'Clear filter',
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
@@ -225,23 +254,26 @@ function toast(msg){ const e=document.getElementById('toast'); e.textContent=msg
 
 /* histórico de mercado determinístico (36 meses) */
 function history(w){
-  const out=[]; let seed = w.ref.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const out=[]; let seed = (w.ref||w.model).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
   const rnd = ()=> (seed = (seed*9301+49297)%233280)/233280;
-  const growth = Math.pow(w.mkt/w.paid, 1/36);
-  let v = w.paid;
+  const growth = Math.pow((w.mkt||1000)/(w.paid||1000), 1/36);
+  let v = w.paid||w.mkt||1000;
   for(let i=0;i<36;i++){ v = v*growth*(0.985+rnd()*0.03); out.push(v); }
-  out[35]=w.mkt; return out;
+  out[35]=w.mkt||v; return out;
 }
 
 /* miniatura SVG do relógio */
 function pic(w,size){
-  const s=size||52, isRect = w.model.includes('Tank');
+  const s=size||52, isRect = (w.model||'').includes('Tank');
+  const dialC = w.dial || '#0B0B0D';
+  const metalC = w.metal || '#B9BCC2';
+  const bezelC = w.bezel || '#111114';
   const face = isRect
-    ? `<rect x="17" y="12" width="26" height="36" rx="5" fill="${w.dial}" stroke="${w.metal}" stroke-width="2.4"/>`
-    : `<circle cx="30" cy="30" r="17" fill="${w.dial}" stroke="${w.metal}" stroke-width="2.6"/>
-       <circle cx="30" cy="30" r="20" fill="none" stroke="${w.bezel}" stroke-width="3.6"/>`;
-  const band = w.strap==='metal' ? w.metal : (w.strapColor||'#3A2A1C');
-  const dark = w.dial.match(/^#[0-9A-F]{2}/i) && parseInt(w.dial.slice(1,3),16) < 120;
+    ? `<rect x="17" y="12" width="26" height="36" rx="5" fill="${dialC}" stroke="${metalC}" stroke-width="2.4"/>`
+    : `<circle cx="30" cy="30" r="17" fill="${dialC}" stroke="${metalC}" stroke-width="2.6"/>
+       <circle cx="30" cy="30" r="20" fill="none" stroke="${bezelC}" stroke-width="3.6"/>`;
+  const band = w.strap==='metal' ? metalC : (w.strapColor||'#3A2A1C');
+  const dark = dialC.match(/^#[0-9A-F]{2}/i) && parseInt(dialC.slice(1,3),16) < 120;
   const hand = dark ? '#EDEDF0' : '#1A1A1E';
   return `<svg viewBox="0 0 60 60" width="${s}" height="${s}">
     <rect x="24" y="1" width="12" height="12" rx="3" fill="${band}"/>
@@ -249,8 +281,8 @@ function pic(w,size){
     ${face}
     <line x1="30" y1="30" x2="30" y2="20" stroke="${hand}" stroke-width="2.2" stroke-linecap="round"/>
     <line x1="30" y1="30" x2="37" y2="34" stroke="${hand}" stroke-width="2.2" stroke-linecap="round"/>
-    <circle cx="30" cy="30" r="1.6" fill="${w.bezel==='#C9C6BE'?'#8A7423':'#C9A227'}"/>
-    <rect x="47" y="27" width="4" height="6" rx="1.6" fill="${w.metal}"/>
+    <circle cx="30" cy="30" r="1.6" fill="${bezelC==='#C9C6BE'?'#8A7423':'#C9A227'}"/>
+    <rect x="47" y="27" width="4" height="6" rx="1.6" fill="${metalC}"/>
   </svg>`;
 }
 
@@ -272,7 +304,14 @@ function applyLang(){
   renderAll();
 }
 
-function renderAll(){ renderHome(); renderColl(); renderComm(); }
+function renderAll(){ 
+  renderHome(); 
+  renderColl(); 
+  renderComm();
+  if(document.getElementById('grailsSheet').classList.contains('on')){
+    renderGrailSheet();
+  }
+}
 
 function renderHome(){
   const A=active();
@@ -284,14 +323,7 @@ function renderHome(){
   dl.className='sub '+(d>=0?'up':'down');
   dl.textContent = A.length? (d>=0?'+':'')+d.toFixed(1)+'% '+t('since') : '—';
 
-  document.getElementById('grailList').innerHTML = GRAILS.map(g=>`
-    <div class="grail">
-      <div class="wpic" style="background:#0F0E0A">${pic({model:g.model,dial:'#0B0B0D',bezel:'#111114',metal:'#C9A227',strap:'metal'},46)}</div>
-      <div class="g"><b>${g.model}</b><span>${g.brand}</span></div>
-      <div class="p">${money(g.mkt,true)}</div>
-    </div>`).join('') || `<div class="card hint">${t('emptyS')}</div>`;
-
-  renderBars(); renderSpots(); renderAdded(); renderFeed();
+  renderBars(); renderSpots(); renderAdded(); renderFeed(); renderNews();
 }
 
 /* categoria e marca dominantes — empate resolvido pela peça de maior valor */
@@ -340,6 +372,44 @@ function renderAdded(){
   const tot=counts.reduce((a,b)=>a+b,0);
   document.getElementById('addedTotal').textContent = tot+' '+(tot===1?t('pieceIn'):t('piecesIn'));
   document.getElementById('addedSub').textContent = t('addedIn')+' '+S.year;
+}
+
+/* CARROSSEL DE NOTÍCIAS */
+let newsIndex = 0;
+let newsTimer = null;
+
+function renderNews(){
+  const container = document.getElementById('newsCarousel');
+  const dots = document.getElementById('newsDots');
+  if(!container || !dots) return;
+
+  container.innerHTML = NEWS.map(item => `
+    <div class="news-card">
+      <div class="news-tag">${item.tag}</div>
+      <b>${item.title}</b>
+      <p>${item.desc}</p>
+      <div class="news-meta">${item.source} · ${item.time}</div>
+    </div>`).join('');
+
+  dots.innerHTML = NEWS.map((_, i) => `
+    <button class="news-dot ${i===newsIndex?'on':''}" onclick="setNewsIndex(${i})"></button>
+  `).join('');
+
+  container.style.transform = `translateX(-${newsIndex * 100}%)`;
+}
+
+function setNewsIndex(i){
+  newsIndex = i;
+  renderNews();
+  startNewsAutoScroll();
+}
+
+function startNewsAutoScroll(){
+  if(newsTimer) clearInterval(newsTimer);
+  newsTimer = setInterval(() => {
+    newsIndex = (newsIndex + 1) % NEWS.length;
+    renderNews();
+  }, 4500);
 }
 
 /* historico completo da atividade, em ordem cronologica inversa */
@@ -484,7 +554,6 @@ function friend(u){
   toast(t('nowFriends'));
 }
 
-/* pedido de acesso: o dono decide, então há uma espera */
 function askAccess(u){
   S.req[u]='pending'; renderComm(); toast(t('reqSent'));
   setTimeout(()=>{ S.req[u]='ok'; renderComm(); toast(t('reqOk')); }, 2600);
@@ -550,13 +619,94 @@ function togglePriv(){ S.priv=!S.priv; document.getElementById('swPriv').classLi
 function toggleDemo(){ S.demo=!S.demo; document.getElementById('swDemo').classList.toggle('on',S.demo); renderAll(); buildBox(); }
 
 /* =========================================================
+   GRAILS (Gerenciamento + Tela Dedicada)
+   ========================================================= */
+function openGrails(){
+  document.getElementById('grailsSheet').classList.add('on');
+  renderGrailSheet();
+}
+
+function renderGrailSheet(){
+  const box = document.getElementById('grailSheetList');
+  if(!GRAILS.length){
+    box.innerHTML = `<div class="card" style="text-align:center;padding:36px 20px">
+      <b style="font-size:16px;font-weight:900;display:block;margin-bottom:8px">${t('emptyGrails')}</b>
+      <button class="btn" style="margin-top:12px" onclick="openCatalog()">${t('catTitle')}</button>
+    </div>`;
+    return;
+  }
+  
+  box.innerHTML = GRAILS.map(g => {
+    const safeModel = g.model.replace(/'/g, "\\'");
+    return `<div class="wrow" onclick="openDetailByModel('${safeModel}')">
+      <div class="wpic" style="background:#0F0E0A">${pic({model:g.model,dial:'#0B0B0D',bezel:'#111114',metal:'#C9A227',strap:'metal'})}</div>
+      <div class="n"><b>${g.model}</b><span>${g.brand}</span></div>
+      <div style="text-align:right">
+        <b style="font-size:13.5px;font-weight:800;display:block;margin-bottom:6px">${money(g.mkt,true)}</b>
+        <button class="addbtn on" onclick="event.stopPropagation(); toggleGrail('${safeModel}')">Remover</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleGrail(model){
+  const idx = GRAILS.findIndex(g=>g.model.toLowerCase() === model.toLowerCase());
+  if(idx >= 0){
+    GRAILS.splice(idx, 1);
+    toast(t('removed'));
+  } else {
+    const c = CATALOG.find(x=>x.model.toLowerCase() === model.toLowerCase()) || 
+              WATCHES.find(x=>x.model.toLowerCase() === model.toLowerCase());
+    if(c){
+      GRAILS.push({brand:c.brand, model:c.model, mkt:c.mkt});
+      toast(t('added'));
+    }
+  }
+  renderAll();
+  renderCatalog();
+}
+
+/* =========================================================
    DETALHE
    ========================================================= */
 let curW=null;
-function openDetail(id){
-  const w = WATCHES.find(x=>x.id===id); curW=w;
+
+function openDetailByModel(modelName){
+  let w = WATCHES.find(x => x.model.toLowerCase() === modelName.toLowerCase() || (x.brand + ' ' + x.model).toLowerCase() === modelName.toLowerCase());
+  if(!w){
+    let c = CATALOG.find(x => x.model.toLowerCase() === modelName.toLowerCase());
+    if(c){
+      w = {
+        id: 'cat_' + c.model,
+        brand: c.brand,
+        model: c.model,
+        ref: c.model,
+        year: 2024,
+        cat: c.cat,
+        paid: Math.round(c.mkt * 0.85),
+        mkt: c.mkt,
+        date: '2024-01-01',
+        dial: '#0B0B0D',
+        bezel: '#111114',
+        metal: '#C9A227',
+        strap: 'metal',
+        papers: true,
+        pt: 'Modelo presente no catálogo oficial de Grails e desejos de relojoaria.',
+        en: 'Official model listed in the global watch catalogue.'
+      };
+    }
+  }
+  if(w) openDetail(w.id, w);
+}
+
+function openDetail(id, overrideObj){
+  const w = overrideObj || WATCHES.find(x=>x.id===id); 
+  if(!w) return;
+  curW=w;
   document.getElementById('dTitle').textContent = w.brand+' '+w.model;
   const h=history(w), up=w.mkt>=w.paid, delta=((w.mkt-w.paid)/w.paid*100).toFixed(1);
+  const isOwned = WATCHES.some(x=>x.id===w.id);
+
   document.getElementById('dBody').innerHTML = `
     <div class="slot"><canvas id="detC"></canvas><div class="slotlab">${t('modelSlot')}</div></div>
 
@@ -582,17 +732,24 @@ function openDetail(id){
       <div class="kv" style="border:0"><span>${t('detPapers')}</span><b>${w.papers?t('yes'):t('no')}</b></div>
     </div>
 
-    <button class="btn sec" style="margin-top:18px" onclick="toggleHide('${w.id}')">
-      ${S.hidden.has(w.id)?t('showW'):t('hideW')}</button>`;
+    ${isOwned ? `<button class="btn sec" style="margin-top:18px" onclick="toggleHide('${w.id}')">
+      ${S.hidden.has(w.id)?t('showW'):t('hideW')}</button>` : ''}`;
+
   document.getElementById('detail').classList.add('on');
   requestAnimationFrame(()=>{ drawLine(h); miniScene(document.getElementById('detC'), w); });
 }
+
 function toggleHide(id){
   S.hidden.has(id)?S.hidden.delete(id):S.hidden.add(id);
   toast(S.hidden.has(id)?t('hidden'):t('shown'));
   renderColl(); buildBox(); openDetail(id);
 }
-function openDetailFromBox(){ closeBox(); openDetail(focused.userData.id); }
+
+function openDetailFromBox(){ 
+  if(!focused) return;
+  const id = focused.userData.id;
+  openDetail(id); 
+}
 
 function drawLine(h){
   const c=document.getElementById('lineC'); if(!c)return;
@@ -612,23 +769,26 @@ function drawLine(h){
    CATÁLOGO
    ========================================================= */
 function openCatalog(){ document.getElementById('catalog').classList.add('on'); renderCatalog(); }
+
 function renderCatalog(){
   const q=(document.getElementById('catInput').value||'').toLowerCase();
   const L=CATALOG.filter(c=>(c.brand+' '+c.model).toLowerCase().includes(q));
   document.getElementById('catList').innerHTML = L.map(c=>{
-    const has=GRAILS.some(g=>g.model===c.model);
-    return `<div class="wrow" style="cursor:default">
+    const has=GRAILS.some(g=>g.model.toLowerCase()===c.model.toLowerCase());
+    const safeModel = c.model.replace(/'/g, "\\'");
+    return `<div class="wrow" onclick="openDetailByModel('${safeModel}')">
       <div class="wpic">${pic({model:c.model,dial:'#0B0B0D',bezel:'#111114',metal:'#B9BCC2',strap:'metal'})}</div>
       <div class="n"><b>${c.model}</b><span>${c.brand}</span><div class="tag">${c.cat}</div></div>
-      <div style="text-align:right"><b style="font-size:13.5px;font-weight:800;display:block">${money(c.mkt,true)}</b>
-      <button class="addbtn ${has?'on':''}" style="margin-top:6px" onclick="addGrail('${c.model.replace(/'/g,"")}')">${has?'★':'+ Grail'}</button></div>
+      <div style="text-align:right">
+        <b style="font-size:13.5px;font-weight:800;display:block">${money(c.mkt,true)}</b>
+        <button class="addbtn ${has?'on':''}" style="margin-top:6px" onclick="event.stopPropagation(); toggleGrail('${safeModel}')">${has?'★ Grail':'+ Grail'}</button>
+      </div>
     </div>`;
   }).join('');
 }
+
 function addGrail(model){
-  if(GRAILS.some(g=>g.model===model))return;
-  const c=CATALOG.find(x=>x.model===model); GRAILS.push({brand:c.brand,model:c.model,mkt:c.mkt});
-  toast(t('added')); renderHome(); renderCatalog();
+  toggleGrail(model);
 }
 
 /* =========================================================
@@ -695,8 +855,6 @@ function initBox(){
   scene.fog=new THREE.Fog(0x050506,22,44);
   cam3=new THREE.PerspectiveCamera(38,1,0.1,100);
 
-  /* three 0.185 usa iluminacao fisicamente correta; o r128 original nao usava.
-     Se a maquete aparecer escura demais, suba LIGHT para 2 ou 3. */
   const LIGHT = 1;
   scene.add(new THREE.HemisphereLight(0xC8CCD4,0x0A0A0C,1.05*LIGHT));
   const key=new THREE.DirectionalLight(0xFFF3D6,1.5*LIGHT); key.position.set(6,12,8); scene.add(key);
@@ -706,95 +864,87 @@ function initBox(){
   raycaster=new THREE.Raycaster(); pointer=new THREE.Vector2();
   buildBox(); sizeBox(); animate();
 
-  /* órbita: 1 dedo gira, 2 dedos aproximam */
-  /* ---- Controle de Câmera e Seleção Corrigidos ---- */
-const pts = new Map();
-let pinch0 = 0, zoom0 = 1, downX = 0, downY = 0;
+  const pts = new Map();
+  let pinch0 = 0, zoom0 = 1, downX = 0, downY = 0;
 
-canvas.addEventListener('pointerdown', e => {
-  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
-  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  dragging = true;
-  downX = e.clientX;
-  downY = e.clientY;
-  lastX = e.clientX;
-  lastY = e.clientY;
-  
-  if (pts.size === 2) {
-    pinch0 = spread();
-    zoom0 = focused ? focusZoom : zoom;
-  }
-});
+  canvas.addEventListener('pointerdown', e => {
+    try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    dragging = true;
+    downX = e.clientX;
+    downY = e.clientY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    
+    if (pts.size === 2) {
+      pinch0 = spread();
+      zoom0 = focused ? focusZoom : zoom;
+    }
+  });
 
-canvas.addEventListener('pointermove', e => {
-  if (!pts.has(e.pointerId)) return;
-  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  canvas.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-  // Zoom via pinça com 2 dedos (Mobile)
-  if (pts.size >= 2) {
-    const d = spread();
-    if (pinch0 > 0) {
-      if (focused) {
-        focusZoom = clamp(zoom0 * (d / pinch0), 0.5, 2.5);
-      } else {
-        zoom = clamp(zoom0 * (pinch0 / d), 0.32, 3.2);
+    if (pts.size >= 2) {
+      const d = spread();
+      if (pinch0 > 0) {
+        if (focused) {
+          focusZoom = clamp(zoom0 * (d / pinch0), 0.5, 2.5);
+        } else {
+          zoom = clamp(zoom0 * (pinch0 / d), 0.32, 3.2);
+        }
+      }
+      return;
+    }
+
+    const dx = (e.clientX - lastX) / 130;
+    const dy = (e.clientY - lastY) / 140;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    if (focused) {
+      focused.rotation.y += dx * 1.5;
+      focused.rotation.x = clamp(focused.rotation.x + dy * 1.2, -1.45, 1.45);
+    } else {
+      rotY += dx;
+      rotX = clamp(rotX + dy, -1.48, 0.72);
+    }
+  });
+
+  const up = e => {
+    const had = pts.size;
+    pts.delete(e.pointerId);
+    try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+
+    if (pts.size < 2) pinch0 = 0;
+
+    if (pts.size === 0) {
+      dragging = false;
+      const dist = Math.hypot(e.clientX - downX, e.clientY - downY);
+      if (had === 1 && dist < 8 && !focused) {
+        pick(downX, downY);
       }
     }
-    return;
-  }
+  };
 
-  // Rotação suave (Desktop e Mobile)
-  const dx = (e.clientX - lastX) / 130;
-  const dy = (e.clientY - lastY) / 140;
-  lastX = e.clientX;
-  lastY = e.clientY;
-
-  if (focused) {
-    focused.rotation.y += dx * 1.5;
-    focused.rotation.x = clamp(focused.rotation.x + dy * 1.2, -1.45, 1.45);
-  } else {
-    rotY += dx;
-    rotX = clamp(rotX + dy, -1.48, 0.72);
-  }
-});
-
-const up = e => {
-  const had = pts.size;
-  pts.delete(e.pointerId);
-  try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
-
-  if (pts.size < 2) pinch0 = 0;
-
-  if (pts.size === 0) {
-    dragging = false;
-    // Distância real entre o início do toque/clique e o término
-    const dist = Math.hypot(e.clientX - downX, e.clientY - downY);
-    
-    // Se o ponteiro moveu menos de 8px, é um clique/toque de seleção
-    if (had === 1 && dist < 8 && !focused) {
-      pick(downX, downY);
-    }
-  }
-};
-
-canvas.addEventListener('pointerup', up);
-canvas.addEventListener('pointercancel', up);
-canvas.addEventListener('pointerleave', up);
+  canvas.addEventListener('pointerup', up);
+  canvas.addEventListener('pointercancel', up);
+  canvas.addEventListener('pointerleave', up);
 
   canvas.addEventListener('wheel', e => {
-  e.preventDefault();
-  if (focused) {
-    focusZoom = clamp(focusZoom * (1 - e.deltaY * 0.0015), 0.5, 2.5);
-  } else {
-    zoom = clamp(zoom * (1 + e.deltaY * 0.0014), 0.32, 3.2);
-  }
-}, { passive: false });
+    e.preventDefault();
+    if (focused) {
+      focusZoom = clamp(focusZoom * (1 - e.deltaY * 0.0015), 0.5, 2.5);
+    } else {
+      zoom = clamp(zoom * (1 + e.deltaY * 0.0014), 0.32, 3.2);
+    }
+  }, { passive: false });
 
   function spread(){ const a=[...pts.values()]; return Math.hypot(a[0].x-a[1].x, a[0].y-a[1].y)||1; }
   addEventListener('resize',sizeBox);
 }
 
-/* ---- geometria ---- */
 function mat(c,rough){ return new THREE.MeshStandardMaterial({color:c,roughness:rough??0.92,metalness:0.05}); }
 
 function makeCushion(){
@@ -809,7 +959,6 @@ function makeCushion(){
   return g;
 }
 
-/* relógio estilizado — mesma maquete, forma varia por categoria */
 function makeWatch(w){
   const g=new THREE.Group();
   const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial), bezC=new THREE.Color(w.bezel);
@@ -827,18 +976,15 @@ function makeWatch(w){
   }
   dial.position.y=0.11; g.add(body); g.add(dial);
 
-  /* cristal */
   const crys=new THREE.Mesh(isRect?new THREE.BoxGeometry(0.56,0.04,0.76):new THREE.CylinderGeometry(0.34,0.34,0.04,32),
     new THREE.MeshStandardMaterial({color:0xE6EAF0,roughness:0.06,metalness:0.1,transparent:true,opacity:0.22}));
   crys.position.y=0.15; g.add(crys);
 
-  /* ponteiros */
   const light = parseInt(w.dial.slice(1,3),16) > 120;
   const hm=new THREE.MeshStandardMaterial({color:light?0x1A1A1E:0xE8E8EE,roughness:0.3,metalness:0.5});
   const h1=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.02,0.2),hm); h1.position.set(0,0.145,-0.08); g.add(h1);
   const h2=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.02,0.28),hm); h2.position.set(0.06,0.145,0.08); h2.rotation.y=0.9; g.add(h2);
 
-  /* subdials do cronógrafo */
   if(w.cat==='Chronograph'){
     [[-0.15,0],[0.15,0],[0,0.16]].forEach(([x,z])=>{
       const sd=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,0.02,18),
@@ -847,11 +993,9 @@ function makeWatch(w){
     });
   }
 
-  /* coroa */
   const cr=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.09,14), new THREE.MeshStandardMaterial({color:caseC,roughness:0.3,metalness:0.85}));
   cr.rotation.z=Math.PI/2; cr.position.set(isRect?0.4:0.47,0.06,0); g.add(cr);
 
-  /* pulseira caindo pelos lados da almofada */
   const bandC = w.strap==='metal' ? new THREE.Color(w.metal) : new THREE.Color(w.strapColor||0x2A1E14);
   const bandM = new THREE.MeshStandardMaterial({color:bandC,roughness:w.strap==='metal'?0.32:0.9,metalness:w.strap==='metal'?0.8:0.05});
   [1,-1].forEach(s=>{
@@ -865,7 +1009,6 @@ function makeWatch(w){
   return g;
 }
 
-/* bandeja com 6 lugares (3x2) */
 function makeTray(items,slotCount){
   const g=new THREE.Group();
   const cols=Math.min(3,Math.max(1,slotCount)), rows=Math.ceil(slotCount/3);
@@ -908,22 +1051,18 @@ function buildBox(){
 
   if(!V.length){ boxGroup=null; document.getElementById('boxSub').textContent=t('emptyT'); return; }
 
-  /* regra: cada bandeja comporta 6. Até 5 peças → uma fileira. */
   const trays=[]; for(let i=0;i<V.length;i+=6) trays.push(V.slice(i,i+6));
   const first=trays[0];
-  const slotCount0 = V.length<=5 ? V.length : 6;
 
   boxGroup=new THREE.Group();
   const t0 = V.length<=5 ? makeTrayRow(first) : makeTray(first,6);
   boxGroup.add(t0);
   const dims=t0.userData;
 
-  /* casco externo */
   const shell=new THREE.Mesh(new THREE.BoxGeometry(dims.W+0.5,1.5,dims.D+0.5), mat(0x6A6C72,0.94));
   shell.position.y=0.35; boxGroup.add(shell);
   t0.position.y=0.35;
 
-  /* tampa de vidro aberta */
   const lid=new THREE.Group();
   const frame=new THREE.Mesh(new THREE.BoxGeometry(dims.W+0.5,0.14,dims.D+0.5), mat(0x6A6C72,0.9));
   const glass=new THREE.Mesh(new THREE.BoxGeometry(dims.W-0.4,0.05,dims.D-0.4),
@@ -932,7 +1071,6 @@ function buildBox(){
   lid.position.set(0,1.1,-(dims.D/2+0.25)); lid.rotation.x=-1.15;
   boxGroup.add(lid);
 
-  /* gaveta */
   drawerGroup=null;
   if(trays[1]){
     drawerGroup=new THREE.Group();
@@ -947,19 +1085,17 @@ function buildBox(){
     drawerGroup.position.set(0,-1.55,0);
     boxGroup.add(drawerGroup);
   }
-document.getElementById('drawerBtn').style.display = 'none';
+  document.getElementById('drawerBtn').style.display = 'none';
 
   boxGroup.position.y = drawerGroup? 0.7 : 0;
   pivot.add(boxGroup);
 
-  /* medir SEM rotação: com o pivot girado, mundo e local não coincidem
-     e tanto o centro quanto as dimensões saem errados */
   const rx=pivot.rotation.x, ry=pivot.rotation.y;
   pivot.rotation.set(0, 0, 0); 
   pivot.updateMatrixWorld(true);
 
   const ctr = new THREE.Box3().setFromObject(boxGroup).getCenter(new THREE.Vector3());
-  ctr.x = 0; // Força o alinhamento horizontal perfeito na origem X
+  ctr.x = 0;
   boxGroup.position.sub(ctr);
 
   pivot.updateMatrixWorld(true);
@@ -981,7 +1117,6 @@ document.getElementById('drawerBtn').style.display = 'none';
     `${V.length} ${t('pieces')} · ${t('pinch')}`;
 }
 
-/* fileira única (≤5 peças) */
 function makeTrayRow(items){
   const n=items.length, W=n*2.5+0.7, D=1.85+0.7;
   const g=new THREE.Group();
@@ -1001,7 +1136,6 @@ function makeTrayRow(items){
   return g;
 }
 
-/* área útil da tela */
 const PAD={side:20};
 const FIT={closed:0, open:0};
 
@@ -1023,7 +1157,6 @@ function sizeBox(){
   renderer.setSize(w,h,false); cam3.aspect=w/h; cam3.updateProjectionMatrix(); fitCamera();
 }
 
-// Função de Raycasting atualizada para busca em profundidade
 function pick(clientX, clientY) {
   const r = renderer.domElement.getBoundingClientRect();
   pointer.x = ((clientX - r.left) / r.width) * 2 - 1;
@@ -1031,7 +1164,6 @@ function pick(clientX, clientY) {
 
   raycaster.setFromCamera(pointer, cam3);
 
-  // 1. Tenta selecionar o relógio clicado (se houver)
   const hitW = raycaster.intersectObjects(watchMeshes, true);
   if (hitW.length) {
     let o = hitW[0].object;
@@ -1044,7 +1176,6 @@ function pick(clientX, clientY) {
     }
   }
 
-  // 2. Tenta selecionar a gaveta para abrir/fechar com um toque
   if (drawerGroup) {
     const hitD = raycaster.intersectObject(drawerGroup, true);
     if (hitD.length) {
@@ -1053,7 +1184,6 @@ function pick(clientX, clientY) {
     }
   }
 
-  // 3. Tenta selecionar uma almofada vazia para escanear
   const hitS = raycaster.intersectObjects(slotsMesh, true);
   if (hitS.length && !S.viewing) {
     openScan();
@@ -1063,7 +1193,7 @@ function pick(clientX, clientY) {
 function focus(obj) {
   focused = obj;
   focusAnim = 0;
-  focusZoom = 1.0; // <--- Reseta o zoom do relógio para 100% ao focar
+  focusZoom = 1.0;
   obj.userData.startPos = obj.position.clone();
   obj.userData.startRot = obj.rotation.clone();
   document.getElementById('fName').textContent = obj.userData.name;
@@ -1096,14 +1226,11 @@ function animate() {
     drawerGroup.position.z += (tz - drawerGroup.position.z) * 0.12;
   }
 
-  // 1. CAIXA ESTÁTICA: Se houver relógio em foco, ignora a variável global 'zoom'
-  // e fixa a câmera a uma distância constante (camDist * 1.18).
   const target = focused ? (camDist * 1.18) : (camDist * zoom);
   camNow += (target - camNow) * 0.16;
   cam3.position.set(0, camNow * 0.50, camNow * 0.87);
   cam3.lookAt(0, 0, 0);
 
-  // 2. ZOOM NO RELÓGIO: Aplica 'focusZoom' apenas no relógio em foco
   watchMeshes.forEach(o => {
     if (o === focused) {
       focusAnim = Math.min(1, focusAnim + 0.07);
@@ -1113,7 +1240,6 @@ function animate() {
       const local = o.parent.worldToLocal(world.clone());
       o.position.lerp(local, 0.14);
 
-      // Escala base multiplicada pelo zoom individual (focusZoom)
       const baseScale = 1 + 0.55 * k;
       const sc = baseScale * focusZoom; 
       o.scale.set(sc, sc, sc);
@@ -1126,7 +1252,6 @@ function animate() {
     }
   });
 
-  // Transparência dos outros itens da caixa
   const opa = focused ? 0.16 : 1;
   pivot.traverse(m => {
     if (m.isMesh && !isChildOf(m, focused)) {
@@ -1166,7 +1291,6 @@ function disposeMini(){
   miniR=null;
 }
 
-/* mini cena no detalhe (slot do Sketchfab) */
 function miniScene(canvas,w){
   if(!canvas)return;
   disposeMini();
@@ -1272,8 +1396,9 @@ function renderAction(a){
   document.getElementById('msgs').scrollTop=1e6;
 }
 function runAction(a){
-  if(a.type==='grail'){ const c=CATALOG.find(x=>x.model.toLowerCase().includes(String(a.value).toLowerCase()));
-    if(c) addGrail(c.model); }
+  if(a.type==='grail'){
+    toggleGrail(String(a.value));
+  }
   if(a.type==='hide'||a.type==='show'){
     const w=WATCHES.find(x=>x.id===a.value || (x.brand+' '+x.model).toLowerCase().includes(String(a.value).toLowerCase()));
     if(w){ a.type==='hide'?S.hidden.add(w.id):S.hidden.delete(w.id); renderColl(); buildBox(); }
@@ -1318,9 +1443,8 @@ function initDockScroll(){
   document.getElementById('s-prof').appendChild(mark);
 
   document.getElementById('cbrl').classList.add('on');
-  commTab(1); setYear(2023); applyLang(); initDockScroll();
+  commTab(1); setYear(2023); applyLang(); initDockScroll(); renderNews(); startNewsAutoScroll();
 
-  /* mini caixa animada no botão herói */
   const hc=document.getElementById('heroC');
   hc.width=340; hc.height=240;
   const x=hc.getContext('2d'); if(!x) return;
@@ -1336,7 +1460,6 @@ function initDockScroll(){
     x.restore();
   })();
 
-  // Expor funções no escopo global para funcionar com os atributos onclick do HTML
   Object.assign(window, {
     go,
     openActivity,
@@ -1347,10 +1470,15 @@ function initDockScroll(){
     unfocus,
     openDetailFromBox,
     openDetail,
+    openDetailByModel,
     close_,
     openCatalog,
     renderCatalog,
+    openGrails,
+    renderGrailSheet,
+    toggleGrail,
     addGrail,
+    setNewsIndex,
     openScan,
     closeScan,
     doScan,

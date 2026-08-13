@@ -23,7 +23,7 @@ input,textarea{font-family:inherit}
 #phone {
   position: relative;
   width: min(430px, 100vw);
-  height: min(932px, 100dvh); /* Substitui 100vh para comportar barras do mobile */
+  height: min(932px, 100dvh);
   background: var(--ink);
   overflow: hidden;
   display: flex;
@@ -46,7 +46,7 @@ input,textarea{font-family:inherit}
   left: 0;
   width: 100%;
   height: 100%;
-  display: block; /* Impede espaçamento inline em telas flex */
+  display: block;
   touch-action: none;
 }
 @media(min-width:520px) and (min-height:800px){ #phone{border-radius:44px;border:1px solid #1c1c22} }
@@ -90,7 +90,7 @@ input,textarea{font-family:inherit}
 .act-item span{font-size:12.5px;color:var(--muted);font-weight:600}
 .act-item:last-child{padding-bottom:0}
 
-/* rodape do card com acao alinhada a direita */
+/* rodapé do card com ação alinhada à direita */
 .cardfoot{display:flex;justify-content:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .linkbtn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--gold);
   padding:7px 12px;border-radius:999px;border:1px solid var(--gold-dim);transition:background .18s ease,color .18s ease}
@@ -116,7 +116,7 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 .kpi .sub{font-size:12.5px;font-weight:700;margin-top:7px}
 .up{color:var(--up)} .down{color:var(--down)}
 
-/* botão herói -> caixa 3d */
+/* botão herói -> caixa 3d / Grails */
 .hero{position:relative;width:100%;margin-top:14px;border-radius:26px;overflow:hidden;
   background:linear-gradient(160deg,#1E1E24,#0E0E11 65%);border:1px solid var(--line);
   padding:20px;display:flex;align-items:center;gap:16px;text-align:left}
@@ -129,7 +129,7 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 
 /* lista de relógios */
 .wrow{display:flex;align-items:center;gap:14px;padding:12px;border-radius:18px;background:var(--surface);
-  border:1px solid var(--line);margin-bottom:10px;width:100%;text-align:left}
+  border:1px solid var(--line);margin-bottom:10px;width:100%;text-align:left;cursor:pointer}
 .wrow:active{background:var(--surface2)}
 .wpic{width:58px;height:58px;border-radius:14px;background:#0D0D10;display:grid;place-items:center;flex:none;overflow:hidden}
 .wpic svg{width:52px;height:52px}
@@ -162,6 +162,86 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 .blabs{display:flex;gap:7px;margin-top:8px}
 .blab{flex:1;text-align:center;font-size:10px;font-weight:700;color:var(--muted)}
 
+/* ---- Carrossel de Notícias ---- */
+.news-carousel-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 18px 18px 14px;
+}
+
+.news-carousel {
+  display: flex;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 100%;
+}
+
+.news-card {
+  min-width: 100%;
+  flex: 0 0 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-tag {
+  align-self: flex-start;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--gold-hi);
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid var(--gold-dim);
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+
+.news-card b {
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.2px;
+  margin-bottom: 6px;
+}
+
+.news-card p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.news-meta {
+  font-size: 11.5px;
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.news-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.news-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 0.2s ease, width 0.2s ease;
+}
+
+.news-dot.on {
+  width: 18px;
+  border-radius: 999px;
+  background: var(--gold);
+}
+
 /* ---- barra inferior + Julios ---- */
 #dock{position:absolute;left:0;right:0;bottom:0;padding:0 14px 22px;pointer-events:none;z-index:40;display:flex;flex-direction:column}
 #dock.mini{flex-direction:row-reverse;align-items:center;gap:10px}
@@ -188,6 +268,7 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 
 /* ---- overlays ---- */
 .sheet{position:absolute;inset:0;background:var(--ink);z-index:60;display:none;flex-direction:column}
+#detail{z-index:75} /* Ajustado para sobrepor a caixa 3D que possui z-index: 70 */
 .sheet.on{display:flex;animation:up .3s cubic-bezier(.2,.9,.2,1)}
 @keyframes up{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 .shead{padding:56px 20px 12px;display:flex;align-items:center;gap:14px}
