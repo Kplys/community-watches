@@ -42,7 +42,7 @@ const WATCHES = [
   {id:'w7', brand:'Omega', model:'Seamaster 300', ref:'165.024', year:1966, cat:'Vintage', paid:24000, date:'2020-06-18',
    mkt:39000, dial:'#141013', bezel:'#1A1418', metal:'#AEB0B4', strap:'leather', strapColor:'#4A3520', papers:false, img:'/watches/w7.png',
    pt:'A geração 165.024 é a que foi entregue ao Serviço Aéreo Especial britânico, com marcações de emissão militar nas peças originais. O mostrador desta unidade envelheceu para um marrom tropical, resultado de décadas de luz sobre um verniz de base preta — um defeito de conservação que o mercado passou a tratar como valorização. Calibre 552, sem data, com ponteiros espada preenchidos de material luminoso que hoje aparece bege.',
-   en:'The 165.024 generation is the one issued to the British Special Air Service, with military markings on original examples. This dial has aged to tropical brown, the result of decades of light on a black lacquer base — a conservation flaw the market decided to treat as an asset. Calibre 552, no date, with sword hands filled with lume that now reads beige.'},
+   en:'The 165.024 generation is the one issued to the British Special Air Service, with military markings on original examples. This dial has aged to tropical brown, the result of decades of light on a black lacquer base — a conservation flaw the market decided to treat as an asset. Calibre 552, no date, with sword hands filled with lume that now reads bege.'},
 
   {id:'w8', brand:'Orient', model:'Bambino V4', ref:'FAC08', year:2024, cat:'Dress', paid:1450, date:'2024-01-27',
    mkt:1500, dial:'#F3EFE4', bezel:'#C8B98E', metal:'#C8B98E', strap:'leather', strapColor:'#5A3A22', papers:true, img:'/watches/w8.png',
@@ -51,23 +51,23 @@ const WATCHES = [
 ];
 
 const CATALOG = [
-  {brand:'Patek Philippe', model:'Nautilus 5711/1A', mkt:6200000, cat:'Sport', img:'/watches/cat1.png'},
-  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, cat:'Sport', img:'/watches/cat2.png'},
-  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, cat:'Chronograph', img:'/watches/cat3.png'},
-  {brand:'Rolex', model:'GMT-Master II 126710BLRO', mkt:195000, cat:'GMT', img:'/watches/cat4.png'},
-  {brand:'Omega', model:'Seamaster Diver 300M', mkt:38000, cat:'Diver', img:'/watches/cat5.png'},
-  {brand:'Grand Seiko', model:'SBGA211 Snowflake', mkt:42000, cat:'Dress', img:'/watches/cat6.png'},
-  {brand:'IWC', model:'Mark XX', mkt:36000, cat:'Field', img:'/watches/cat7.png'},
-  {brand:'Cartier', model:'Santos de Cartier', mkt:52000, cat:'Dress', img:'/watches/cat8.png'},
-  {brand:'Swatch x Omega', model:'MoonSwatch Mission to the Moon', mkt:2400, cat:'Fun', img:'/watches/cat9.png'},
-  {brand:'Casio', model:'G-Shock GA-2100', mkt:800, cat:'Fun', img:'/watches/cat10.png'},
-  {brand:'Tudor', model:'Pelagos 39', mkt:33000, cat:'Diver', img:'/watches/cat11.png'},
-  {brand:'Seiko', model:'Alpinist SPB121', mkt:6900, cat:'Field', img:'/watches/cat12.png'}
+  {brand:'Patek Philippe', model:'Nautilus 5711/1A', mkt:6200000, cat:'Sport', img:'/watches/cat1.webp'},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, cat:'Sport', img:'/watches/cat2.webp'},
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, cat:'Chronograph', img:'/watches/cat3.webp'},
+  {brand:'Rolex', model:'GMT-Master II 126710BLRO', mkt:195000, cat:'GMT', img:'/watches/cat4.webp'},
+  {brand:'Omega', model:'Seamaster Diver 300M', mkt:38000, cat:'Diver', img:'/watches/cat5.webp'},
+  {brand:'Grand Seiko', model:'SBGA211 Snowflake', mkt:42000, cat:'Dress', img:'/watches/cat6.webp'},
+  {brand:'IWC', model:'Mark XX', mkt:36000, cat:'Field', img:'/watches/cat7.webp'},
+  {brand:'Cartier', model:'Santos de Cartier', mkt:52000, cat:'Dress', img:'/watches/cat8.webp'},
+  {brand:'Swatch x Omega', model:'MoonSwatch Mission to the Moon', mkt:2400, cat:'Fun', img:'/watches/cat9.webp'},
+  {brand:'Casio', model:'G-Shock GA-2100', mkt:800, cat:'Fun', img:'/watches/cat10.webp'},
+  {brand:'Tudor', model:'Pelagos 39', mkt:33000, cat:'Diver', img:'/watches/cat11.webp'},
+  {brand:'Seiko', model:'Alpinist SPB121', mkt:6900, cat:'Field', img:'/watches/cat12.webp'}
 ];
 
 let GRAILS = [
-  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, img:'/watches/cat3.png'},
-  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, img:'/watches/cat2.png'}
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, img:'/watches/cat3.webp'},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, img:'/watches/cat2.webp'}
 ];
 
 const NEWS = [
@@ -262,25 +262,29 @@ function history(w){
   out[35]=w.mkt||v; return out;
 }
 
-/* miniatura SVG ou Foto PNG/WebP transparente do relógio */
-function pic(w,size){
-  const s=size||52;
+/* miniatura com fallback SVG embutido */
+function pic(w, size){
+  const s = size || 52;
+  const svg = getSvgPic(w, s);
   if(w && w.img){
-    return `<img src="${w.img}" alt="${w.model||''}" style="width:${s}px;height:${s}px;object-fit:contain;display:block;" onerror="this.onerror=null; this.parentNode.innerHTML=getSvgPic(${JSON.stringify(w).replace(/"/g, '&quot;')}, ${s});">`;
+    return `<div style="position:relative;width:${s}px;height:${s}px;display:flex;align-items:center;justify-content:center;">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${svg}</div>
+      <img src="${w.img}" alt="${w.model||''}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;border-radius:12px;" onerror="this.style.display='none';">
+    </div>`;
   }
-  return getSvgPic(w, s);
+  return svg;
 }
 
 function getSvgPic(w, s){
-  const isRect = (w.model||'').includes('Tank');
-  const dialC = w.dial || '#0B0B0D';
-  const metalC = w.metal || '#B9BCC2';
-  const bezelC = w.bezel || '#111114';
+  const isRect = ((w&&w.model)||'').includes('Tank');
+  const dialC = (w&&w.dial) || '#0B0B0D';
+  const metalC = (w&&w.metal) || '#B9BCC2';
+  const bezelC = (w&&w.bezel) || '#111114';
   const face = isRect
     ? `<rect x="17" y="12" width="26" height="36" rx="5" fill="${dialC}" stroke="${metalC}" stroke-width="2.4"/>`
     : `<circle cx="30" cy="30" r="17" fill="${dialC}" stroke="${metalC}" stroke-width="2.6"/>
        <circle cx="30" cy="30" r="20" fill="none" stroke="${bezelC}" stroke-width="3.6"/>`;
-  const band = w.strap==='metal' ? metalC : (w.strapColor||'#3A2A1C');
+  const band = (w&&w.strap==='metal') ? metalC : ((w&&w.strapColor)||'#3A2A1C');
   const dark = dialC.match(/^#[0-9A-F]{2}/i) && parseInt(dialC.slice(1,3),16) < 120;
   const hand = dark ? '#EDEDF0' : '#1A1A1E';
   return `<svg viewBox="0 0 60 60" width="${s}" height="${s}">
