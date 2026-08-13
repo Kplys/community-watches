@@ -10,64 +10,64 @@ const CAT = ['Dress','Diver','Chronograph','GMT','Field','Sport','Fun','Vintage'
 
 const WATCHES = [
   {id:'w1', brand:'Rolex', model:'Submariner Date', ref:'126610LN', year:2021, cat:'Diver', paid:62000, date:'2021-03-14',
-   mkt:78500, dial:'#0B0B0D', bezel:'#111114', metal:'#B9BCC2', strap:'metal', papers:true,
+   mkt:78500, dial:'#0B0B0D', bezel:'#111114', metal:'#B9BCC2', strap:'metal', papers:true, img:'/watches/w1.png',
    pt:'O Submariner Date de 2020 em diante trouxe caixa de 41 mm e o calibre 3235, com 70 horas de reserva. É o relógio que definiu o que um mergulhador deveria ser: em 1953 a Rolex apresentou o primeiro relógio de pulso garantido a 100 metros, e a linguagem visual — bezel graduado, ponteiros Mercedes, índices luminosos generosos — virou gramática comum de toda a indústria. Esta referência corrigiu a queixa mais ouvida sobre a geração anterior: as alças finalmente ficaram proporcionais à caixa.',
    en:'From 2020 onward the Submariner Date grew to a 41 mm case and the 3235 calibre, with 70 hours of reserve. This is the watch that defined what a diver should be: in 1953 Rolex introduced the first wristwatch guaranteed to 100 metres, and its visual language — graduated bezel, Mercedes hands, generous lume — became the common grammar of the whole industry. This reference fixed the loudest complaint about the previous generation: the lugs are finally proportional to the case.'},
 
   {id:'w2', brand:'Omega', model:'Speedmaster Professional', ref:'310.30.42', year:2019, cat:'Chronograph', paid:32000, date:'2019-08-02',
-   mkt:41900, dial:'#0A0A0C', bezel:'#131318', metal:'#B4B7BD', strap:'metal', papers:true,
+   mkt:41900, dial:'#0A0A0C', bezel:'#131318', metal:'#B4B7BD', strap:'metal', papers:true, img:'/watches/w2.png',
    pt:'Certificado pela NASA para todas as missões tripuladas em 1965 e no pulso de Buzz Aldrin quando ele desceu à superfície lunar. O que quase ninguém comenta é que o cronógrafo foi usado como instrumento de emergência na Apollo 13: sem computador de bordo, a tripulação cronometrou manualmente uma queima de 14 segundos que corrigiu a rota de reentrada. O movimento continua de corda manual, com roda de colunas — uma decisão de projeto que a Omega se recusa a abandonar.',
    en:'NASA-qualified for all manned missions in 1965 and on Buzz Aldrin\'s wrist on the lunar surface. What rarely gets mentioned is that the chronograph served as an emergency instrument on Apollo 13: with the guidance computer down, the crew manually timed a 14-second burn that corrected their re-entry path. The movement is still hand-wound, with a column wheel — a design decision Omega refuses to abandon.'},
 
   {id:'w3', brand:'Tudor', model:'Black Bay Fifty-Eight', ref:'79030N', year:2022, cat:'Diver', paid:28500, date:'2022-11-20',
-   mkt:31200, dial:'#0C0C0F', bezel:'#101014', metal:'#AFB2B8', strap:'metal', papers:false,
+   mkt:31200, dial:'#0C0C0F', bezel:'#101014', metal:'#AFB2B8', strap:'metal', papers:false, img:'/watches/w3.png',
    pt:'O 58 do nome é 1958, ano da referência 7924, o primeiro Tudor com 200 metros de estanqueidade. A caixa de 39 mm e 11,9 mm de espessura foi a resposta direta ao público que achava a linha Black Bay grande demais — e virou o relógio que reposicionou a marca inteira. O calibre MT5402 é próprio, com espiral em silício e certificação COSC. É o argumento mais forte de que herança e preço acessível podem coexistir.',
    en:'The 58 stands for 1958, the year of reference 7924, the first Tudor waterproof to 200 metres. The 39 mm case, 11.9 mm thick, answered everyone who found the Black Bay line too large — and became the watch that repositioned the entire brand. The MT5402 is in-house, with a silicon hairspring and COSC certification. It is the strongest argument that heritage and accessible pricing can coexist.'},
 
   {id:'w4', brand:'Cartier', model:'Tank Must', ref:'WSTA0041', year:2023, cat:'Dress', paid:19800, date:'2023-05-09',
-   mkt:21400, dial:'#EFEDE6', bezel:'#C9C6BE', metal:'#C6C3BB', strap:'leather', strapColor:'#1A1A1D', papers:true,
+   mkt:21400, dial:'#EFEDE6', bezel:'#C9C6BE', metal:'#C6C3BB', strap:'leather', strapColor:'#1A1A1D', papers:true, img:'/watches/w4.png',
    pt:'Louis Cartier desenhou o Tank em 1917 inspirado na vista superior dos tanques Renault FT que cruzavam a frente ocidental: as brancards laterais são as esteiras, o mostrador é o compartimento da tripulação. Foi um dos primeiros relógios de pulso pensados como objeto de design, não como instrumento reduzido. O Must nasceu nos anos 1970 como a porta de entrada da marca, e a versão atual mantém os algarismos romanos, o trilho ferroviário dos minutos e a cabochão azul na coroa.',
    en:'Louis Cartier drew the Tank in 1917 after the overhead view of the Renault FT tanks crossing the Western Front: the side brancards are the treads, the dial is the crew compartment. It was among the first wristwatches conceived as a design object rather than a shrunken instrument. The Must line began in the 1970s as the brand\'s entry point, and today\'s version keeps the Roman numerals, the railway minute track and the blue cabochon on the crown.'},
 
   {id:'w5', brand:'Seiko', model:'SKX007', ref:'7S26-0020', year:1998, cat:'Diver', paid:1900, date:'2018-02-11',
-   mkt:3600, dial:'#0A0A0C', bezel:'#131317', metal:'#A9ACB2', strap:'rubber', strapColor:'#151518', papers:false,
+   mkt:3600, dial:'#0A0A0C', bezel:'#131317', metal:'#A9ACB2', strap:'rubber', strapColor:'#151518', papers:false, img:'/watches/w5.png',
    pt:'Descontinuado em 2019, e foi justamente aí que o preço subiu. O SKX é o relógio que ensinou uma geração inteira a gostar de relojoaria mecânica: 200 metros reais, certificação ISO de mergulho, calibre 7S26 sem corda manual nem parada de segundos — bruto de propósito. É provavelmente a peça mais modificada da história: existe uma indústria inteira de mostradores, bezéis e cristais de safira feitos só para ele.',
    en:'Discontinued in 2019, which is exactly when prices climbed. The SKX taught a whole generation to love mechanical watches: a real 200 metres, ISO dive certification, and the 7S26 calibre with no handwinding and no hacking — deliberately crude. It is probably the most modified watch in history: an entire industry of dials, bezels and sapphire crystals exists only for this reference.'},
 
   {id:'w6', brand:'Tissot', model:'PRX Powermatic 80', ref:'T137.407', year:2023, cat:'Sport', paid:4200, date:'2023-09-01',
-   mkt:4050, dial:'#12315E', bezel:'#B9BCC2', metal:'#BCBFC5', strap:'metal', papers:true,
+   mkt:4050, dial:'#12315E', bezel:'#B9BCC2', metal:'#BCBFC5', strap:'metal', papers:true, img:'/watches/w6.png',
    pt:'O desenho vem de 1978, quando a Tissot lançou um quartzo de caixa e pulseira integradas na esteira do Royal Oak e do Nautilus. O relançamento de 2021 acertou algo que a indústria vinha errando: entregou a estética integrada com 80 horas de reserva de marcha por um preço de quatro dígitos. É o relógio que mais aparece como primeira compra mecânica de quem entra no hobby hoje.',
    en:'The design dates to 1978, when Tissot released an integrated-bracelet quartz in the wake of the Royal Oak and the Nautilus. The 2021 revival got something the industry kept missing: integrated looks with 80 hours of power reserve at a four-figure price. It is the watch that most often shows up as a newcomer\'s first mechanical purchase.'},
 
   {id:'w7', brand:'Omega', model:'Seamaster 300', ref:'165.024', year:1966, cat:'Vintage', paid:24000, date:'2020-06-18',
-   mkt:39000, dial:'#141013', bezel:'#1A1418', metal:'#AEB0B4', strap:'leather', strapColor:'#4A3520', papers:false,
+   mkt:39000, dial:'#141013', bezel:'#1A1418', metal:'#AEB0B4', strap:'leather', strapColor:'#4A3520', papers:false, img:'/watches/w7.png',
    pt:'A geração 165.024 é a que foi entregue ao Serviço Aéreo Especial britânico, com marcações de emissão militar nas peças originais. O mostrador desta unidade envelheceu para um marrom tropical, resultado de décadas de luz sobre um verniz de base preta — um defeito de conservação que o mercado passou a tratar como valorização. Calibre 552, sem data, com ponteiros espada preenchidos de material luminoso que hoje aparece bege.',
    en:'The 165.024 generation is the one issued to the British Special Air Service, with military markings on original examples. This dial has aged to tropical brown, the result of decades of light on a black lacquer base — a conservation flaw the market decided to treat as an asset. Calibre 552, no date, with sword hands filled with lume that now reads beige.'},
 
   {id:'w8', brand:'Orient', model:'Bambino V4', ref:'FAC08', year:2024, cat:'Dress', paid:1450, date:'2024-01-27',
-   mkt:1500, dial:'#F3EFE4', bezel:'#C8B98E', metal:'#C8B98E', strap:'leather', strapColor:'#5A3A22', papers:true,
+   mkt:1500, dial:'#F3EFE4', bezel:'#C8B98E', metal:'#C8B98E', strap:'leather', strapColor:'#5A3A22', papers:true, img:'/watches/w8.png',
    pt:'A Orient é subsidiária da Seiko desde 2017 e opera como o laboratório de mecânica acessível do grupo. A quarta geração do Bambino trocou o mostrador aplicado por índices finos e reduziu a caixa para 40,5 mm. O calibre F6724 é automático com corda manual e parada de segundos — recursos que faltam em relógios que custam três vezes mais. Existe para provar que mostrador domado e cristal abaulado não precisam ser caros.',
    en:'Orient has been a Seiko subsidiary since 2017 and works as the group\'s accessible-mechanics lab. The fourth-generation Bambino swapped applied markers for thin indices and trimmed the case to 40.5 mm. The F6724 calibre is automatic with handwinding and hacking — features missing from watches costing three times as much. It exists to prove that a restrained dial and a domed crystal need not be expensive.'}
 ];
 
 const CATALOG = [
-  {brand:'Patek Philippe', model:'Nautilus 5711/1A', mkt:6200000, cat:'Sport'},
-  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, cat:'Sport'},
-  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, cat:'Chronograph'},
-  {brand:'Rolex', model:'GMT-Master II 126710BLRO', mkt:195000, cat:'GMT'},
-  {brand:'Omega', model:'Seamaster Diver 300M', mkt:38000, cat:'Diver'},
-  {brand:'Grand Seiko', model:'SBGA211 Snowflake', mkt:42000, cat:'Dress'},
-  {brand:'IWC', model:'Mark XX', mkt:36000, cat:'Field'},
-  {brand:'Cartier', model:'Santos de Cartier', mkt:52000, cat:'Dress'},
-  {brand:'Swatch x Omega', model:'MoonSwatch Mission to the Moon', mkt:2400, cat:'Fun'},
-  {brand:'Casio', model:'G-Shock GA-2100', mkt:800, cat:'Fun'},
-  {brand:'Tudor', model:'Pelagos 39', mkt:33000, cat:'Diver'},
-  {brand:'Seiko', model:'Alpinist SPB121', mkt:6900, cat:'Field'}
+  {brand:'Patek Philippe', model:'Nautilus 5711/1A', mkt:6200000, cat:'Sport', img:'/watches/cat1.png'},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, cat:'Sport', img:'/watches/cat2.png'},
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, cat:'Chronograph', img:'/watches/cat3.png'},
+  {brand:'Rolex', model:'GMT-Master II 126710BLRO', mkt:195000, cat:'GMT', img:'/watches/cat4.png'},
+  {brand:'Omega', model:'Seamaster Diver 300M', mkt:38000, cat:'Diver', img:'/watches/cat5.png'},
+  {brand:'Grand Seiko', model:'SBGA211 Snowflake', mkt:42000, cat:'Dress', img:'/watches/cat6.png'},
+  {brand:'IWC', model:'Mark XX', mkt:36000, cat:'Field', img:'/watches/cat7.png'},
+  {brand:'Cartier', model:'Santos de Cartier', mkt:52000, cat:'Dress', img:'/watches/cat8.png'},
+  {brand:'Swatch x Omega', model:'MoonSwatch Mission to the Moon', mkt:2400, cat:'Fun', img:'/watches/cat9.png'},
+  {brand:'Casio', model:'G-Shock GA-2100', mkt:800, cat:'Fun', img:'/watches/cat10.png'},
+  {brand:'Tudor', model:'Pelagos 39', mkt:33000, cat:'Diver', img:'/watches/cat11.png'},
+  {brand:'Seiko', model:'Alpinist SPB121', mkt:6900, cat:'Field', img:'/watches/cat12.png'}
 ];
 
 let GRAILS = [
-  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000},
-  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000}
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, img:'/watches/cat3.png'},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, img:'/watches/cat2.png'}
 ];
 
 const NEWS = [
@@ -262,9 +262,17 @@ function history(w){
   out[35]=w.mkt||v; return out;
 }
 
-/* miniatura SVG do relógio */
+/* miniatura SVG ou Foto PNG/WebP transparente do relógio */
 function pic(w,size){
-  const s=size||52, isRect = (w.model||'').includes('Tank');
+  const s=size||52;
+  if(w && w.img){
+    return `<img src="${w.img}" alt="${w.model||''}" style="width:${s}px;height:${s}px;object-fit:contain;display:block;" onerror="this.onerror=null; this.parentNode.innerHTML=getSvgPic(${JSON.stringify(w).replace(/"/g, '&quot;')}, ${s});">`;
+  }
+  return getSvgPic(w, s);
+}
+
+function getSvgPic(w, s){
+  const isRect = (w.model||'').includes('Tank');
   const dialC = w.dial || '#0B0B0D';
   const metalC = w.metal || '#B9BCC2';
   const bezelC = w.bezel || '#111114';
@@ -639,7 +647,7 @@ function renderGrailSheet(){
   box.innerHTML = GRAILS.map(g => {
     const safeModel = g.model.replace(/'/g, "\\'");
     return `<div class="wrow" onclick="openDetailByModel('${safeModel}')">
-      <div class="wpic" style="background:#0F0E0A">${pic({model:g.model,dial:'#0B0B0D',bezel:'#111114',metal:'#C9A227',strap:'metal'})}</div>
+      <div class="wpic" style="background:#0F0E0A">${pic({model:g.model,dial:'#0B0B0D',bezel:'#111114',metal:'#C9A227',strap:'metal',img:g.img})}</div>
       <div class="n"><b>${g.model}</b><span>${g.brand}</span></div>
       <div style="text-align:right">
         <b style="font-size:13.5px;font-weight:800;display:block;margin-bottom:6px">${money(g.mkt,true)}</b>
@@ -658,7 +666,7 @@ function toggleGrail(model){
     const c = CATALOG.find(x=>x.model.toLowerCase() === model.toLowerCase()) || 
               WATCHES.find(x=>x.model.toLowerCase() === model.toLowerCase());
     if(c){
-      GRAILS.push({brand:c.brand, model:c.model, mkt:c.mkt});
+      GRAILS.push({brand:c.brand, model:c.model, mkt:c.mkt, img:c.img});
       toast(t('added'));
     }
   }
@@ -691,6 +699,7 @@ function openDetailByModel(modelName){
         metal: '#C9A227',
         strap: 'metal',
         papers: true,
+        img: c.img,
         pt: 'Modelo presente no catálogo oficial de Grails e desejos de relojoaria.',
         en: 'Official model listed in the global watch catalogue.'
       };
@@ -777,7 +786,7 @@ function renderCatalog(){
     const has=GRAILS.some(g=>g.model.toLowerCase()===c.model.toLowerCase());
     const safeModel = c.model.replace(/'/g, "\\'");
     return `<div class="wrow" onclick="openDetailByModel('${safeModel}')">
-      <div class="wpic">${pic({model:c.model,dial:'#0B0B0D',bezel:'#111114',metal:'#B9BCC2',strap:'metal'})}</div>
+      <div class="wpic">${pic({model:c.model,dial:'#0B0B0D',bezel:'#111114',metal:'#B9BCC2',strap:'metal',img:c.img})}</div>
       <div class="n"><b>${c.model}</b><span>${c.brand}</span><div class="tag">${c.cat}</div></div>
       <div style="text-align:right">
         <b style="font-size:13.5px;font-weight:800;display:block">${money(c.mkt,true)}</b>
@@ -1020,7 +1029,7 @@ function makeTray(items,slotCount){
     const w1=new THREE.Mesh(new THREE.BoxGeometry(W,1.15,0.18), mat(GREY.wall,0.9));
     w1.position.set(x,0.57,z); g.add(w1);
   });
-  [[(W/2-0.09),0],[-(W/2-0.09),0]].forEach(([x,z])=>{
+  [[(W/2-0.09),0],[-(W/2-0.09)]].forEach(([x,z])=>{
     const w2=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.15,D), mat(GREY.wall,0.9));
     w2.position.set(x,0.57,z); g.add(w2);
   });
