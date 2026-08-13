@@ -67,7 +67,12 @@
       </div>
 
       <h2 class="sec" data-i="secActivity">Atividade recente</h2>
-      <div class="card"><div class="feed" id="feed"></div></div>
+      <div class="card">
+        <div class="feed" id="feed"></div>
+        <div class="cardfoot">
+          <button class="linkbtn" id="feedMore" onclick="openActivity()" data-i="seeHistory">Ver histórico</button>
+        </div>
+      </div>
     </div>
 
     <!-- ============ COLEÇÃO ============ -->
@@ -195,6 +200,15 @@
       <b id="fsTitle"></b>
     </div>
     <div class="sbody" id="fsBody"></div>
+  </div>
+
+  <!-- ============ HISTÓRICO DE ATIVIDADE ============ -->
+  <div class="sheet" id="activity">
+    <div class="shead">
+      <button class="iconbtn" onclick="close_('activity')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F4F4F6" stroke-width="2.8" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <b id="actTitle"></b>
+    </div>
+    <div class="sbody" id="actBody"></div>
   </div>
 
   <!-- ============ SCANNER ============ -->
