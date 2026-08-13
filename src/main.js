@@ -1,0 +1,1305 @@
+import * as THREE from 'three';
+window.THREE = THREE;
+
+/* =========================================================
+   DADOS
+   ========================================================= */
+const USD = 5.45;
+
+const CAT = ['Dress','Diver','Chronograph','GMT','Field','Sport','Fun','Vintage'];
+
+const WATCHES = [
+  {id:'w1', brand:'Rolex', model:'Submariner Date', ref:'126610LN', year:2021, cat:'Diver', paid:62000, date:'2021-03-14',
+   mkt:78500, dial:'#0B0B0D', bezel:'#111114', metal:'#B9BCC2', strap:'metal', papers:true,
+   pt:'O Submariner Date de 2020 em diante trouxe caixa de 41 mm e o calibre 3235, com 70 horas de reserva. É o relógio que definiu o que um mergulhador deveria ser: em 1953 a Rolex apresentou o primeiro relógio de pulso garantido a 100 metros, e a linguagem visual — bezel graduado, ponteiros Mercedes, índices luminosos generosos — virou gramática comum de toda a indústria. Esta referência corrigiu a queixa mais ouvida sobre a geração anterior: as alças finalmente ficaram proporcionais à caixa.',
+   en:'From 2020 onward the Submariner Date grew to a 41 mm case and the 3235 calibre, with 70 hours of reserve. This is the watch that defined what a diver should be: in 1953 Rolex introduced the first wristwatch guaranteed to 100 metres, and its visual language — graduated bezel, Mercedes hands, generous lume — became the common grammar of the whole industry. This reference fixed the loudest complaint about the previous generation: the lugs are finally proportional to the case.'},
+
+  {id:'w2', brand:'Omega', model:'Speedmaster Professional', ref:'310.30.42', year:2019, cat:'Chronograph', paid:32000, date:'2019-08-02',
+   mkt:41900, dial:'#0A0A0C', bezel:'#131318', metal:'#B4B7BD', strap:'metal', papers:true,
+   pt:'Certificado pela NASA para todas as missões tripuladas em 1965 e no pulso de Buzz Aldrin quando ele desceu à superfície lunar. O que quase ninguém comenta é que o cronógrafo foi usado como instrumento de emergência na Apollo 13: sem computador de bordo, a tripulação cronometrou manualmente uma queima de 14 segundos que corrigiu a rota de reentrada. O movimento continua de corda manual, com roda de colunas — uma decisão de projeto que a Omega se recusa a abandonar.',
+   en:'NASA-qualified for all manned missions in 1965 and on Buzz Aldrin\'s wrist on the lunar surface. What rarely gets mentioned is that the chronograph served as an emergency instrument on Apollo 13: with the guidance computer down, the crew manually timed a 14-second burn that corrected their re-entry path. The movement is still hand-wound, with a column wheel — a design decision Omega refuses to abandon.'},
+
+  {id:'w3', brand:'Tudor', model:'Black Bay Fifty-Eight', ref:'79030N', year:2022, cat:'Diver', paid:28500, date:'2022-11-20',
+   mkt:31200, dial:'#0C0C0F', bezel:'#101014', metal:'#AFB2B8', strap:'metal', papers:false,
+   pt:'O 58 do nome é 1958, ano da referência 7924, o primeiro Tudor com 200 metros de estanqueidade. A caixa de 39 mm e 11,9 mm de espessura foi a resposta direta ao público que achava a linha Black Bay grande demais — e virou o relógio que reposicionou a marca inteira. O calibre MT5402 é próprio, com espiral em silício e certificação COSC. É o argumento mais forte de que herança e preço acessível podem coexistir.',
+   en:'The 58 stands for 1958, the year of reference 7924, the first Tudor waterproof to 200 metres. The 39 mm case, 11.9 mm thick, answered everyone who found the Black Bay line too large — and became the watch that repositioned the entire brand. The MT5402 is in-house, with a silicon hairspring and COSC certification. It is the strongest argument that heritage and accessible pricing can coexist.'},
+
+  {id:'w4', brand:'Cartier', model:'Tank Must', ref:'WSTA0041', year:2023, cat:'Dress', paid:19800, date:'2023-05-09',
+   mkt:21400, dial:'#EFEDE6', bezel:'#C9C6BE', metal:'#C6C3BB', strap:'leather', strapColor:'#1A1A1D', papers:true,
+   pt:'Louis Cartier desenhou o Tank em 1917 inspirado na vista superior dos tanques Renault FT que cruzavam a frente ocidental: as brancards laterais são as esteiras, o mostrador é o compartimento da tripulação. Foi um dos primeiros relógios de pulso pensados como objeto de design, não como instrumento reduzido. O Must nasceu nos anos 1970 como a porta de entrada da marca, e a versão atual mantém os algarismos romanos, o trilho ferroviário dos minutos e a cabochão azul na coroa.',
+   en:'Louis Cartier drew the Tank in 1917 after the overhead view of the Renault FT tanks crossing the Western Front: the side brancards are the treads, the dial is the crew compartment. It was among the first wristwatches conceived as a design object rather than a shrunken instrument. The Must line began in the 1970s as the brand\'s entry point, and today\'s version keeps the Roman numerals, the railway minute track and the blue cabochon on the crown.'},
+
+  {id:'w5', brand:'Seiko', model:'SKX007', ref:'7S26-0020', year:1998, cat:'Diver', paid:1900, date:'2018-02-11',
+   mkt:3600, dial:'#0A0A0C', bezel:'#131317', metal:'#A9ACB2', strap:'rubber', strapColor:'#151518', papers:false,
+   pt:'Descontinuado em 2019, e foi justamente aí que o preço subiu. O SKX é o relógio que ensinou uma geração inteira a gostar de relojoaria mecânica: 200 metros reais, certificação ISO de mergulho, calibre 7S26 sem corda manual nem parada de segundos — bruto de propósito. É provavelmente a peça mais modificada da história: existe uma indústria inteira de mostradores, bezéis e cristais de safira feitos só para ele.',
+   en:'Discontinued in 2019, which is exactly when prices climbed. The SKX taught a whole generation to love mechanical watches: a real 200 metres, ISO dive certification, and the 7S26 calibre with no handwinding and no hacking — deliberately crude. It is probably the most modified watch in history: an entire industry of dials, bezels and sapphire crystals exists only for this reference.'},
+
+  {id:'w6', brand:'Tissot', model:'PRX Powermatic 80', ref:'T137.407', year:2023, cat:'Sport', paid:4200, date:'2023-09-01',
+   mkt:4050, dial:'#12315E', bezel:'#B9BCC2', metal:'#BCBFC5', strap:'metal', papers:true,
+   pt:'O desenho vem de 1978, quando a Tissot lançou um quartzo de caixa e pulseira integradas na esteira do Royal Oak e do Nautilus. O relançamento de 2021 acertou algo que a indústria vinha errando: entregou a estética integrada com 80 horas de reserva de marcha por um preço de quatro dígitos. É o relógio que mais aparece como primeira compra mecânica de quem entra no hobby hoje.',
+   en:'The design dates to 1978, when Tissot released an integrated-bracelet quartz in the wake of the Royal Oak and the Nautilus. The 2021 revival got something the industry kept missing: integrated looks with 80 hours of power reserve at a four-figure price. It is the watch that most often shows up as a newcomer\'s first mechanical purchase.'},
+
+  {id:'w7', brand:'Omega', model:'Seamaster 300', ref:'165.024', year:1966, cat:'Vintage', paid:24000, date:'2020-06-18',
+   mkt:39000, dial:'#141013', bezel:'#1A1418', metal:'#AEB0B4', strap:'leather', strapColor:'#4A3520', papers:false,
+   pt:'A geração 165.024 é a que foi entregue ao Serviço Aéreo Especial britânico, com marcações de emissão militar nas peças originais. O mostrador desta unidade envelheceu para um marrom tropical, resultado de décadas de luz sobre um verniz de base preta — um defeito de conservação que o mercado passou a tratar como valorização. Calibre 552, sem data, com ponteiros espada preenchidos de material luminoso que hoje aparece bege.',
+   en:'The 165.024 generation is the one issued to the British Special Air Service, with military markings on original examples. This dial has aged to tropical brown, the result of decades of light on a black lacquer base — a conservation flaw the market decided to treat as an asset. Calibre 552, no date, with sword hands filled with lume that now reads beige.'},
+
+  {id:'w8', brand:'Orient', model:'Bambino V4', ref:'FAC08', year:2024, cat:'Dress', paid:1450, date:'2024-01-27',
+   mkt:1500, dial:'#F3EFE4', bezel:'#C8B98E', metal:'#C8B98E', strap:'leather', strapColor:'#5A3A22', papers:true,
+   pt:'A Orient é subsidiária da Seiko desde 2017 e opera como o laboratório de mecânica acessível do grupo. A quarta geração do Bambino trocou o mostrador aplicado por índices finos e reduziu a caixa para 40,5 mm. O calibre F6724 é automático com corda manual e parada de segundos — recursos que faltam em relógios que custam três vezes mais. Existe para provar que mostrador domado e cristal abaulado não precisam ser caros.',
+   en:'Orient has been a Seiko subsidiary since 2017 and works as the group\'s accessible-mechanics lab. The fourth-generation Bambino swapped applied markers for thin indices and trimmed the case to 40.5 mm. The F6724 calibre is automatic with handwinding and hacking — features missing from watches costing three times as much. It exists to prove that a restrained dial and a domed crystal need not be expensive.'}
+];
+
+const CATALOG = [
+  {brand:'Patek Philippe', model:'Nautilus 5711/1A', mkt:6200000, cat:'Sport'},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000, cat:'Sport'},
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000, cat:'Chronograph'},
+  {brand:'Rolex', model:'GMT-Master II 126710BLRO', mkt:195000, cat:'GMT'},
+  {brand:'Omega', model:'Seamaster Diver 300M', mkt:38000, cat:'Diver'},
+  {brand:'Grand Seiko', model:'SBGA211 Snowflake', mkt:42000, cat:'Dress'},
+  {brand:'IWC', model:'Mark XX', mkt:36000, cat:'Field'},
+  {brand:'Cartier', model:'Santos de Cartier', mkt:52000, cat:'Dress'},
+  {brand:'Swatch x Omega', model:'MoonSwatch Mission to the Moon', mkt:2400, cat:'Fun'},
+  {brand:'Casio', model:'G-Shock GA-2100', mkt:800, cat:'Fun'},
+  {brand:'Tudor', model:'Pelagos 39', mkt:33000, cat:'Diver'},
+  {brand:'Seiko', model:'Alpinist SPB121', mkt:6900, cat:'Field'}
+];
+
+let GRAILS = [
+  {brand:'Rolex', model:'Daytona 126500LN', mkt:280000},
+  {brand:'Audemars Piguet', model:'Royal Oak 15510ST', mkt:1450000}
+];
+
+const MEMBERS = [
+  {u:'@leo.horology', n:'Leonardo M.', i:'LM', g:'#EBD27C,#8A7423', priv:false,
+   owns:['w1','w2','w3','w4','w7'], city:'São Paulo'},
+  {u:'@vintage.sp', n:'Marina T.', i:'MT', g:'#9BB7D4,#3B5876', priv:true,
+   owns:['w7','w5','w2'], city:'Campinas'},
+  {u:'@carioca.time', n:'Diego P.', i:'DP', g:'#D9A08C,#7A4636', priv:false,
+   owns:['w6','w8','w3','w1'], city:'Rio de Janeiro'},
+  {u:'@seiko.club.br', n:'Ana R.', i:'AR', g:'#A8C9A0,#456B47', priv:false,
+   owns:['w5','w6','w8'], city:'Natal'},
+  {u:'@tropical.dials', n:'Bruno L.', i:'BL', g:'#C9A6D4,#5A3B67', priv:false,
+   owns:['w7','w2','w1','w5'], city:'Recife'},
+  {u:'@quartz.era', n:'Helena F.', i:'HF', g:'#D4C39B,#6B5A2E', priv:true,
+   owns:['w6','w8'], city:'Porto Alegre'}
+];
+const ownedBy = m => m.owns.map(id=>WATCHES.find(w=>w.id===id)).filter(Boolean);
+
+const REVIEWS = [
+  {u:'@leo.horology', w:'Tudor Black Bay 58', s:5,
+   pt:'Seis meses de uso diário e nenhum arranhão preocupante. A pulseira é o ponto fraco: sem micro-ajuste, num dia quente ela fica curta. Fora isso, é o tamanho que eu queria que o Submariner tivesse.',
+   en:'Six months of daily wear and no scratch worth worrying about. The bracelet is the weak point: no micro-adjust, so on a hot day it runs short. Otherwise it is the size I wish the Submariner were.'},
+  {u:'@vintage.sp', w:'Omega Seamaster 300 165.024', s:4,
+   pt:'Comprei sem papéis e levei para revisão antes de usar. Adiantava 12 segundos por dia; depois do ajuste, três. Mostrador tropical é lindo mas some com o contraste dos ponteiros à noite.',
+   en:'Bought without papers and serviced it before wearing. It ran 12 seconds fast per day; after regulation, three. The tropical dial is beautiful but it kills hand contrast at night.'},
+  {u:'@seiko.club.br', w:'Seiko SKX007', s:5,
+   pt:'Meu primeiro automático, comprei em 2016 e nunca abri. Já caiu no chão duas vezes. Continua funcionando. Não é preciso, é indestrutível — e para o preço da época, era roubo.',
+   en:'My first automatic, bought in 2016 and never opened. It has hit the floor twice. Still running. It is not accurate, it is indestructible — and at the price back then it was a steal.'}
+];
+
+/* =========================================================
+   ESTADO + i18n
+   ========================================================= */
+let S = {lang:'pt', cur:'BRL', priv:false, demo:true, sort:'recent', year:2023, hidden:new Set(), friends:new Set(), filter:null,
+         req:{}, viewing:null};
+
+/* logo — caixa isométrica em linha, igual à identidade da marca */
+const LOGO_SVG = `<svg viewBox="0 0 120 96" fill="none" stroke="#C9A227" stroke-width="1.5"
+  stroke-linejoin="round" stroke-linecap="round">
+  <path d="M8 58 60 28l52 30-52 30z" opacity=".95"/>
+  <path d="M8 58v12l52 30V88M112 58v12L60 100"/>
+  <path d="M22 50 60 28l38 22-38 22z" opacity=".55"/>
+  <path d="M60 28 30 10 6 24l50 29" opacity=".5"/>
+  <path d="M6 24v10M30 10v8" opacity=".5"/>
+  <g opacity=".9">
+    <circle cx="47" cy="47" r="6"/><path d="M47 43v4l3 2"/>
+    <circle cx="66" cy="47" r="6"/><path d="M66 43v4l3 2"/>
+    <circle cx="56" cy="57" r="6"/><path d="M56 53v4l3 2"/>
+    <circle cx="75" cy="57" r="6"/><path d="M75 53v4l3 2"/>
+    <circle cx="38" cy="57" r="6"/><path d="M38 53v4l3 2"/>
+    <circle cx="66" cy="67" r="6"/><path d="M66 63v4l3 2"/>
+  </g>
+  <path d="M56 74h8v7h-8z" opacity=".9"/>
+</svg>`;
+
+const T = {
+ pt:{searchPh:'Buscar relógios no catálogo',kPieces:'Peças',kMarket:'Valor de mercado',heroT:'Abrir minha caixa',
+  heroS:'Veja a coleção em 3D',secGrails:'Grails',secSpend:'Gastos por mês',tabHome:'Home',tabColl:'Coleção',
+  tabComm:'Comunidade',tabProf:'Perfil',cMembers:'Colecionadores',cReviews:'Reviews',secPrefs:'Preferências',
+  prefLang:'Idioma',prefLangS:'Interface do app',prefCur:'Moeda principal',prefCurS:'A outra aparece abaixo',
+  prefPriv:'Modo privacidade',prefPrivS:'Esconde valores no seu perfil público',prefDemo:'Coleção de demonstração',
+  prefDemoS:'Desligue para ver o app vazio',resetView:'Reposicionar',openDrawer:'Abrir gaveta',closeDrawer:'Fechar gaveta',
+  seeDetails:'Ver detalhes',catTitle:'Catálogo',scanHint:'Centralize o relógio no círculo',scanNow:'Identificar relógio',
+  juliosRole:'Curador da sua coleção',juliosPh:'Pergunte ao Julios sobre sua coleção',
+  memberSince:'Membro desde março de 2021',bio:'Colecionador em Natal. Gosto de mergulhadores dos anos 60 e de qualquer coisa com mostrador tropical. Troco, não vendo.',
+  hiddenNote:'Peças ocultas continuam no total e no valor da coleção, mas não aparecem na caixa 3D.',
+  protoNote:'Protótipo local. Nada é enviado para servidor — o login com idioma, usuário, e-mail e senha entra na versão com sincronização.',
+  paid:'Pago',market:'Mercado',cats:'categorias',recent:'Recentes',value:'Valor',brand:'Marca',oldest:'Mais antigos',
+  detRef:'Referência',detYear:'Ano',detCat:'Categoria',detPaid:'Valor pago',detDate:'Data da compra',detPapers:'Caixa e documentos',
+  yes:'Declarado pelo dono',no:'Não informado',secStory:'A história',secPerf:'Desempenho',secModel:'Modelo 3D',
+  modelSlot:'Espaço do modelo Sketchfab',addGrail:'Adicionar aos Grails',hideW:'Ocultar da caixa',showW:'Mostrar na caixa',
+  identified:'Identificado',conf:'confiança',notSure:'Não é este relógio?',editRef:'Informar a referência manualmente',
+  addToColl:'Adicionar à coleção',scanning:'Lendo a caixa e o mostrador…',noData:'Sem dados de mercado para esta referência',
+  noDataSub:'Nossa equipe vai analisar as fotos e atualizar o catálogo. Você recebe um aviso quando o histórico estiver disponível.',
+  emptyT:'Sua caixa está vazia',emptyS:'Escaneie o primeiro relógio para começar a montar a coleção.',
+  scanFirst:'Escanear meu primeiro relógio',tapEmpty:'Toque num espaço vazio para escanear',
+  drag:'Arraste para girar · toque num relógio',mkt12:'Mercado nos últimos 12 meses',since:'desde a compra',
+  friendAdd:'Adicionar',friendOk:'Amigos',pieces:'peças',ownerOf:'Coleção de',added:'Adicionado aos Grails',
+  hidden:'Relógio oculto da caixa',shown:'Relógio de volta na caixa',confirmQ:'Julios quer fazer isso:',
+  yesDo:'Confirmar',noDo:'Agora não',done:'Feito',
+  secProfile:'Perfil da coleção',secAdded:'Peças adicionadas por mês',secActivity:'Atividade recente',
+  spotCat:'Categoria com mais peças',spotBrand:'Marca com mais peças',seeWatches:'Ver relógios',
+  ofColl:'da coleção',tieNote:'desempate pelo maior valor',clearFilter:'Limpar filtro',
+  filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
+  actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
+  noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
+  pinch:'Pinça para aproximar · arraste para girar',
+  findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
+  askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
+  nowFriends:'Amigo adicionado',reqSent:'Pedido enviado ao dono da coleção',
+  reqOk:'Acesso liberado. A coleção já pode ser vista.',
+  openTheirBox:'Abrir a caixa dele em 3D',privOn:'Este colecionador mantém os valores privados. As peças aparecem, os preços não.',welcome:'Oi, Rafa. Sua coleção tem 8 peças e valorizou 26% desde a compra. Posso separar por categoria, avaliar uma peça ou sugerir a próxima compra dentro de uma faixa de preço.'},
+ en:{searchPh:'Search watches in the catalogue',kPieces:'Pieces',kMarket:'Market value',heroT:'Open my box',
+  heroS:'See the collection in 3D',secGrails:'Grails',secSpend:'Spending by month',tabHome:'Home',tabColl:'Collection',
+  tabComm:'Community',tabProf:'Profile',cMembers:'Collectors',cReviews:'Reviews',secPrefs:'Preferences',
+  prefLang:'Language',prefLangS:'App interface',prefCur:'Main currency',prefCurS:'The other one shows below',
+  prefPriv:'Privacy mode',prefPrivS:'Hides values on your public profile',prefDemo:'Demo collection',
+  prefDemoS:'Turn off to see the empty app',resetView:'Reset view',openDrawer:'Open drawer',closeDrawer:'Close drawer',
+  seeDetails:'See details',catTitle:'Catalogue',scanHint:'Centre the watch in the circle',scanNow:'Identify watch',
+  juliosRole:'Curator of your collection',juliosPh:'Ask Julios about your collection',
+  memberSince:'Member since March 2021',bio:'Collector in Natal, Brazil. Into 1960s divers and anything with a tropical dial. I trade, I do not sell.',
+  hiddenNote:'Hidden pieces still count towards your total and value, but they do not appear in the 3D box.',
+  protoNote:'Local prototype. Nothing leaves your device — the language, username, e-mail and password sign-in arrives with cloud sync.',
+  paid:'Paid',market:'Market',cats:'categories',recent:'Recent',value:'Value',brand:'Brand',oldest:'Oldest',
+  detRef:'Reference',detYear:'Year',detCat:'Category',detPaid:'Price paid',detDate:'Purchase date',detPapers:'Box and papers',
+  yes:'Declared by the owner',no:'Not provided',secStory:'The story',secPerf:'Performance',secModel:'3D model',
+  modelSlot:'Sketchfab model slot',addGrail:'Add to Grails',hideW:'Hide from box',showW:'Show in box',
+  identified:'Identified',conf:'confidence',notSure:'Not this watch?',editRef:'Enter the reference manually',
+  addToColl:'Add to collection',scanning:'Reading the case and dial…',noData:'No market data for this reference',
+  noDataSub:'Our team will review your photos and update the catalogue. You will be notified when the history is ready.',
+  emptyT:'Your box is empty',emptyS:'Scan your first watch to start building the collection.',
+  scanFirst:'Scan my first watch',tapEmpty:'Tap an empty slot to scan',
+  drag:'Drag to rotate · tap a watch',mkt12:'Market over the last 12 months',since:'since purchase',
+  friendAdd:'Add',friendOk:'Friends',pieces:'pieces',ownerOf:'Collection of',added:'Added to Grails',
+  hidden:'Watch hidden from the box',shown:'Watch back in the box',confirmQ:'Julios wants to do this:',
+  yesDo:'Confirm',noDo:'Not now',done:'Done',
+  secProfile:'Collection profile',secAdded:'Pieces added by month',secActivity:'Recent activity',
+  spotCat:'Category with most pieces',spotBrand:'Brand with most pieces',seeWatches:'See watches',
+  ofColl:'of the collection',tieNote:'ties broken by highest value',clearFilter:'Clear filter',
+  filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
+  actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
+  noAct:'Nothing here yet. Your first scan opens this timeline.',
+  pinch:'Pinch to zoom · drag to rotate',
+  findPh:'Find a collector by name or @',noMember:'No collector by that name.',
+  askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
+  nowFriends:'Friend added',reqSent:'Request sent to the collection owner',
+  reqOk:'Access granted. The collection is open.',
+  openTheirBox:'Open their box in 3D',privOn:'This collector keeps values private. The pieces show, the prices do not.',welcome:'Hi Rafa. Your collection holds 8 pieces and is up 26% since purchase. I can sort by category, value a piece, or suggest your next buy within a price range.'}
+};
+const t = k => (T[S.lang][k] ?? k);
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const active = () => S.demo ? WATCHES : [];
+const visible = () => S.viewing ? ownedBy(S.viewing) : active().filter(w=>!S.hidden.has(w.id));
+
+function money(brl, forcePrimary){
+  if(S.priv && !forcePrimary) return '••••';
+  if(S.cur==='BRL') return 'R$ ' + brl.toLocaleString('pt-BR',{maximumFractionDigits:0});
+  return 'US$ ' + Math.round(brl/USD).toLocaleString('en-US');
+}
+function moneyAlt(brl){
+  if(S.priv) return '';
+  if(S.cur==='BRL') return 'US$ ' + Math.round(brl/USD).toLocaleString('en-US');
+  return 'R$ ' + brl.toLocaleString('pt-BR',{maximumFractionDigits:0});
+}
+const totalPaid = () => active().reduce((s,w)=>s+w.paid,0);
+const totalMkt  = () => active().reduce((s,w)=>s+w.mkt,0);
+
+function toast(msg){ const e=document.getElementById('toast'); e.textContent=msg; e.classList.add('on');
+  clearTimeout(e._t); e._t=setTimeout(()=>e.classList.remove('on'),1900); }
+
+/* histórico de mercado determinístico (36 meses) */
+function history(w){
+  const out=[]; let seed = w.ref.split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const rnd = ()=> (seed = (seed*9301+49297)%233280)/233280;
+  const growth = Math.pow(w.mkt/w.paid, 1/36);
+  let v = w.paid;
+  for(let i=0;i<36;i++){ v = v*growth*(0.985+rnd()*0.03); out.push(v); }
+  out[35]=w.mkt; return out;
+}
+
+/* miniatura SVG do relógio */
+function pic(w,size){
+  const s=size||52, isRect = w.model.includes('Tank');
+  const face = isRect
+    ? `<rect x="17" y="12" width="26" height="36" rx="5" fill="${w.dial}" stroke="${w.metal}" stroke-width="2.4"/>`
+    : `<circle cx="30" cy="30" r="17" fill="${w.dial}" stroke="${w.metal}" stroke-width="2.6"/>
+       <circle cx="30" cy="30" r="20" fill="none" stroke="${w.bezel}" stroke-width="3.6"/>`;
+  const band = w.strap==='metal' ? w.metal : (w.strapColor||'#3A2A1C');
+  const dark = w.dial.match(/^#[0-9A-F]{2}/i) && parseInt(w.dial.slice(1,3),16) < 120;
+  const hand = dark ? '#EDEDF0' : '#1A1A1E';
+  return `<svg viewBox="0 0 60 60" width="${s}" height="${s}">
+    <rect x="24" y="1" width="12" height="12" rx="3" fill="${band}"/>
+    <rect x="24" y="47" width="12" height="12" rx="3" fill="${band}"/>
+    ${face}
+    <line x1="30" y1="30" x2="30" y2="20" stroke="${hand}" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="30" y1="30" x2="37" y2="34" stroke="${hand}" stroke-width="2.2" stroke-linecap="round"/>
+    <circle cx="30" cy="30" r="1.6" fill="${w.bezel==='#C9C6BE'?'#8A7423':'#C9A227'}"/>
+    <rect x="47" y="27" width="4" height="6" rx="1.6" fill="${w.metal}"/>
+  </svg>`;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(e=>{
+    const k=e.dataset.i, v=t(k);
+    if(e.tagName==='INPUT') e.placeholder=v; else e.textContent=v;
+  });
+  document.getElementById('juliosPh').textContent=t('juliosPh');
+  document.getElementById('chatIn').placeholder=t('juliosPh');
+  document.getElementById('memberSince').textContent=t('memberSince');
+  document.getElementById('bioTxt').textContent=t('bio');
+  document.getElementById('drawerBtn').textContent = drawerOpen? t('closeDrawer') : t('openDrawer');
+  document.getElementById('lgpt').classList.toggle('on',S.lang==='pt');
+  document.getElementById('lgen').classList.toggle('on',S.lang==='en');
+  renderAll();
+}
+
+function renderAll(){ renderHome(); renderColl(); renderComm(); }
+
+function renderHome(){
+  const A=active();
+  document.getElementById('kQty').textContent = A.length;
+  document.getElementById('kCats').textContent = new Set(A.map(w=>w.cat)).size + ' ' + t('cats');
+  document.getElementById('kMkt').textContent = A.length? money(totalMkt(),true) : '—';
+  const d = A.length? (totalMkt()-totalPaid())/totalPaid()*100 : 0;
+  const dl=document.getElementById('kDelta');
+  dl.className='sub '+(d>=0?'up':'down');
+  dl.textContent = A.length? (d>=0?'+':'')+d.toFixed(1)+'% '+t('since') : '—';
+
+  document.getElementById('grailList').innerHTML = GRAILS.map(g=>`
+    <div class="grail">
+      <div class="wpic" style="background:#0F0E0A">${pic({model:g.model,dial:'#0B0B0D',bezel:'#111114',metal:'#C9A227',strap:'metal'},46)}</div>
+      <div class="g"><b>${g.model}</b><span>${g.brand}</span></div>
+      <div class="p">${money(g.mkt,true)}</div>
+    </div>`).join('') || `<div class="card hint">${t('emptyS')}</div>`;
+
+  renderBars(); renderSpots(); renderAdded(); renderFeed();
+}
+
+/* categoria e marca dominantes — empate resolvido pela peça de maior valor */
+function dominant(key){
+  const A=active(); if(!A.length) return null;
+  const g={};
+  A.forEach(w=>{ (g[w[key]]=g[w[key]]||[]).push(w); });
+  return Object.entries(g).sort((a,b)=>{
+    if(b[1].length!==a[1].length) return b[1].length-a[1].length;
+    return Math.max(...b[1].map(w=>w.mkt)) - Math.max(...a[1].map(w=>w.mkt));
+  })[0];
+}
+
+function renderSpots(){
+  const A=active(), box=document.getElementById('spots');
+  if(!A.length){ box.innerHTML=`<div class="card hint">${t('emptyS')}</div>`; return; }
+  const c=dominant('cat'), b=dominant('brand');
+  const card=(lab,name,list,type)=>`
+    <div class="spot">
+      <div style="flex:1;min-width:0">
+        <div class="lab">${lab}</div>
+        <b class="big">${name}</b>
+        <span class="sub">${list.length} ${t('pieces')} · ${Math.round(list.length/A.length*100)}% ${t('ofColl')}</span>
+      </div>
+      <button class="go" onclick="filterBy('${type}','${name}')">${t('seeWatches')}</button>
+    </div>`;
+  box.innerHTML = card(t('spotCat'),c[0],c[1],'cat') + card(t('spotBrand'),b[0],b[1],'brand')
+    + `<p class="hint" style="margin:4px 2px 0">${t('tieNote')}.</p>`;
+}
+
+function filterBy(type,value){
+  S.filter={type,value}; go('coll'); renderColl();
+  document.getElementById('s-coll').scrollTop=0;
+}
+function clearFilter(){ S.filter=null; renderColl(); }
+
+function renderAdded(){
+  const A=active();
+  const M = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const counts=new Array(12).fill(0);
+  A.forEach(w=>{ const [y,m]=w.date.split('-').map(Number); if(y===S.year) counts[m-1]++; });
+  const max=Math.max(...counts,1);
+  document.getElementById('cbars').innerHTML = counts.map(v=>
+    `<div class="bar ${v===max&&v>0?'top':''}" style="height:${v?Math.max(14,v/max*100):5}%"></div>`).join('');
+  document.getElementById('cblabs').innerHTML = M.map(m=>`<div class="blab">${m}</div>`).join('');
+  const tot=counts.reduce((a,b)=>a+b,0);
+  document.getElementById('addedTotal').textContent = tot+' '+(tot===1?t('pieceIn'):t('piecesIn'));
+  document.getElementById('addedSub').textContent = t('addedIn')+' '+S.year;
+}
+
+function renderFeed(){
+  const A=active(), f=document.getElementById('feed');
+  if(!A.length){ f.innerHTML=`<span class="hint">${t('noAct')}</span>`; f.style.paddingLeft='0'; return; }
+  f.style.paddingLeft='26px';
+  const last=[...A].sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const best=[...A].sort((a,b)=>(b.mkt-b.paid)/b.paid-(a.mkt-a.paid)/a.paid)[0];
+  const fmt=d=>new Date(d).toLocaleDateString(S.lang==='pt'?'pt-BR':'en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  const items=[
+    {hot:true, b:`${last.brand} ${last.model}`, s:`${t('actAdded')} · ${fmt(last.date)}`},
+    {hot:false,b:`${best.brand} ${best.model}`, s:`${t('actUp')} +${((best.mkt-best.paid)/best.paid*100).toFixed(0)}% ${t('since')}`},
+    {hot:false,b:GRAILS[0]?GRAILS[0].model:'—', s:t('actGrail')},
+    {hot:false,b:MEMBERS[0].u, s:t('actFriend')}
+  ];
+  f.innerHTML=items.map(i=>`<div class="act-item ${i.hot?'hot':''}"><b>${i.b}</b><span>${i.s}</span></div>`).join('');
+}
+
+function renderBars(){
+  const M = S.lang==='pt' ? ['J','F','M','A','M','J','J','A','S','O','N','D'] : ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const vals = new Array(12).fill(0);
+  active().forEach(w=>{ const [y,m]=w.date.split('-').map(Number); if(y===S.year) vals[m-1]+=w.paid; });
+  const max = Math.max(...vals,1);
+  document.getElementById('bars').innerHTML = vals.map(v=>
+    `<div class="bar ${v===max&&v>0?'top':''}" style="height:${v?Math.max(8,v/max*100):4}%"></div>`).join('');
+  document.getElementById('blabs').innerHTML = M.map(m=>`<div class="blab">${m}</div>`).join('');
+  const tot = vals.reduce((a,b)=>a+b,0);
+  document.getElementById('spendTotal').textContent = tot? money(tot,true) : '—';
+  document.getElementById('y2023').classList.toggle('on',S.year===2023);
+  document.getElementById('y2024').classList.toggle('on',S.year===2024);
+}
+function setYear(y){ S.year=y; renderBars(); }
+
+function renderColl(){
+  const sorts=[['recent',t('recent')],['value',t('value')],['brand',t('brand')],['oldest',t('oldest')]];
+  document.getElementById('sortChips').innerHTML = sorts.map(([k,l])=>
+    `<button class="chip ${S.sort===k?'on':''}" onclick="setSort('${k}')">${l}</button>`).join('');
+
+  const fb=document.getElementById('collFilter');
+  if(S.filter){
+    fb.innerHTML=`<div class="spot" style="margin-bottom:14px">
+      <div style="flex:1"><div class="lab">${t('filtering')}</div><b class="big">${S.filter.value}</b></div>
+      <button class="go" onclick="clearFilter()">${t('clearFilter')}</button></div>`;
+  } else fb.innerHTML='';
+
+  let L=[...active()];
+  if(S.filter) L=L.filter(w=>w[S.filter.type]===S.filter.value);
+  if(S.sort==='recent') L.sort((a,b)=>b.date.localeCompare(a.date));
+  if(S.sort==='oldest') L.sort((a,b)=>a.year-b.year);
+  if(S.sort==='value')  L.sort((a,b)=>b.mkt-a.mkt);
+  if(S.sort==='brand')  L.sort((a,b)=>a.brand.localeCompare(b.brand));
+
+  const box=document.getElementById('collList');
+  if(!L.length){
+    box.innerHTML=`<div class="card" style="text-align:center;padding:36px 20px">
+      <b style="font-size:17px;font-weight:900;display:block">${t('emptyT')}</b>
+      <p class="hint" style="margin:10px 0 18px">${t('emptyS')}</p>
+      <button class="btn" onclick="openScan()">${t('scanFirst')}</button></div>`;
+    return;
+  }
+  box.innerHTML = L.map(w=>{
+    const up = w.mkt>=w.paid;
+    return `<button class="wrow" onclick="openDetail('${w.id}')">
+      <div class="wpic">${pic(w)}</div>
+      <div class="n"><b>${w.brand} ${w.model}</b><span>${w.ref} · ${w.year}</span>
+        <div class="tag">${w.cat}${S.hidden.has(w.id)?' · '+t('hideW'):''}</div></div>
+      <div class="v"><b>${money(w.mkt,true)}</b>
+        <span class="${up?'up':'down'}">${up?'+':''}${((w.mkt-w.paid)/w.paid*100).toFixed(0)}%</span></div>
+    </button>`;
+  }).join('');
+}
+function setSort(k){ S.sort=k; renderColl(); }
+
+function renderComm(){
+  const q=((document.getElementById('commSearch')||{}).value||'').trim().toLowerCase();
+  const L=MEMBERS.filter(m=>(m.n+' '+m.u+' '+m.city).toLowerCase().includes(q));
+
+  document.getElementById('commA').innerHTML = L.length? L.map(m=>{
+    const f=S.friends.has(m.u), st=S.req[m.u]||'none';
+    const val = m.priv? '••••' : money(ownedBy(m).reduce((s,w)=>s+w.mkt,0),true);
+    let action;
+    if(!f) action=`<button class="addbtn" onclick="friend('${m.u}')">${t('friendAdd')}</button>`;
+    else if(st==='none') action=`<button class="addbtn" onclick="askAccess('${m.u}')">${t('askAccess')}</button>`;
+    else if(st==='pending') action=`<button class="addbtn" style="opacity:.55" disabled>${t('pending')}</button>`;
+    else action=`<button class="addbtn on" onclick="openFriend('${m.u}')">${t('seeColl')}</button>`;
+    return `<div class="member">
+      <div class="ava" style="background:linear-gradient(140deg,${m.g})">${m.i}</div>
+      <div class="m"><b>${m.n} ${f?'<span style="color:var(--gold);font-size:11px">✓</span>':''}</b>
+        <span>${m.u} · ${m.owns.length} ${t('pieces')} · ${val}</span>
+        <span style="display:block;font-size:11.5px;margin-top:1px">${m.city}</span></div>
+      ${action}
+    </div>`;
+  }).join('') : `<div class="card hint">${t('noMember')}</div>`;
+
+  document.getElementById('commB').innerHTML = REVIEWS.map(r=>`
+    <div class="review"><div class="h">
+      <b>${r.w}</b><div class="stars">${'★'.repeat(r.s)}${'☆'.repeat(5-r.s)}</div>
+      </div><div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px">${r.u}</div>
+      <p>${S.lang==='pt'?r.pt:r.en}</p></div>`).join('');
+}
+
+function friend(u){
+  S.friends.add(u); renderComm();
+  toast(t('nowFriends'));
+}
+
+/* pedido de acesso: o dono decide, então há uma espera */
+function askAccess(u){
+  S.req[u]='pending'; renderComm(); toast(t('reqSent'));
+  setTimeout(()=>{ S.req[u]='ok'; renderComm(); toast(t('reqOk')); }, 2600);
+}
+
+function openFriend(u){
+  const m=MEMBERS.find(x=>x.u===u); if(!m)return;
+  const L=ownedBy(m), tot=L.reduce((s,w)=>s+w.mkt,0);
+  document.getElementById('fsTitle').textContent=m.n;
+  document.getElementById('fsBody').innerHTML=`
+    <div class="card" style="display:flex;gap:14px;align-items:center">
+      <div class="ava" style="width:54px;height:54px;font-size:18px;background:linear-gradient(140deg,${m.g})">${m.i}</div>
+      <div style="flex:1"><b style="font-size:16px;font-weight:900;display:block">${m.u}</b>
+        <span style="font-size:12.5px;color:var(--muted);font-weight:600">${m.city} · ${L.length} ${t('pieces')}</span></div>
+    </div>
+    ${m.priv? `<p class="hint" style="margin:12px 2px">${t('privOn')}</p>`
+            : `<div class="kpis" style="margin-top:12px">
+                 <div class="kpi"><div class="lab">${t('kMarket')}</div><div class="val sm">${money(tot,true)}</div>
+                   <div class="sub" style="color:var(--muted)">${moneyAlt(tot)}</div></div>
+                 <div class="kpi"><div class="lab">${t('kPieces')}</div><div class="val">${L.length}</div>
+                   <div class="sub" style="color:var(--muted)">${new Set(L.map(w=>w.cat)).size} ${t('cats')}</div></div>
+               </div>`}
+    <button class="btn" style="margin-top:16px" onclick="openFriendBox('${m.u}')">${t('openTheirBox')}</button>
+    <h2 class="sec">${t('tabColl')}</h2>
+    ${L.map(w=>`<div class="wrow" style="cursor:default">
+      <div class="wpic">${pic(w)}</div>
+      <div class="n"><b>${w.brand} ${w.model}</b><span>${w.ref} · ${w.year}</span>
+        <div class="tag">${w.cat}</div></div>
+      ${m.priv?'':`<div class="v"><b>${money(w.mkt,true)}</b></div>`}
+    </div>`).join('')}`;
+  document.getElementById('friendSheet').classList.add('on');
+}
+
+function openFriendBox(u){
+  S.viewing=MEMBERS.find(x=>x.u===u);
+  document.getElementById('boxOwner').textContent=S.viewing.u.replace('@','').toUpperCase();
+  openBox(); buildBox(); fitCamera(true);
+}
+function commTab(n){
+  document.getElementById('cTab1').classList.toggle('on',n===1);
+  document.getElementById('cTab2').classList.toggle('on',n===2);
+  document.getElementById('commA').style.display=n===1?'':'none';
+  document.getElementById('commB').style.display=n===2?'':'none';
+}
+
+/* navegação */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',['home','coll','comm','prof'][i]===id));
+  const dock = document.getElementById('dock');
+  if(dock) dock.classList.remove('mini');
+}
+const close_ = id => document.getElementById(id).classList.remove('on');
+
+/* preferências */
+function setLang(l){ S.lang=l; applyLang(); }
+function setCur(c){ S.cur=c;
+  document.getElementById('cbrl').classList.toggle('on',c==='BRL');
+  document.getElementById('cusd').classList.toggle('on',c==='USD'); renderAll(); }
+function togglePriv(){ S.priv=!S.priv; document.getElementById('swPriv').classList.toggle('on',S.priv); renderAll(); }
+function toggleDemo(){ S.demo=!S.demo; document.getElementById('swDemo').classList.toggle('on',S.demo); renderAll(); buildBox(); }
+
+/* =========================================================
+   DETALHE
+   ========================================================= */
+let curW=null;
+function openDetail(id){
+  const w = WATCHES.find(x=>x.id===id); curW=w;
+  document.getElementById('dTitle').textContent = w.brand+' '+w.model;
+  const h=history(w), up=w.mkt>=w.paid, delta=((w.mkt-w.paid)/w.paid*100).toFixed(1);
+  document.getElementById('dBody').innerHTML = `
+    <div class="slot"><canvas id="detC"></canvas><div class="slotlab">${t('modelSlot')}</div></div>
+
+    <div class="kpis" style="margin-top:16px">
+      <div class="kpi"><div class="lab">${t('paid')}</div><div class="val sm">${money(w.paid,true)}</div>
+        <div class="sub" style="color:var(--muted)">${moneyAlt(w.paid)}</div></div>
+      <div class="kpi"><div class="lab">${t('market')}</div><div class="val sm">${money(w.mkt,true)}</div>
+        <div class="sub ${up?'up':'down'}">${up?'+':''}${delta}%</div></div>
+    </div>
+
+    <h2 class="sec">${t('mkt12')}</h2>
+    <div class="card"><canvas id="lineC" style="width:100%;height:150px"></canvas></div>
+
+    <h2 class="sec">${t('secStory')}</h2>
+    <div class="prose"><p>${S.lang==='pt'?w.pt:w.en}</p></div>
+
+    <h2 class="sec">${t('detRef')}</h2>
+    <div class="card" style="padding:2px 18px">
+      <div class="kv"><span>${t('detRef')}</span><b>${w.ref}</b></div>
+      <div class="kv"><span>${t('detYear')}</span><b>${w.year}</b></div>
+      <div class="kv"><span>${t('detCat')}</span><b>${w.cat}</b></div>
+      <div class="kv"><span>${t('detDate')}</span><b>${new Date(w.date).toLocaleDateString(S.lang==='pt'?'pt-BR':'en-GB')}</b></div>
+      <div class="kv" style="border:0"><span>${t('detPapers')}</span><b>${w.papers?t('yes'):t('no')}</b></div>
+    </div>
+
+    <button class="btn sec" style="margin-top:18px" onclick="toggleHide('${w.id}')">
+      ${S.hidden.has(w.id)?t('showW'):t('hideW')}</button>`;
+  document.getElementById('detail').classList.add('on');
+  requestAnimationFrame(()=>{ drawLine(h); miniScene(document.getElementById('detC'), w); });
+}
+function toggleHide(id){
+  S.hidden.has(id)?S.hidden.delete(id):S.hidden.add(id);
+  toast(S.hidden.has(id)?t('hidden'):t('shown'));
+  renderColl(); buildBox(); openDetail(id);
+}
+function openDetailFromBox(){ closeBox(); openDetail(focused.userData.id); }
+
+function drawLine(h){
+  const c=document.getElementById('lineC'); if(!c)return;
+  const dpr=devicePixelRatio||1, W=c.clientWidth, H=150;
+  c.width=W*dpr; c.height=H*dpr; const x=c.getContext('2d'); x.scale(dpr,dpr);
+  const min=Math.min(...h), max=Math.max(...h), pad=14;
+  const px=i=>pad+i/(h.length-1)*(W-pad*2), py=v=>H-pad-(v-min)/(max-min||1)*(H-pad*2);
+  const g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,'rgba(201,162,39,.28)'); g.addColorStop(1,'rgba(201,162,39,0)');
+  x.beginPath(); x.moveTo(px(0),py(h[0])); h.forEach((v,i)=>x.lineTo(px(i),py(v)));
+  x.lineTo(px(h.length-1),H); x.lineTo(px(0),H); x.closePath(); x.fillStyle=g; x.fill();
+  x.beginPath(); h.forEach((v,i)=>i?x.lineTo(px(i),py(v)):x.moveTo(px(i),py(v)));
+  x.strokeStyle='#C9A227'; x.lineWidth=2.2; x.lineJoin='round'; x.stroke();
+  x.beginPath(); x.arc(px(h.length-1),py(h[h.length-1]),4.2,0,7); x.fillStyle='#EBD27C'; x.fill();
+}
+
+/* =========================================================
+   CATÁLOGO
+   ========================================================= */
+function openCatalog(){ document.getElementById('catalog').classList.add('on'); renderCatalog(); }
+function renderCatalog(){
+  const q=(document.getElementById('catInput').value||'').toLowerCase();
+  const L=CATALOG.filter(c=>(c.brand+' '+c.model).toLowerCase().includes(q));
+  document.getElementById('catList').innerHTML = L.map(c=>{
+    const has=GRAILS.some(g=>g.model===c.model);
+    return `<div class="wrow" style="cursor:default">
+      <div class="wpic">${pic({model:c.model,dial:'#0B0B0D',bezel:'#111114',metal:'#B9BCC2',strap:'metal'})}</div>
+      <div class="n"><b>${c.model}</b><span>${c.brand}</span><div class="tag">${c.cat}</div></div>
+      <div style="text-align:right"><b style="font-size:13.5px;font-weight:800;display:block">${money(c.mkt,true)}</b>
+      <button class="addbtn ${has?'on':''}" style="margin-top:6px" onclick="addGrail('${c.model.replace(/'/g,"")}')">${has?'★':'+ Grail'}</button></div>
+    </div>`;
+  }).join('');
+}
+function addGrail(model){
+  if(GRAILS.some(g=>g.model===model))return;
+  const c=CATALOG.find(x=>x.model===model); GRAILS.push({brand:c.brand,model:c.model,mkt:c.mkt});
+  toast(t('added')); renderHome(); renderCatalog();
+}
+
+/* =========================================================
+   SCANNER (identificação simulada)
+   ========================================================= */
+let stream=null;
+async function openScan(){
+  document.getElementById('scan').classList.add('on');
+  document.getElementById('scanResult').innerHTML='';
+  document.getElementById('scanBtn').style.display='';
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('cam').srcObject=stream;
+  }catch(e){ document.getElementById('scanmsg').textContent = t('scanHint'); }
+}
+function closeScan(){
+  document.getElementById('scan').classList.remove('on');
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+}
+function doScan(){
+  const btn=document.getElementById('scanBtn'), res=document.getElementById('scanResult');
+  btn.style.display='none';
+  res.innerHTML=`<div class="card" style="text-align:center;margin-bottom:14px"><span class="hint">${t('scanning')}</span></div>`;
+  setTimeout(()=>{
+    const w = WATCHES[Math.floor(Math.random()*WATCHES.length)];
+    res.innerHTML = `
+      <div class="card" style="margin-bottom:12px;display:flex;gap:14px;align-items:center">
+        <div class="wpic">${pic(w)}</div>
+        <div style="flex:1"><div style="font-size:10.5px;font-weight:800;letter-spacing:.1em;color:var(--gold)">${t('identified').toUpperCase()} · 87% ${t('conf')}</div>
+        <b style="font-size:15px;font-weight:900;display:block;margin-top:3px">${w.brand} ${w.model}</b>
+        <span style="font-size:12.5px;color:var(--muted);font-weight:600">${w.ref} · ${w.year}</span></div>
+      </div>
+      <p class="hint" style="margin:0 0 12px">${t('notSure')} <b style="color:var(--gold)">${t('editRef')}</b></p>
+      <button class="btn" onclick="closeScan();toast('${t('done')}')">${t('addToColl')}</button>`;
+  },1900);
+}
+
+/* =========================================================
+   CAIXA 3D  —  maquete cinza, three.js r128
+   ========================================================= */
+let renderer,scene,cam3,pivot,boxGroup,drawerGroup,raycaster,pointer,slotsMesh=[],watchMeshes=[];
+let drawerOpen=false, focused=null, focusAnim=0, rotX=-0.78, rotY=-0.30, dragging=false, lastX=0,lastY=0;
+let camDist=15, zoom=1, camNow=0, focusZoom = 1.0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+const GREY = {tray:0x8E9096, wall:0x74767C, cushion:0xA8AAB0, floor:0x5C5E64};
+
+function initBox(){
+  const canvas=document.getElementById('c3d');
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  scene=new THREE.Scene();
+  scene.fog=new THREE.Fog(0x050506,22,44);
+  cam3=new THREE.PerspectiveCamera(38,1,0.1,100);
+
+  scene.add(new THREE.HemisphereLight(0xC8CCD4,0x0A0A0C,1.05));
+  const key=new THREE.DirectionalLight(0xFFF3D6,1.5); key.position.set(6,12,8); scene.add(key);
+  const rim=new THREE.DirectionalLight(0xC9A227,0.65); rim.position.set(-8,4,-7); scene.add(rim);
+
+  pivot=new THREE.Group(); scene.add(pivot);
+  raycaster=new THREE.Raycaster(); pointer=new THREE.Vector2();
+  buildBox(); sizeBox(); animate();
+
+  /* órbita: 1 dedo gira, 2 dedos aproximam */
+  /* ---- Controle de Câmera e Seleção Corrigidos ---- */
+const pts = new Map();
+let pinch0 = 0, zoom0 = 1, downX = 0, downY = 0;
+
+canvas.addEventListener('pointerdown', e => {
+  try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
+  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  dragging = true;
+  downX = e.clientX;
+  downY = e.clientY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+  
+  if (pts.size === 2) {
+    pinch0 = spread();
+    zoom0 = focused ? focusZoom : zoom;
+  }
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (!pts.has(e.pointerId)) return;
+  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+  // Zoom via pinça com 2 dedos (Mobile)
+  if (pts.size >= 2) {
+    const d = spread();
+    if (pinch0 > 0) {
+      if (focused) {
+        focusZoom = clamp(zoom0 * (d / pinch0), 0.5, 2.5);
+      } else {
+        zoom = clamp(zoom0 * (pinch0 / d), 0.32, 3.2);
+      }
+    }
+    return;
+  }
+
+  // Rotação suave (Desktop e Mobile)
+  const dx = (e.clientX - lastX) / 130;
+  const dy = (e.clientY - lastY) / 140;
+  lastX = e.clientX;
+  lastY = e.clientY;
+
+  if (focused) {
+    focused.rotation.y += dx * 1.5;
+    focused.rotation.x = clamp(focused.rotation.x + dy * 1.2, -1.45, 1.45);
+  } else {
+    rotY += dx;
+    rotX = clamp(rotX + dy, -1.48, 0.72);
+  }
+});
+
+const up = e => {
+  const had = pts.size;
+  pts.delete(e.pointerId);
+  try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+
+  if (pts.size < 2) pinch0 = 0;
+
+  if (pts.size === 0) {
+    dragging = false;
+    // Distância real entre o início do toque/clique e o término
+    const dist = Math.hypot(e.clientX - downX, e.clientY - downY);
+    
+    // Se o ponteiro moveu menos de 8px, é um clique/toque de seleção
+    if (had === 1 && dist < 8 && !focused) {
+      pick(downX, downY);
+    }
+  }
+};
+
+canvas.addEventListener('pointerup', up);
+canvas.addEventListener('pointercancel', up);
+canvas.addEventListener('pointerleave', up);
+
+  canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (focused) {
+    focusZoom = clamp(focusZoom * (1 - e.deltaY * 0.0015), 0.5, 2.5);
+  } else {
+    zoom = clamp(zoom * (1 + e.deltaY * 0.0014), 0.32, 3.2);
+  }
+}, { passive: false });
+
+  function spread(){ const a=[...pts.values()]; return Math.hypot(a[0].x-a[1].x, a[0].y-a[1].y)||1; }
+  addEventListener('resize',sizeBox);
+}
+
+/* ---- geometria ---- */
+function mat(c,rough){ return new THREE.MeshStandardMaterial({color:c,roughness:rough??0.92,metalness:0.05}); }
+
+function makeCushion(){
+  const g=new THREE.Group();
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.42,1.5,20,1,false), mat(GREY.cushion,0.98));
+  body.rotation.z=Math.PI/2; body.position.y=0.42; g.add(body);
+  const cap1=new THREE.Mesh(new THREE.SphereGeometry(0.42,16,12), mat(GREY.cushion,0.98));
+  cap1.position.set(0.75,0.42,0); g.add(cap1);
+  const cap2=cap1.clone(); cap2.position.x=-0.75; g.add(cap2);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(2.05,0.14,1.35), mat(GREY.wall,0.95));
+  base.position.y=0.07; g.add(base);
+  return g;
+}
+
+/* relógio estilizado — mesma maquete, forma varia por categoria */
+function makeWatch(w){
+  const g=new THREE.Group();
+  const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial), bezC=new THREE.Color(w.bezel);
+  const isRect = w.model.includes('Tank');
+
+  let body, dial;
+  if(isRect){
+    body=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.2,0.92), new THREE.MeshStandardMaterial({color:caseC,roughness:0.28,metalness:0.85}));
+    dial=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.06,0.74), new THREE.MeshStandardMaterial({color:dialC,roughness:0.5,metalness:0.1}));
+  }else{
+    body=new THREE.Mesh(new THREE.CylinderGeometry(0.44,0.42,0.2,32), new THREE.MeshStandardMaterial({color:caseC,roughness:0.26,metalness:0.88}));
+    dial=new THREE.Mesh(new THREE.CylinderGeometry(0.33,0.33,0.06,32), new THREE.MeshStandardMaterial({color:dialC,roughness:0.45,metalness:0.12}));
+    const bez=new THREE.Mesh(new THREE.TorusGeometry(0.395,0.055,10,40), new THREE.MeshStandardMaterial({color:bezC,roughness:0.35,metalness:0.7}));
+    bez.rotation.x=Math.PI/2; bez.position.y=0.1; g.add(bez);
+  }
+  dial.position.y=0.11; g.add(body); g.add(dial);
+
+  /* cristal */
+  const crys=new THREE.Mesh(isRect?new THREE.BoxGeometry(0.56,0.04,0.76):new THREE.CylinderGeometry(0.34,0.34,0.04,32),
+    new THREE.MeshStandardMaterial({color:0xE6EAF0,roughness:0.06,metalness:0.1,transparent:true,opacity:0.22}));
+  crys.position.y=0.15; g.add(crys);
+
+  /* ponteiros */
+  const light = parseInt(w.dial.slice(1,3),16) > 120;
+  const hm=new THREE.MeshStandardMaterial({color:light?0x1A1A1E:0xE8E8EE,roughness:0.3,metalness:0.5});
+  const h1=new THREE.Mesh(new THREE.BoxGeometry(0.035,0.02,0.2),hm); h1.position.set(0,0.145,-0.08); g.add(h1);
+  const h2=new THREE.Mesh(new THREE.BoxGeometry(0.028,0.02,0.28),hm); h2.position.set(0.06,0.145,0.08); h2.rotation.y=0.9; g.add(h2);
+
+  /* subdials do cronógrafo */
+  if(w.cat==='Chronograph'){
+    [[-0.15,0],[0.15,0],[0,0.16]].forEach(([x,z])=>{
+      const sd=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,0.02,18),
+        new THREE.MeshStandardMaterial({color:light?0xC8C8CC:0x2A2A30,roughness:0.6}));
+      sd.position.set(x,0.145,z); g.add(sd);
+    });
+  }
+
+  /* coroa */
+  const cr=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.09,14), new THREE.MeshStandardMaterial({color:caseC,roughness:0.3,metalness:0.85}));
+  cr.rotation.z=Math.PI/2; cr.position.set(isRect?0.4:0.47,0.06,0); g.add(cr);
+
+  /* pulseira caindo pelos lados da almofada */
+  const bandC = w.strap==='metal' ? new THREE.Color(w.metal) : new THREE.Color(w.strapColor||0x2A1E14);
+  const bandM = new THREE.MeshStandardMaterial({color:bandC,roughness:w.strap==='metal'?0.32:0.9,metalness:w.strap==='metal'?0.8:0.05});
+  [1,-1].forEach(s=>{
+    const a=new THREE.Mesh(new THREE.BoxGeometry(0.42,0.09,0.42),bandM);
+    a.position.set(0,0.02,s*0.55); a.rotation.x=s*0.55; g.add(a);
+    const b=new THREE.Mesh(new THREE.BoxGeometry(0.40,0.08,0.5),bandM);
+    b.position.set(0,-0.28,s*0.86); b.rotation.x=s*1.05; g.add(b);
+  });
+
+  g.userData={id:w.id,name:w.brand+' '+w.model,ref:w.ref+' · '+w.year};
+  return g;
+}
+
+/* bandeja com 6 lugares (3x2) */
+function makeTray(items,slotCount){
+  const g=new THREE.Group();
+  const cols=Math.min(3,Math.max(1,slotCount)), rows=Math.ceil(slotCount/3);
+  const W=cols*2.5+0.7, D=rows*1.85+0.7;
+
+  const floor=new THREE.Mesh(new THREE.BoxGeometry(W,0.2,D), mat(GREY.floor,0.96));
+  g.add(floor);
+  [[0,(D/2-0.09)],[0,-(D/2-0.09)]].forEach(([x,z])=>{
+    const w1=new THREE.Mesh(new THREE.BoxGeometry(W,1.15,0.18), mat(GREY.wall,0.9));
+    w1.position.set(x,0.57,z); g.add(w1);
+  });
+  [[(W/2-0.09),0],[-(W/2-0.09),0]].forEach(([x,z])=>{
+    const w2=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.15,D), mat(GREY.wall,0.9));
+    w2.position.set(x,0.57,z); g.add(w2);
+  });
+
+  for(let i=0;i<slotCount;i++){
+    const r=Math.floor(i/cols), c=i%cols;
+    const x=(c-(cols-1)/2)*2.5, z=(r-(rows-1)/2)*1.85;
+    const cu=makeCushion(); cu.position.set(x,0.1,z); cu.rotation.y=Math.PI/2;
+    cu.userData.slot=i; cu.children.forEach(m=>m.userData.slot=i);
+    g.add(cu); slotsMesh.push(cu);
+
+    const w=items[i];
+    if(w){
+      const wm=makeWatch(w); wm.position.set(x,0.98,z);
+      wm.userData.home=new THREE.Vector3(x,0.98,z);
+      g.add(wm); watchMeshes.push(wm);
+    }
+  }
+  g.userData={W,D};
+  return g;
+}
+
+function buildBox(){
+  if(!pivot)return;
+  while(pivot.children.length) pivot.remove(pivot.children[0]);
+  slotsMesh=[]; watchMeshes=[]; focused=null; drawerOpen=false;
+  const V=visible();
+
+  if(!V.length){ boxGroup=null; document.getElementById('boxSub').textContent=t('emptyT'); return; }
+
+  /* regra: cada bandeja comporta 6. Até 5 peças → uma fileira. */
+  const trays=[]; for(let i=0;i<V.length;i+=6) trays.push(V.slice(i,i+6));
+  const first=trays[0];
+  const slotCount0 = V.length<=5 ? V.length : 6;
+
+  boxGroup=new THREE.Group();
+  const t0 = V.length<=5 ? makeTrayRow(first) : makeTray(first,6);
+  boxGroup.add(t0);
+  const dims=t0.userData;
+
+  /* casco externo */
+  const shell=new THREE.Mesh(new THREE.BoxGeometry(dims.W+0.5,1.5,dims.D+0.5), mat(0x6A6C72,0.94));
+  shell.position.y=0.35; boxGroup.add(shell);
+  t0.position.y=0.35;
+
+  /* tampa de vidro aberta */
+  const lid=new THREE.Group();
+  const frame=new THREE.Mesh(new THREE.BoxGeometry(dims.W+0.5,0.14,dims.D+0.5), mat(0x6A6C72,0.9));
+  const glass=new THREE.Mesh(new THREE.BoxGeometry(dims.W-0.4,0.05,dims.D-0.4),
+    new THREE.MeshStandardMaterial({color:0xBFC6D0,roughness:0.05,metalness:0.2,transparent:true,opacity:0.16}));
+  glass.position.y=0.08; lid.add(frame); lid.add(glass);
+  lid.position.set(0,1.1,-(dims.D/2+0.25)); lid.rotation.x=-1.15;
+  boxGroup.add(lid);
+
+  /* gaveta */
+  drawerGroup=null;
+  if(trays[1]){
+    drawerGroup=new THREE.Group();
+    const dt=makeTray(trays[1],6);
+    const dd=dt.userData;
+    const dshell=new THREE.Mesh(new THREE.BoxGeometry(dd.W+0.5,1.45,dd.D+0.5), mat(0x5F6167,0.94));
+    dshell.position.y=0.32; drawerGroup.add(dshell); dt.position.y=0.32;
+    drawerGroup.add(dt);
+    const knob=new THREE.Mesh(new THREE.SphereGeometry(0.14,14,10), new THREE.MeshStandardMaterial({color:0xC9A227,roughness:0.3,metalness:0.85}));
+    knob.position.set(0,0.5,dd.D/2+0.3); drawerGroup.add(knob);
+    drawerGroup.userData.D = dd.D*0.86;
+    drawerGroup.position.set(0,-1.55,0);
+    boxGroup.add(drawerGroup);
+  }
+document.getElementById('drawerBtn').style.display = 'none';
+
+  boxGroup.position.y = drawerGroup? 0.7 : 0;
+  pivot.add(boxGroup);
+
+  /* medir SEM rotação: com o pivot girado, mundo e local não coincidem
+     e tanto o centro quanto as dimensões saem errados */
+  const rx=pivot.rotation.x, ry=pivot.rotation.y;
+  pivot.rotation.set(0, 0, 0); 
+  pivot.updateMatrixWorld(true);
+
+  const ctr = new THREE.Box3().setFromObject(boxGroup).getCenter(new THREE.Vector3());
+  ctr.x = 0; // Força o alinhamento horizontal perfeito na origem X
+  boxGroup.position.sub(ctr);
+
+  pivot.updateMatrixWorld(true);
+
+  const span=g=>{ const s=new THREE.Vector3(); new THREE.Box3().setFromObject(g).getSize(s);
+                  return 0.5*Math.hypot(s.x,s.y,s.z); };
+  FIT.closed=span(boxGroup);
+  if(drawerGroup){
+    drawerGroup.position.z=drawerGroup.userData.D;
+    pivot.updateMatrixWorld(true);
+    FIT.open=span(boxGroup);
+    drawerGroup.position.z=0;
+  } else FIT.open=FIT.closed;
+
+  pivot.rotation.set(rx,ry,0); pivot.updateMatrixWorld(true);
+
+  fitCamera(true);
+  document.getElementById('boxSub').textContent =
+    `${V.length} ${t('pieces')} · ${t('pinch')}`;
+}
+
+/* fileira única (≤5 peças) */
+function makeTrayRow(items){
+  const n=items.length, W=n*2.5+0.7, D=1.85+0.7;
+  const g=new THREE.Group();
+  g.add(new THREE.Mesh(new THREE.BoxGeometry(W,0.2,D), mat(GREY.floor,0.96)));
+  [[0,D/2-0.09],[0,-(D/2-0.09)]].forEach(([x,z])=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(W,1.15,0.18), mat(GREY.wall,0.9)); m.position.set(x,0.57,z); g.add(m); });
+  [[W/2-0.09,0],[-(W/2-0.09),0]].forEach(([x,z])=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(0.18,1.15,D), mat(GREY.wall,0.9)); m.position.set(x,0.57,z); g.add(m); });
+  items.forEach((w,i)=>{
+    const x=(i-(n-1)/2)*2.5;
+    const cu=makeCushion(); cu.position.set(x,0.1,0); cu.rotation.y=Math.PI/2;
+    cu.userData.slot=i; cu.children.forEach(m=>m.userData.slot=i); g.add(cu); slotsMesh.push(cu);
+    const wm=makeWatch(w); wm.position.set(x,0.98,0); wm.userData.home=new THREE.Vector3(x,0.98,0);
+    g.add(wm); watchMeshes.push(wm);
+  });
+  g.userData={W,D};
+  return g;
+}
+
+/* área útil da tela */
+const PAD={side:20};
+const FIT={closed:0, open:0};
+
+function fitCamera(snap){
+  if(!FIT.closed || !cam3 || !renderer){ camDist=15; return; }
+  const W=renderer.domElement.clientWidth;
+  const fracW=(W-PAD.side*2)/W;
+  const vh=Math.tan(cam3.fov*Math.PI/360), hh=vh*cam3.aspect;
+  const R = drawerOpen? FIT.open : FIT.closed;
+  camDist = Math.max(R/(hh*fracW), R/vh)*1.04;
+  if(snap||!camNow) camNow=camDist;
+  scene.fog.near = camDist*0.8;
+  scene.fog.far  = camDist*2.8;
+}
+
+function sizeBox(){
+  if(!renderer)return;
+  const w=document.getElementById('phone').clientWidth, h=document.getElementById('phone').clientHeight;
+  renderer.setSize(w,h,false); cam3.aspect=w/h; cam3.updateProjectionMatrix(); fitCamera();
+}
+
+// Função de Raycasting atualizada para busca em profundidade
+function pick(clientX, clientY) {
+  const r = renderer.domElement.getBoundingClientRect();
+  pointer.x = ((clientX - r.left) / r.width) * 2 - 1;
+  pointer.y = -((clientY - r.top) / r.height) * 2 + 1;
+
+  raycaster.setFromCamera(pointer, cam3);
+
+  // 1. Tenta selecionar o relógio clicado (se houver)
+  const hitW = raycaster.intersectObjects(watchMeshes, true);
+  if (hitW.length) {
+    let o = hitW[0].object;
+    while (o && !o.userData?.id) {
+      o = o.parent;
+    }
+    if (o && o.userData?.id) {
+      focus(o);
+      return;
+    }
+  }
+
+  // 2. Tenta selecionar a gaveta para abrir/fechar com um toque
+  if (drawerGroup) {
+    const hitD = raycaster.intersectObject(drawerGroup, true);
+    if (hitD.length) {
+      toggleDrawer();
+      return;
+    }
+  }
+
+  // 3. Tenta selecionar uma almofada vazia para escanear
+  const hitS = raycaster.intersectObjects(slotsMesh, true);
+  if (hitS.length && !S.viewing) {
+    openScan();
+  }
+}
+
+function focus(obj) {
+  focused = obj;
+  focusAnim = 0;
+  focusZoom = 1.0; // <--- Reseta o zoom do relógio para 100% ao focar
+  obj.userData.startPos = obj.position.clone();
+  obj.userData.startRot = obj.rotation.clone();
+  document.getElementById('fName').textContent = obj.userData.name;
+  document.getElementById('fRef').textContent = obj.userData.ref;
+  document.getElementById('focuscard').classList.add('on');
+}
+function unfocus(){
+  if(!focused)return;
+  const o=focused; focused=null;
+  document.getElementById('focuscard').classList.remove('on');
+  o.userData.returning=1;
+}
+function resetView(){ rotX=-0.78; rotY=-0.30; zoom=1; unfocus(); fitCamera(); }
+function toggleDrawer(){
+  if(!drawerGroup)return;
+  drawerOpen=!drawerOpen;
+  document.getElementById('drawerBtn').textContent = drawerOpen? t('closeDrawer') : t('openDrawer');
+  fitCamera();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  if (!renderer) return;
+
+  pivot.rotation.y += (rotY - pivot.rotation.y) * 0.12;
+  pivot.rotation.x += (rotX - pivot.rotation.x) * 0.12;
+
+  if (drawerGroup) {
+    const tz = drawerOpen ? drawerGroup.userData.D : 0;
+    drawerGroup.position.z += (tz - drawerGroup.position.z) * 0.12;
+  }
+
+  // 1. CAIXA ESTÁTICA: Se houver relógio em foco, ignora a variável global 'zoom'
+  // e fixa a câmera a uma distância constante (camDist * 1.18).
+  const target = focused ? (camDist * 1.18) : (camDist * zoom);
+  camNow += (target - camNow) * 0.16;
+  cam3.position.set(0, camNow * 0.50, camNow * 0.87);
+  cam3.lookAt(0, 0, 0);
+
+  // 2. ZOOM NO RELÓGIO: Aplica 'focusZoom' apenas no relógio em foco
+  watchMeshes.forEach(o => {
+    if (o === focused) {
+      focusAnim = Math.min(1, focusAnim + 0.07);
+      const k = focusAnim * focusAnim * (3 - 2 * focusAnim);
+
+      const world = new THREE.Vector3(0, camNow * 0.50 * 0.40, camNow * 0.87 * 0.40);
+      const local = o.parent.worldToLocal(world.clone());
+      o.position.lerp(local, 0.14);
+
+      // Escala base multiplicada pelo zoom individual (focusZoom)
+      const baseScale = 1 + 0.55 * k;
+      const sc = baseScale * focusZoom; 
+      o.scale.set(sc, sc, sc);
+    } else if (o.userData.returning) {
+      o.position.lerp(o.userData.home, 0.16);
+      o.scale.lerp(new THREE.Vector3(1, 1, 1), 0.16);
+      o.rotation.x += (0 - o.rotation.x) * 0.16;
+      o.rotation.y += (0 - o.rotation.y) * 0.16;
+      if (o.position.distanceTo(o.userData.home) < 0.02) o.userData.returning = 0;
+    }
+  });
+
+  // Transparência dos outros itens da caixa
+  const opa = focused ? 0.16 : 1;
+  pivot.traverse(m => {
+    if (m.isMesh && !isChildOf(m, focused)) {
+      if (!m.material._o) { m.material._o = m.material.opacity; m.material._tr = m.material.transparent; }
+      const tgt = focused ? Math.min(m.material._o, 0.14) : m.material._o;
+      m.material.transparent = focused ? true : m.material._tr;
+      m.material.opacity += (tgt - m.material.opacity) * 0.12;
+    }
+  });
+
+  renderer.render(scene, cam3);
+}
+function isChildOf(m,p){ if(!p)return false; let o=m; while(o){ if(o===p)return true; o=o.parent; } return false; }
+
+function openBox(){
+  document.getElementById('boxwrap').classList.add('on');
+  zoom=1; rotX=-0.78; rotY=-0.30;
+  if(!renderer){ initBox(); }
+  else { sizeBox(); buildBox(); }
+  requestAnimationFrame(()=>{ sizeBox(); fitCamera(true); });
+}
+function closeBox(){
+  unfocus();
+  document.getElementById('boxwrap').classList.remove('on');
+  if(S.viewing){
+    S.viewing=null;
+    document.getElementById('boxOwner').textContent='RAFA.COLLECTS';
+    buildBox();
+  }
+}
+
+/* mini cena no detalhe (slot do Sketchfab) */
+function miniScene(canvas,w){
+  if(!canvas)return;
+  const r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  r.setPixelRatio(Math.min(devicePixelRatio,2));
+  const sc=new THREE.Scene(), c=new THREE.PerspectiveCamera(34,canvas.clientWidth/230,0.1,50);
+  sc.add(new THREE.HemisphereLight(0xCED3DB,0x101014,1.1));
+  const d=new THREE.DirectionalLight(0xFFF4DC,1.6); d.position.set(4,8,6); sc.add(d);
+  const g=makeWatch(w); g.scale.set(2.4,2.4,2.4); sc.add(g);
+  c.position.set(0,2.6,3.6); c.lookAt(0,0,0);
+  r.setSize(canvas.clientWidth,230,false);
+  let dragL=false,lx=0,ly=0,spin=true;
+  canvas.addEventListener('pointerdown',e=>{dragL=true;spin=false;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointermove',e=>{ if(!dragL)return;
+    g.rotation.y+=(e.clientX-lx)/120; g.rotation.x=Math.max(-1.2,Math.min(1.2,g.rotation.x+(e.clientY-ly)/150));
+    lx=e.clientX; ly=e.clientY; });
+  canvas.addEventListener('pointerup',()=>dragL=false);
+  (function loop(){ if(!document.getElementById('detail').classList.contains('on'))return;
+    requestAnimationFrame(loop); if(spin) g.rotation.y+=0.006; r.render(sc,c); })();
+}
+
+/* =========================================================
+   JULIOS
+   ========================================================= */
+let chatHistory=[];
+function openChat(){
+  document.getElementById('chat').classList.add('on');
+  if(!chatHistory.length){ push('ai', t('welcome')); }
+  setTimeout(()=>document.getElementById('chatIn').focus(),250);
+}
+function closeChat(){ document.getElementById('chat').classList.remove('on'); }
+
+function push(who,txt){
+  const m=document.createElement('div'); m.className='msg '+(who==='me'?'me':'ai'); m.textContent=txt;
+  document.getElementById('msgs').appendChild(m);
+  document.getElementById('msgs').scrollTop=1e6;
+  return m;
+}
+
+function collectionContext(){
+  return active().map(w=>({
+    id:w.id, marca:w.brand, modelo:w.model, ref:w.ref, ano:w.year, categoria:w.cat,
+    pago_brl:w.paid, mercado_brl:w.mkt, comprado_em:w.date,
+    variacao_pct:+(((w.mkt-w.paid)/w.paid)*100).toFixed(1),
+    oculto:S.hidden.has(w.id)
+  }));
+}
+
+async function sendMsg(){
+  const input=document.getElementById('chatIn'); const q=input.value.trim(); if(!q)return;
+  input.value=''; push('me',q); chatHistory.push({role:'user',content:q});
+  const wait=push('ai',''); wait.innerHTML='<span class="dots"><span></span><span></span><span></span></span>';
+
+  const sys = `Você é Julios, curador de relojoaria dentro do app Community Watches.
+Responda em ${S.lang==='pt'?'português do Brasil':'English'}. Tom: direto, conhecedor, sem bajulação. Máximo 5 frases, salvo se pedirem listas.
+Você conhece APENAS os dados abaixo sobre a coleção do usuário — nunca invente peças, preços ou datas que não estejam aqui.
+Você também pode responder sobre relojoaria em geral (história, mecânica, marcas) usando seu conhecimento.
+Moeda principal do usuário: ${S.cur}. Cotação: 1 USD = R$ ${USD}.
+Categorias válidas: ${CAT.join(', ')}.
+Catálogo disponível para recomendações: ${JSON.stringify(CATALOG)}
+Coleção do usuário: ${JSON.stringify(collectionContext())}
+Grails atuais: ${JSON.stringify(GRAILS)}
+
+Se o usuário pedir uma AÇÃO que altere o app (adicionar aos Grails, ocultar um relógio, mostrar de novo, reordenar a coleção), NÃO execute: proponha.
+Responda SEMPRE em JSON puro, sem markdown, sem crase, neste formato:
+{"reply":"sua resposta em texto","action":null}
+ou, quando houver ação a propor:
+{"reply":"texto curto","action":{"type":"grail|hide|show|sort","value":"nome do modelo ou id do relógio ou recent|value|brand|oldest","label":"descrição curta da ação para o usuário confirmar"}}`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ model:"claude-sonnet-4-6", max_tokens:1000,
+        system:sys, messages:chatHistory.slice(-10) })
+    });
+    const data=await res.json();
+    let txt=(data.content||[]).map(i=>i.text||'').join('').trim();
+    txt=txt.replace(/```json|```/g,'').trim();
+    let parsed; try{ parsed=JSON.parse(txt); }catch(e){ parsed={reply:txt,action:null}; }
+    wait.textContent=parsed.reply||'';
+    chatHistory.push({role:'assistant',content:JSON.stringify(parsed)});
+    if(parsed.action) renderAction(parsed.action);
+  }catch(err){
+    wait.textContent = S.lang==='pt'
+      ? 'Não consegui responder agora. Tente de novo em instantes.'
+      : 'I could not answer just now. Try again in a moment.';
+  }
+  document.getElementById('msgs').scrollTop=1e6;
+}
+
+function renderAction(a){
+  const box=document.createElement('div'); box.className='act';
+  box.innerHTML=`<p>${t('confirmQ')}<br><span style="color:var(--gold)">${a.label||a.type}</span></p>
+    <div class="r"><button class="y">${t('yesDo')}</button><button class="n">${t('noDo')}</button></div>`;
+  document.getElementById('msgs').appendChild(box);
+  box.querySelector('.n').onclick=()=>box.remove();
+  box.querySelector('.y').onclick=()=>{ runAction(a); box.remove(); push('ai',t('done')); };
+  document.getElementById('msgs').scrollTop=1e6;
+}
+function runAction(a){
+  if(a.type==='grail'){ const c=CATALOG.find(x=>x.model.toLowerCase().includes(String(a.value).toLowerCase()));
+    if(c) addGrail(c.model); }
+  if(a.type==='hide'||a.type==='show'){
+    const w=WATCHES.find(x=>x.id===a.value || (x.brand+' '+x.model).toLowerCase().includes(String(a.value).toLowerCase()));
+    if(w){ a.type==='hide'?S.hidden.add(w.id):S.hidden.delete(w.id); renderColl(); buildBox(); }
+  }
+  if(a.type==='sort'){ S.sort=a.value; renderColl(); }
+  renderHome();
+}
+
+/* =========================================================
+   DOCK SCROLL BEHAVIOR
+   ========================================================= */
+function initDockScroll(){
+  const dock=document.getElementById('dock');
+  if(!dock) return;
+  const last=new WeakMap();
+  const set=on=>dock.classList.toggle('mini',on);
+
+  document.querySelectorAll('.screen').forEach(sc=>{
+    last.set(sc,0);
+    sc.addEventListener('scroll',()=>{
+      if(!sc.classList.contains('on'))return;
+      const y=sc.scrollTop, prev=last.get(sc)||0;
+      if(y<48) set(false);          // topo: sempre expandida
+      else if(y>prev+5) set(true);  // descendo: compacta
+      else if(y<prev-5) set(false); // subindo: expande
+      last.set(sc,y);
+    },{passive:true});
+  });
+
+  document.querySelectorAll('#tabs .tab').forEach(b=>
+    b.addEventListener('click',()=>set(false)));
+}
+
+/* =========================================================
+   BOOT
+   ========================================================= */
+(function boot(){
+  document.getElementById('logoSm').innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
+  const mark=document.createElement('div');
+  mark.className='logoBig'; mark.style.opacity='.5'; mark.style.marginTop='34px';
+  mark.innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
+  document.getElementById('s-prof').appendChild(mark);
+
+  document.getElementById('cbrl').classList.add('on');
+  commTab(1); setYear(2023); applyLang(); initDockScroll();
+
+  /* mini caixa animada no botão herói */
+  const hc=document.getElementById('heroC');
+  hc.width=340; hc.height=240;
+  const x=hc.getContext('2d');
+  let a=0;
+  (function tick(){ requestAnimationFrame(tick); a+=0.006;
+    x.clearRect(0,0,340,240); x.save(); x.translate(170,130);
+    for(let i=0;i<6;i++){
+      const px=(i%3-1)*54, pz=(Math.floor(i/3)-.5)*44;
+      const sx=px*Math.cos(a)-pz*Math.sin(a), sy=(px*Math.sin(a)+pz*Math.cos(a))*0.42;
+      x.beginPath(); x.ellipse(sx,sy,20,10,0,0,7);
+      x.fillStyle= i<3?'rgba(201,162,39,.75)':'rgba(160,163,170,.55)'; x.fill();
+    }
+    x.restore();
+  })();
+
+  // Expor funções no escopo global para funcionar com os atributos onclick do HTML
+  Object.assign(window, {
+    go,
+    openBox,
+    closeBox,
+    resetView,
+    toggleDrawer,
+    unfocus,
+    openDetailFromBox,
+    openDetail,
+    close_,
+    openCatalog,
+    renderCatalog,
+    addGrail,
+    openScan,
+    closeScan,
+    doScan,
+    openChat,
+    closeChat,
+    sendMsg,
+    setYear,
+    setLang,
+    setCur,
+    togglePriv,
+    toggleDemo,
+    toggleHide,
+    setSort,
+    filterBy,
+    clearFilter,
+    commTab,
+    friend,
+    askAccess,
+    openFriend,
+    openFriendBox
+  });
+})();
