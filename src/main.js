@@ -128,7 +128,7 @@ const REVIEWS = [
 /* =========================================================
    ESTADO + i18n
    ========================================================= */
-let S = {lang:'pt', cur:'BRL', priv:false, demo:true, sort:'recent', year:2023, hidden:new Set(), friends:new Set(), filter:null,
+let S = {theme:'dark', lang:'pt', cur:'BRL', priv:false, demo:true, sort:'recent', year:2023, hidden:new Set(), friends:new Set(), filter:null,
          req:{}, viewing:null};
 
 /* logo — caixa isométrica em linha, igual à identidade da marca */
@@ -168,7 +168,7 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
-  goColl:'Ir pra coleção',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
+  goColl:'Ir pra coleção',prefTheme:'Aparência',prefThemeS:'Claro ou escuro',themeDark:'Escuro',themeLight:'Claro',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
   pinch:'Pinça para aproximar · arraste para girar',
   findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
   askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
@@ -206,7 +206,7 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
-  goColl:'Go to collection',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
+  goColl:'Go to collection',prefTheme:'Appearance',prefThemeS:'Light or dark',themeDark:'Dark',themeLight:'Light',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
   pinch:'Pinch to zoom · drag to rotate',
   findPh:'Find a collector by name or @',noMember:'No collector by that name.',
   askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
@@ -609,6 +609,20 @@ const close_ = id => { document.getElementById(id).classList.remove('on');
   if(id==='detail') disposeMini(); };
 
 /* preferências */
+/* alterna o tema: o CSS inteiro responde ao atributo data-theme na raiz */
+function setTheme(mode){
+  S.theme = mode;
+  document.documentElement.setAttribute('data-theme', mode);
+  const d=document.getElementById('thDark'), l=document.getElementById('thLight');
+  if(d) d.classList.toggle('on', mode==='dark');
+  if(l) l.classList.toggle('on', mode==='light');
+  try{ localStorage.setItem('cw-theme', mode); }catch(e){}
+  if(typeof scene!=='undefined' && scene && scene.fog){
+    scene.fog.color.setHex(mode==='light'?0xEAEAE6:0x050506);
+    scene.traverse(o=>{ if(o.isHemisphereLight) o.groundColor.setHex(mode==='light'?0xBFBFB8:0x0A0A0C); });
+  }
+}
+
 function setLang(l){ S.lang=l; applyLang(); }
 function setCur(c){ S.cur=c;
   document.getElementById('cbrl').classList.toggle('on',c==='BRL');
@@ -945,11 +959,11 @@ function initBox(){
   canvas.addEventListener('webglcontextlost',e=>e.preventDefault(),false);
   canvas.addEventListener('webglcontextrestored',()=>{ buildBox(); sizeBox(); },false);
   scene=new THREE.Scene();
-  scene.fog=new THREE.Fog(0x050506,22,44);
+  scene.fog=new THREE.Fog(S.theme==='light'?0xEAEAE6:0x050506,22,44);
   cam3=new THREE.PerspectiveCamera(38,1,0.1,100);
 
   const LIGHT = 1;
-  scene.add(new THREE.HemisphereLight(0xC8CCD4,0x0A0A0C,1.05*LIGHT));
+  scene.add(new THREE.HemisphereLight(0xC8CCD4, S.theme==='light'?0xBFBFB8:0x0A0A0C, 1.05*LIGHT));
   const key=new THREE.DirectionalLight(0xFFF3D6,1.5*LIGHT); key.position.set(6,12,8); scene.add(key);
   const rim=new THREE.DirectionalLight(0xC9A227,0.65*LIGHT); rim.position.set(-8,4,-7); scene.add(rim);
 
@@ -1535,6 +1549,24 @@ function initDockScroll(){
   mark.innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
   document.getElementById('s-prof').appendChild(mark);
 
+  /* seletor de aparência, inserido como primeira preferência do Perfil */
+  const prefCard = document.getElementById('lgpt')?.closest('.card');
+  if(prefCard && !document.getElementById('thDark')){
+    const row=document.createElement('div');
+    row.className='toggle';
+    row.innerHTML=`<div class="l"><b data-i="prefTheme">Aparência</b><span data-i="prefThemeS">Claro ou escuro</span></div>
+      <div class="seg" style="width:140px">
+        <button id="thDark"  data-i="themeDark">Escuro</button>
+        <button id="thLight" data-i="themeLight">Claro</button>
+      </div>`;
+    prefCard.insertBefore(row, prefCard.firstChild);
+    row.querySelector('#thDark').addEventListener('click',()=>setTheme('dark'));
+    row.querySelector('#thLight').addEventListener('click',()=>setTheme('light'));
+  }
+  let temaSalvo='dark';
+  try{ temaSalvo = localStorage.getItem('cw-theme') || 'dark'; }catch(e){}
+  setTheme(temaSalvo);
+
   /* link sublinhado no rodape do card "Valor de mercado" */
   const mktCard = document.getElementById('kMkt')?.closest('.kpi');
   if(mktCard && !mktCard.querySelector('.kpilink')){
@@ -1592,6 +1624,7 @@ function initDockScroll(){
 
   Object.assign(window, {
     go,
+    setTheme,
     openPerformance,
     openActivity,
     openBox,
