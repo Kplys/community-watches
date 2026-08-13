@@ -168,7 +168,7 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
-  goColl:'Ir pra minha coleção',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
+  goColl:'Ir pra coleção',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
   pinch:'Pinça para aproximar · arraste para girar',
   findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
   askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
@@ -206,7 +206,7 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
-  goColl:'Go to my collection',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
+  goColl:'Go to collection',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
   pinch:'Pinch to zoom · drag to rotate',
   findPh:'Find a collector by name or @',noMember:'No collector by that name.',
   askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
@@ -1548,9 +1548,9 @@ function initDockScroll(){
 
   /* botao dourado dentro do card "Peças", criado por JS para nao mexer no HTML */
   const pecasCard = document.getElementById('kQty')?.closest('.kpi');
-  if(pecasCard && !pecasCard.querySelector('.kpibtn')){
+  if(pecasCard && !pecasCard.querySelector('.kpilink')){
     const b=document.createElement('button');
-    b.className='kpibtn';
+    b.className='kpilink';
     b.dataset.i='goColl';
     b.textContent=t('goColl');
     b.addEventListener('click',()=>go('coll'));
