@@ -168,7 +168,31 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
-  goColl:'Ir pra coleção',prefTheme:'Aparência',prefThemeS:'Claro ou escuro',themeDark:'Escuro',themeLight:'Claro',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
+  goColl:'Ir pra coleção',
+  cCollabs:'Coleções',newCollab:'Criar coleção colaborativa',
+  needFriend:'Adicione um amigo na aba Colecionadores para poder criar uma coleção em conjunto.',
+  noCollab:'Nenhuma coleção colaborativa ainda. Crie uma com alguém que também colecione.',
+  withFriend:'com',shared:'em conjunto',valuesHidden:'valores ocultos',
+  fName:'Nome da coleção',fNamePh:'Ex: Mergulhadores dos anos 60',
+  fWith:'Com quem',fVis:'Quem pode ver',
+  vis_private:'Privada',vis_friends:'Amigos',vis_public:'Pública',
+  vis_private_h:'Só vocês dois enxergam esta coleção.',
+  vis_friends_h:'Amigos de vocês dois podem abrir e ver as peças.',
+  vis_public_h:'Qualquer pessoa na comunidade pode encontrar esta coleção.',
+  fValues:'Valores',fShowValues:'Mostrar valores',
+  fShowValuesS:'Quanto cada peça vale hoje',
+  fWhoAdds:'Quem pode adicionar peças',add_both:'Nós dois',add_me:'Só eu',
+  rule_both:'Vocês dois podem adicionar e remover peças.',
+  rule_me:'Só você pode adicionar peças; seu parceiro apenas visualiza.',
+  fNote:'Sobre a coleção',fNotePh:'O que reúne essas peças?',
+  fCreate:'Criar coleção',fNameReq:'Dê um nome à coleção',
+  fFooter:'As configurações valem para os dois lados e podem ser alteradas depois.',
+  collabCreated:'Coleção colaborativa criada',
+  collabItems:'Peças em conjunto',collabEmpty:'Ainda sem peças. Adicione a primeira abaixo.',
+  collabAdd:'Adicionar da minha coleção',collabAdded:'Peça adicionada',
+  openChatWith:'Conversar com',chat:'Conversar',
+  chatPh:'Escreva uma mensagem',
+  chatEmpty:'Nenhuma mensagem ainda. Diga oi.',prefTheme:'Aparência',prefThemeS:'Claro ou escuro',themeDark:'Escuro',themeLight:'Claro',seeCharts:'Ver desempenho',perfTitle:'Desempenho da coleção',perfSub:'Mercado nos últimos 12 meses',owned:'Na coleção',catEmpty:'Nenhum relógio encontrado com esse nome.',seeHistory:'Ver histórico',histTitle:'Histórico de atividade',
   pinch:'Pinça para aproximar · arraste para girar',
   findPh:'Buscar colecionador por nome ou @',noMember:'Nenhum colecionador com esse nome.',
   askAccess:'Pedir acesso',pending:'Aguardando',seeColl:'Ver coleção',
@@ -206,7 +230,31 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
-  goColl:'Go to collection',prefTheme:'Appearance',prefThemeS:'Light or dark',themeDark:'Dark',themeLight:'Light',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
+  goColl:'Go to collection',
+  cCollabs:'Collections',newCollab:'Create a shared collection',
+  needFriend:'Add a friend in the Collectors tab to start a shared collection.',
+  noCollab:'No shared collections yet. Start one with someone who also collects.',
+  withFriend:'with',shared:'shared',valuesHidden:'values hidden',
+  fName:'Collection name',fNamePh:'e.g. 1960s divers',
+  fWith:'With whom',fVis:'Who can see it',
+  vis_private:'Private',vis_friends:'Friends',vis_public:'Public',
+  vis_private_h:'Only the two of you can see this collection.',
+  vis_friends_h:'Friends of you both can open it and see the pieces.',
+  vis_public_h:'Anyone in the community can find this collection.',
+  fValues:'Values',fShowValues:'Show values',
+  fShowValuesS:'What each piece is worth today',
+  fWhoAdds:'Who can add pieces',add_both:'Both of us',add_me:'Only me',
+  rule_both:'Both of you can add and remove pieces.',
+  rule_me:'Only you can add pieces; your partner can view them.',
+  fNote:'About this collection',fNotePh:'What brings these pieces together?',
+  fCreate:'Create collection',fNameReq:'Give the collection a name',
+  fFooter:'These settings apply to both sides and can be changed later.',
+  collabCreated:'Shared collection created',
+  collabItems:'Shared pieces',collabEmpty:'No pieces yet. Add the first one below.',
+  collabAdd:'Add from my collection',collabAdded:'Piece added',
+  openChatWith:'Chat with',chat:'Chat',
+  chatPh:'Write a message',
+  chatEmpty:'No messages yet. Say hello.',prefTheme:'Appearance',prefThemeS:'Light or dark',themeDark:'Dark',themeLight:'Light',seeCharts:'See performance',perfTitle:'Collection performance',perfSub:'Market over the last 12 months',owned:'Owned',catEmpty:'No watch found with that name.',seeHistory:'See history',histTitle:'Activity history',
   pinch:'Pinch to zoom · drag to rotate',
   findPh:'Find a collector by name or @',noMember:'No collector by that name.',
   askAccess:'Ask for access',pending:'Waiting',seeColl:'See collection',
@@ -531,20 +579,29 @@ function renderComm(){
     else if(st==='none') action=`<button class="addbtn" onclick="askAccess('${m.u}')">${t('askAccess')}</button>`;
     else if(st==='pending') action=`<button class="addbtn" style="opacity:.55" disabled>${t('pending')}</button>`;
     else action=`<button class="addbtn on" onclick="openFriend('${m.u}')">${t('seeColl')}</button>`;
+    const chat = f? `<button class="chatbtn" title="${t('chat')}" data-chat="${m.u}">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.1" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>
+      </button>` : '';
     return `<div class="member">
       <div class="ava" style="background:linear-gradient(140deg,${m.g})">${m.i}</div>
       <div class="m"><b>${m.n} ${f?'<span style="color:var(--gold);font-size:11px">✓</span>':''}</b>
         <span>${m.u} · ${m.owns.length} ${t('pieces')} · ${val}</span>
         <span style="display:block;font-size:11.5px;margin-top:1px">${m.city}</span></div>
-      ${action}
+      ${chat}${action}
     </div>`;
   }).join('') : `<div class="card hint">${t('noMember')}</div>`;
+
+  document.querySelectorAll('#commA [data-chat]').forEach(b=>
+    b.addEventListener('click',e=>{ e.stopPropagation(); openChat2(b.dataset.chat); }));
 
   document.getElementById('commB').innerHTML = REVIEWS.map(r=>`
     <div class="review"><div class="h">
       <b>${r.w}</b><div class="stars">${'★'.repeat(r.s)}${'☆'.repeat(5-r.s)}</div>
       </div><div style="font-size:12px;color:var(--muted);font-weight:700;margin-bottom:8px">${r.u}</div>
       <p>${S.lang==='pt'?r.pt:r.en}</p></div>`).join('');
+
+  ensureCollabTab(); renderCollabs();
 }
 
 function friend(u){
@@ -591,10 +648,14 @@ function openFriendBox(u){
   openBox(); buildBox(); fitCamera(true);
 }
 function commTab(n){
+  ensureCollabTab();
   document.getElementById('cTab1').classList.toggle('on',n===1);
   document.getElementById('cTab2').classList.toggle('on',n===2);
+  document.getElementById('cTab3')?.classList.toggle('on',n===3);
   document.getElementById('commA').style.display=n===1?'':'none';
   document.getElementById('commB').style.display=n===2?'':'none';
+  const c=document.getElementById('commC'); if(c) c.style.display=n===3?'':'none';
+  if(n===3) renderCollabs();
 }
 
 /* navegação */
@@ -845,6 +906,288 @@ function openPerformance(){
   document.getElementById('perf').classList.add('on');
   requestAnimationFrame(()=>L.forEach(w=>
     drawLine(history(w), document.getElementById('pc_'+w.id))));
+}
+
+/* cria uma folha (sheet) por JS, sem tocar no index.html */
+function ensureSheet(id, titulo){
+  let sh=document.getElementById(id);
+  if(!sh){
+    sh=document.createElement('div');
+    sh.className='sheet'; sh.id=id;
+    sh.innerHTML=`<div class="shead">
+        <button class="iconbtn" data-close>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.8" stroke-linecap="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
+        <b id="${id}Title"></b>
+      </div>
+      <div class="sbody" id="${id}Body"></div>`;
+    document.getElementById('phone').appendChild(sh);
+    sh.querySelector('[data-close]').addEventListener('click',()=>close_(id));
+  }
+  document.getElementById(id+'Title').textContent=titulo||'';
+  return sh;
+}
+
+/* =========================================================
+   COLEÇÕES COLABORATIVAS + CHAT ENTRE AMIGOS
+   ========================================================= */
+
+/* uma coleção colaborativa é um acervo compartilhado entre o dono e um amigo.
+   as configurações definem o que cada lado enxerga e pode fazer. */
+let COLLABS = [];
+let CHATS = {};                 /* { '@amigo': [ {de:'me'|'them', txt, hora} ] } */
+let chatWith = null;
+
+const meUser = '@rafa.collects';
+const friendsList = () => MEMBERS.filter(m=>S.friends.has(m.u));
+
+/* ---------- terceira aba da Comunidade ---------- */
+function ensureCollabTab(){
+  if(document.getElementById('cTab3')) return;
+  const chips = document.getElementById('cTab2')?.parentElement;
+  if(!chips) return;
+  const b=document.createElement('button');
+  b.className='chip'; b.id='cTab3'; b.dataset.i='cCollabs';
+  b.textContent=t('cCollabs');
+  b.addEventListener('click',()=>commTab(3));
+  chips.appendChild(b);
+
+  const box=document.createElement('div');
+  box.id='commC'; box.style.display='none';
+  document.getElementById('commB').after(box);
+}
+
+function renderCollabs(){
+  const box=document.getElementById('commC'); if(!box) return;
+  const amigos=friendsList();
+
+  const topo = `<button class="btn" style="margin-bottom:14px" onclick="openCollabForm()">
+      ${t('newCollab')}</button>` +
+    (amigos.length? '' : `<p class="hint" style="margin:0 0 14px">${t('needFriend')}</p>`);
+
+  const lista = COLLABS.length ? COLLABS.map(c=>{
+    const outro = MEMBERS.find(m=>m.u===c.with);
+    const pecas = c.items.map(id=>WATCHES.find(w=>w.id===id)).filter(Boolean);
+    const tot = pecas.reduce((s,w)=>s+w.mkt,0);
+    return `<div class="collab" data-cid="${c.id}">
+      <div class="collabhead">
+        <div class="collabava">
+          <span class="ava" style="width:32px;height:32px;font-size:12px;background:linear-gradient(140deg,#EBD27C,#8A7423)">RC</span>
+          <span class="ava" style="width:32px;height:32px;font-size:12px;background:linear-gradient(140deg,${outro?outro.g:'#888,#444'})">${outro?outro.i:'??'}</span>
+        </div>
+        <div class="collabname">
+          <b>${c.name}</b>
+          <span>${t('withFriend')} ${c.with}</span>
+        </div>
+        <span class="vistag ${c.visibility}">${t('vis_'+c.visibility)}</span>
+      </div>
+      <div class="collabfoot">
+        <span>${pecas.length} ${t('pieces')}</span>
+        <span>${c.showValues? money(tot,true) : '••••'}</span>
+      </div>
+    </div>`;
+  }).join('') : `<div class="card hint">${t('noCollab')}</div>`;
+
+  box.innerHTML = topo + lista;
+  box.querySelector('.btn')?.addEventListener('click',openCollabForm);
+  box.querySelectorAll('[data-cid]').forEach(el=>
+    el.addEventListener('click',()=>openCollab(el.dataset.cid)));
+}
+
+/* ---------- formulário de configuração ---------- */
+function openCollabForm(){
+  const amigos=friendsList();
+  if(!amigos.length){ toast(t('needFriend')); return; }
+  ensureSheet('collabForm', t('newCollab'));
+
+  document.getElementById('collabFormBody').innerHTML = `
+    <label class="fld">
+      <span>${t('fName')}</span>
+      <input id="cfName" placeholder="${t('fNamePh')}" maxlength="40">
+    </label>
+
+    <label class="fld">
+      <span>${t('fWith')}</span>
+      <select id="cfWith">
+        ${amigos.map(m=>`<option value="${m.u}">${m.n} · ${m.u}</option>`).join('')}
+      </select>
+    </label>
+
+    <div class="fld">
+      <span>${t('fVis')}</span>
+      <div class="seg segwide">
+        <button class="on" data-v="private">${t('vis_private')}</button>
+        <button data-v="friends">${t('vis_friends')}</button>
+        <button data-v="public">${t('vis_public')}</button>
+      </div>
+      <p class="fhint" id="cfVisHint">${t('vis_private_h')}</p>
+    </div>
+
+    <div class="fld">
+      <span>${t('fValues')}</span>
+      <div class="toggle" style="border:0;padding:6px 0">
+        <div class="l"><b>${t('fShowValues')}</b><span>${t('fShowValuesS')}</span></div>
+        <div class="sw" id="cfValues"><i></i></div>
+      </div>
+    </div>
+
+    <div class="fld">
+      <span>${t('fWhoAdds')}</span>
+      <div class="seg segwide">
+        <button class="on" data-a="both">${t('add_both')}</button>
+        <button data-a="me">${t('add_me')}</button>
+      </div>
+    </div>
+
+    <label class="fld">
+      <span>${t('fNote')}</span>
+      <textarea id="cfNote" rows="3" placeholder="${t('fNotePh')}"></textarea>
+    </label>
+
+    <button class="btn" id="cfGo" style="margin-top:6px">${t('fCreate')}</button>
+    <p class="hint" style="margin-top:12px">${t('fFooter')}</p>`;
+
+  const body=document.getElementById('collabFormBody');
+  body.querySelectorAll('[data-v]').forEach(b=>b.addEventListener('click',()=>pickVis(b)));
+  body.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('click',()=>pickAdd(b)));
+  document.getElementById('cfValues').addEventListener('click',function(){this.classList.toggle('on');});
+  document.getElementById('cfGo').addEventListener('click',createCollab);
+  document.getElementById('collabForm').classList.add('on');
+}
+
+function pickVis(b){
+  [...b.parentElement.children].forEach(x=>x.classList.toggle('on',x===b));
+  const h=document.getElementById('cfVisHint');
+  if(h) h.textContent=t('vis_'+b.dataset.v+'_h');
+}
+function pickAdd(b){
+  [...b.parentElement.children].forEach(x=>x.classList.toggle('on',x===b));
+}
+
+function createCollab(){
+  const nome=(document.getElementById('cfName').value||'').trim();
+  if(!nome){ toast(t('fNameReq')); return; }
+  const com=document.getElementById('cfWith').value;
+  const vis=document.querySelector('#collabFormBody [data-v].on')?.dataset.v || 'private';
+  const quem=document.querySelector('#collabFormBody [data-a].on')?.dataset.a || 'both';
+  const valores=document.getElementById('cfValues').classList.contains('on');
+  const nota=(document.getElementById('cfNote').value||'').trim();
+
+  COLLABS.push({
+    id:'c'+(COLLABS.length+1)+Date.now().toString(36),
+    name:nome, with:com, visibility:vis, showValues:valores,
+    whoAdds:quem, note:nota, items:[], created:new Date().toISOString().slice(0,10)
+  });
+  close_('collabForm');
+  renderCollabs(); commTab(3);
+  toast(t('collabCreated'));
+}
+
+/* ---------- página da coleção colaborativa ---------- */
+function openCollab(id){
+  const c=COLLABS.find(x=>x.id===id); if(!c) return;
+  const outro=MEMBERS.find(m=>m.u===c.with);
+  const pecas=c.items.map(i=>WATCHES.find(w=>w.id===i)).filter(Boolean);
+  const tot=pecas.reduce((s,w)=>s+w.mkt,0);
+  const livres=active().filter(w=>!c.items.includes(w.id));
+
+  ensureSheet('collabView', c.name);
+  document.getElementById('collabViewBody').innerHTML = `
+    <div class="card" style="display:flex;gap:12px;align-items:center">
+      <div class="collabava">
+        <span class="ava" style="width:36px;height:36px;font-size:13px;background:linear-gradient(140deg,#EBD27C,#8A7423)">RC</span>
+        <span class="ava" style="width:36px;height:36px;font-size:13px;background:linear-gradient(140deg,${outro?outro.g:'#888,#444'})">${outro?outro.i:'??'}</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <b style="font-size:15px;font-weight:900;display:block">${meUser} + ${c.with}</b>
+        <span style="font-size:12.5px;color:var(--muted);font-weight:600">${t('since')} ${c.created}</span>
+      </div>
+      <span class="vistag ${c.visibility}">${t('vis_'+c.visibility)}</span>
+    </div>
+
+    ${c.note? `<p class="prose" style="margin-top:12px">${c.note}</p>`:''}
+
+    <div class="kpis" style="margin-top:14px">
+      <div class="kpi"><div class="lab">${t('kPieces')}</div><div class="val">${pecas.length}</div>
+        <div class="sub" style="color:var(--muted)">${t('shared')}</div></div>
+      <div class="kpi"><div class="lab">${t('kMarket')}</div>
+        <div class="val sm">${c.showValues? money(tot,true) : '••••'}</div>
+        <div class="sub" style="color:var(--muted)">${c.showValues? t('fShowValues') : t('valuesHidden')}</div></div>
+    </div>
+
+    <h2 class="sec">${t('collabItems')}</h2>
+    ${pecas.length? pecas.map(w=>`<div class="wrow" style="cursor:default">
+        <div class="wpic">${pic(w)}</div>
+        <div class="n"><b>${w.brand} ${w.model}</b><span>${w.ref} · ${w.year}</span>
+          <div class="tag">${w.cat}</div></div>
+        ${c.showValues? `<div class="v"><b>${money(w.mkt,true)}</b></div>`:''}
+      </div>`).join('') : `<div class="card hint">${t('collabEmpty')}</div>`}
+
+    ${livres.length? `
+      <h2 class="sec">${t('collabAdd')}</h2>
+      <div class="chips" style="flex-wrap:wrap;gap:8px">
+        ${livres.map(w=>`<button class="chip" data-add="${w.id}">+ ${w.model}</button>`).join('')}
+      </div>` : ''}
+
+    <button class="btn sec" id="cvChat" style="margin-top:18px">${t('openChatWith')} ${c.with}</button>
+    <p class="hint" style="margin-top:14px">${t('rule_'+c.whoAdds)}</p>`;
+
+  const vb=document.getElementById('collabViewBody');
+  vb.querySelectorAll('[data-add]').forEach(b=>
+    b.addEventListener('click',()=>addToCollab(c.id,b.dataset.add)));
+  document.getElementById('cvChat')?.addEventListener('click',()=>openChat2(c.with));
+  document.getElementById('collabView').classList.add('on');
+}
+
+function addToCollab(cid,wid){
+  const c=COLLABS.find(x=>x.id===cid); if(!c) return;
+  if(!c.items.includes(wid)) c.items.push(wid);
+  openCollab(cid); renderCollabs(); toast(t('collabAdded'));
+}
+
+/* ---------- chat com amigos ---------- */
+function openChat2(u){
+  const m=MEMBERS.find(x=>x.u===u); if(!m) return;
+  chatWith=u;
+  CHATS[u] = CHATS[u] || [];
+  ensureSheet('fchat', m.n);
+  const sh=document.getElementById('fchat');
+  if(!document.getElementById('fchatBar')){
+    const bar=document.createElement('div');
+    bar.id='fchatBar'; bar.className='fchatbar';
+    bar.innerHTML=`<input id="fchatIn" placeholder="${t('chatPh')}">
+      <button id="fchatSend"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"
+        stroke="var(--on-gold)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 12h15M13 6l6 6-6 6"/></svg></button>`;
+    sh.appendChild(bar);
+    bar.querySelector('#fchatSend').addEventListener('click',sendToFriend);
+    bar.querySelector('#fchatIn').addEventListener('keydown',e=>{
+      if(e.key==='Enter') sendToFriend();
+    });
+  }
+  document.getElementById('fchatIn').placeholder=t('chatPh');
+  renderFriendChat();
+  sh.classList.add('on');
+}
+
+function renderFriendChat(){
+  const box=document.getElementById('fchatBody'); if(!box) return;
+  const L=CHATS[chatWith]||[];
+  box.innerHTML = L.length? L.map(m=>
+    `<div class="msg ${m.de==='me'?'me':'ai'}">${m.txt}
+       <i class="mhora">${m.hora}</i></div>`).join('')
+    : `<div class="card hint">${t('chatEmpty')}</div>`;
+  box.scrollTop=box.scrollHeight;
+}
+
+function sendToFriend(){
+  const inp=document.getElementById('fchatIn');
+  const txt=(inp.value||'').trim(); if(!txt) return;
+  inp.value='';
+  const hora=new Date().toLocaleTimeString(S.lang==='pt'?'pt-BR':'en-GB',{hour:'2-digit',minute:'2-digit'});
+  (CHATS[chatWith]=CHATS[chatWith]||[]).push({de:'me',txt,hora});
+  renderFriendChat();
 }
 
 /* =========================================================
@@ -1624,6 +1967,8 @@ function initDockScroll(){
 
   Object.assign(window, {
     go,
+    openCollabForm, createCollab, openCollab, addToCollab,
+    pickVis, pickAdd, openChat2, sendToFriend, renderCollabs,
     setTheme,
     openPerformance,
     openActivity,

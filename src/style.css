@@ -479,6 +479,58 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 .stars{color:var(--gold);font-size:12px;letter-spacing:1px}
 .review p{margin:0;font-size:14px;line-height:1.6;color:var(--prose2);font-weight:500}
 
+/* ---- coleções colaborativas ---- */
+.collab{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:14px;margin-bottom:10px;cursor:pointer}
+.collab:active{background:var(--surface2)}
+.collabhead{display:flex;align-items:center;gap:12px}
+.collabava{display:flex;flex:none}
+.collabava .ava:last-child{margin-left:-11px;box-shadow:0 0 0 2px var(--surface)}
+.collabname{flex:1;min-width:0}
+.collabname b{display:block;font-size:14.5px;font-weight:800;letter-spacing:-.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.collabname span{font-size:12px;color:var(--muted);font-weight:600}
+.collabfoot{display:flex;justify-content:space-between;margin-top:11px;padding-top:10px;
+  border-top:1px solid var(--line);font-size:12.5px;font-weight:700;color:var(--muted)}
+.vistag{flex:none;font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+  border-radius:999px;padding:4px 9px;border:1px solid var(--line);color:var(--muted)}
+.vistag.public{color:var(--gold);border-color:var(--gold-dim);background:rgba(201,162,39,.1)}
+.vistag.friends{color:var(--text);border-color:var(--line);background:var(--track)}
+
+/* ---- formulário ---- */
+.fld{display:block;margin-bottom:18px}
+.fld > span{display:block;font-size:11.5px;font-weight:800;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--surface);color:var(--text);
+  border:1px solid var(--line);border-radius:14px;padding:13px 15px;
+  font-size:15px;font-weight:600;outline:none;resize:none;
+  appearance:none;-webkit-appearance:none}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--gold-dim)}
+.fld select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),
+  linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 21px,calc(100% - 14px) 21px;
+  background-size:6px 6px,6px 6px;background-repeat:no-repeat;padding-right:42px}
+.segwide{display:flex;background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:4px}
+.segwide button{flex:1;padding:10px 6px;border-radius:999px;
+  font-size:12.5px;font-weight:800;color:var(--muted)}
+.segwide button.on{background:var(--gold);color:var(--on-gold)}
+.fhint{margin:9px 2px 0;font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.5}
+
+/* ---- chat com amigo ---- */
+.chatbtn{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
+  background:var(--surface2);border:1px solid var(--line);color:var(--gold);margin-right:8px}
+.chatbtn:active{background:var(--gold);color:var(--on-gold)}
+#fchatBody{padding-bottom:96px}
+.mhora{display:block;font-style:normal;font-size:10.5px;font-weight:700;
+  opacity:.55;margin-top:4px;text-align:right}
+.fchatbar{position:absolute;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;
+  padding:12px 18px 26px;border-top:1px solid var(--line);background:var(--ink)}
+.fchatbar input{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:999px;
+  padding:14px 18px;color:var(--text);font-size:15px;font-weight:600;outline:none}
+.fchatbar button{width:46px;height:46px;border-radius:50%;background:var(--gold);
+  display:grid;place-items:center;flex:none}
+
 /* perfil */
 .toggle{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--line)}
 .toggle .l b{display:block;font-size:14.5px;font-weight:800}
