@@ -380,12 +380,23 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 }
 #julios .av{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 32% 30%,var(--gold-hi),var(--gold) 45%,#6B5613);flex:none}
 #julios span{font-size:14px;color:var(--julios-txt);font-weight:600;flex:1}
-#tabs{pointer-events:auto;background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--line);
+#tabs{position:relative;pointer-events:auto;background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--line);
   border-radius:999px;display:flex;padding:7px;
   transition:padding .22s ease}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border-radius:999px;color:var(--muted);
   transition:padding .22s ease}
-.tab.on{background:var(--track);color:var(--gold)}
+.tab{position:relative;z-index:1;background:none}
+.tab.on{color:var(--gold)}
+
+/* pilula que desliza entre as abas */
+.tabind{position:absolute;top:7px;bottom:7px;left:0;width:0;border-radius:999px;
+  background:var(--track);z-index:0;pointer-events:none;
+  transition:transform .38s cubic-bezier(.22,.9,.24,1),
+             width .38s cubic-bezier(.22,.9,.24,1);
+  will-change:transform,width}
+.tabind.noanim{transition:none}
+#dock.mini .tabind{top:5px;bottom:5px}
+@media (prefers-reduced-motion:reduce){ .tabind{transition:none} }
 .tab span{font-size:11px;font-weight:800;letter-spacing:-.1px}
 .tab svg{width:22px;height:22px}
 

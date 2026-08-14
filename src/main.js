@@ -659,12 +659,32 @@ function commTab(n){
 }
 
 /* navegação */
+/* pilula deslizante sob a aba ativa: acompanha posicao e largura */
+function syncTabInd(animar){
+  const tabs=document.getElementById('tabs'); if(!tabs) return;
+  let ind=tabs.querySelector('.tabind');
+  if(!ind){
+    ind=document.createElement('span');
+    ind.className='tabind noanim';
+    tabs.insertBefore(ind, tabs.firstChild);
+  }
+  const on=tabs.querySelector('.tab.on'); if(!on) return;
+  if(animar===false) ind.classList.add('noanim');
+  const w=on.offsetWidth;
+  if(!w) return;                       /* barra ainda sem layout */
+  ind.style.width=w+'px';
+  ind.style.transform='translateX('+on.offsetLeft+'px)';
+  if(animar===false) requestAnimationFrame(()=>ind.classList.remove('noanim'));
+  else ind.classList.remove('noanim');
+}
+
 function go(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById('s-'+id).classList.add('on');
   document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on',['home','coll','comm','prof'][i]===id));
   const dock = document.getElementById('dock');
   if(dock) dock.classList.remove('mini');
+  syncTabInd();
 }
 const close_ = id => { document.getElementById(id).classList.remove('on');
   if(id==='detail') disposeMini(); };
@@ -1864,7 +1884,11 @@ function initDockScroll(){
   const dock=document.getElementById('dock');
   if(!dock) return;
   const last=new WeakMap();
-  const set=on=>dock.classList.toggle('mini',on);
+  const set=on=>{
+    if(dock.classList.contains('mini')===on) return;
+    dock.classList.toggle('mini',on);
+    syncTabInd(false);
+  };
 
   document.querySelectorAll('.screen').forEach(sc=>{
     last.set(sc,0);
@@ -1933,7 +1957,10 @@ function initDockScroll(){
   }
 
   document.getElementById('cbrl').classList.add('on');
-  commTab(1); setYear(2023); applyLang(); initDockScroll(); renderNews(); startNewsAutoScroll();
+  commTab(1); setYear(2023); applyLang();
+  syncTabInd(false);
+  requestAnimationFrame(()=>syncTabInd(false));
+  window.addEventListener('resize',()=>syncTabInd(false)); initDockScroll(); renderNews(); startNewsAutoScroll();
 
   /* animacao das almofadas girando, usada nos cards "Abrir minha caixa" e "Grails" */
   function heroAnim(canvas, phase){
@@ -1967,6 +1994,7 @@ function initDockScroll(){
 
   Object.assign(window, {
     go,
+    syncTabInd,
     openCollabForm, createCollab, openCollab, addToCollab,
     pickVis, pickAdd, openChat2, sendToFriend, renderCollabs,
     setTheme,
