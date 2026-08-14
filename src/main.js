@@ -169,6 +169,9 @@ const T = {
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
   goColl:'Ir pra coleção',
+  emptyBoxSub:'Sua caixa ainda está vazia',
+  emptyBoxT:'Comece sua coleção',
+  emptyBoxP:'Escaneie um relógio e ele aparece aqui, na almofada. A caixa cresce conforme você adiciona peças.',
   cCollabs:'Coleções',newCollab:'Criar coleção colaborativa',
   needFriend:'Adicione um amigo na aba Colecionadores para poder criar uma coleção em conjunto.',
   noCollab:'Nenhuma coleção colaborativa ainda. Crie uma com alguém que também colecione.',
@@ -231,6 +234,9 @@ const T = {
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
   goColl:'Go to collection',
+  emptyBoxSub:'Your box is still empty',
+  emptyBoxT:'Start your collection',
+  emptyBoxP:'Scan a watch and it lands here, on the cushion. The box grows as you add pieces.',
   cCollabs:'Collections',newCollab:'Create a shared collection',
   needFriend:'Add a friend in the Collectors tab to start a shared collection.',
   noCollab:'No shared collections yet. Start one with someone who also collects.',
@@ -1519,13 +1525,15 @@ function buildBox(){
   slotsMesh=[]; watchMeshes=[]; focused=null; drawerOpen=false;
   const V=visible();
 
-  if(!V.length){ boxGroup=null; document.getElementById('boxSub').textContent=t('emptyT'); return; }
+  /* coleção vazia: a caixa aparece assim mesmo, com uma bandeja de
+     almofadas livres, para a pessoa entender onde o relógio vai entrar */
+  const vazia = !V.length;
 
   const trays=[]; for(let i=0;i<V.length;i+=6) trays.push(V.slice(i,i+6));
-  const first=trays[0];
+  const first = vazia? [] : trays[0];
 
   boxGroup=new THREE.Group();
-  const t0 = V.length<=5 ? makeTrayRow(first) : makeTray(first,6);
+  const t0 = vazia ? makeTray([],3) : (V.length<=5 ? makeTrayRow(first) : makeTray(first,6));
   boxGroup.add(t0);
   const dims=t0.userData;
 
@@ -1583,8 +1591,30 @@ function buildBox(){
   pivot.rotation.set(rx,ry,0); pivot.updateMatrixWorld(true);
 
   fitCamera(true);
-  document.getElementById('boxSub').textContent =
-    `${V.length} ${t('pieces')} · ${t('pinch')}`;
+  document.getElementById('boxSub').textContent = vazia
+    ? t('emptyBoxSub')
+    : `${V.length} ${t('pieces')} · ${t('pinch')}`;
+  toggleEmptyBoxCard(vazia);
+}
+
+/* convite para escanear a primeira peça, dentro da caixa 3D.
+   some sozinho assim que a coleção deixa de estar vazia */
+function toggleEmptyBoxCard(mostrar){
+  const wrap=document.getElementById('boxwrap'); if(!wrap) return;
+  let card=document.getElementById('emptyBox');
+  if(!mostrar){ if(card) card.remove(); return; }
+  if(!card){
+    card=document.createElement('div');
+    card.id='emptyBox';
+    wrap.appendChild(card);
+  }
+  card.innerHTML=`
+    <b>${t('emptyBoxT')}</b>
+    <p>${t('emptyBoxP')}</p>
+    <button class="btn" id="emptyBoxGo">${t('scanFirst')}</button>`;
+  card.querySelector('#emptyBoxGo').addEventListener('click',()=>{
+    if(typeof openScan==='function') openScan();
+  });
 }
 
 function makeTrayRow(items){
@@ -1739,12 +1769,15 @@ function isChildOf(m,p){ if(!p)return false; let o=m; while(o){ if(o===p)return 
 function openBox(){
   document.getElementById('boxwrap').classList.add('on');
   zoom=1; rotX=-0.78; rotY=-0.30;
+  /* o convite nao depende do 3D: aparece mesmo se o WebGL falhar */
+  toggleEmptyBoxCard(!visible().length);
   if(!renderer){ initBox(); }
   else { sizeBox(); buildBox(); }
   requestAnimationFrame(()=>{ sizeBox(); fitCamera(true); });
 }
 function closeBox(){
   unfocus();
+  toggleEmptyBoxCard(false);
   document.getElementById('boxwrap').classList.remove('on');
   if(S.viewing){
     S.viewing=null;
