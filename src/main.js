@@ -168,7 +168,7 @@ const T = {
   filtering:'Mostrando',addedIn:'em',pieceIn:'peça adicionada',piecesIn:'peças adicionadas',
   actAdded:'entrou na coleção',actUp:'subiu no mercado',actGrail:'virou Grail',actFriend:'começou a seguir você',
   noAct:'Nada por aqui ainda. A primeira peça escaneada abre esta linha do tempo.',
-  goColl:'Ir pra coleção',
+  goColl:'Ir pra coleção',splashHint:'toque para entrar',
   emptyBoxSub:'Sua caixa ainda está vazia',
   emptyBoxT:'Comece sua coleção',
   emptyBoxP:'Escaneie um relógio e ele aparece aqui, na almofada. A caixa cresce conforme você adiciona peças.',
@@ -233,7 +233,7 @@ const T = {
   filtering:'Showing',addedIn:'in',pieceIn:'piece added',piecesIn:'pieces added',
   actAdded:'joined the collection',actUp:'climbed on the market',actGrail:'became a Grail',actFriend:'started following you',
   noAct:'Nothing here yet. Your first scan opens this timeline.',
-  goColl:'Go to collection',
+  goColl:'Go to collection',splashHint:'tap to enter',
   emptyBoxSub:'Your box is still empty',
   emptyBoxT:'Start your collection',
   emptyBoxP:'Scan a watch and it lands here, on the cushion. The box grows as you add pieces.',
@@ -1268,6 +1268,620 @@ function addGrail(model){
 }
 
 /* =========================================================
+   TELA DE ABERTURA — porte do "Fluid Text" (Originkit)
+   Simulacao de fluidos Navier-Stokes em WebGL. Os shaders e a
+   logica sao os do componente original; o React foi trocado por
+   JS puro e o contexto e destruido ao sair, para nao concorrer
+   com o WebGL da caixa 3D.
+   ========================================================= */
+const SPLASH = {
+  text:'Community Watches',
+  color:'#C9A127',
+  palette:['#C9A127','#FFD966','#f7d87a'],
+  splatRadius:7, splatForce:10, curl:50, densityDissipation:5,
+  font:{ family:'Parisienne, cursive', weight:400, size:96 }
+};
+
+const SHADING = true;
+const COLOR_SPEED = 0.125;
+const VELOCITY_DISSIPATION = 2;
+const PRESSURE = 1/20;
+const SIM_RESOLUTION = 128;
+const DYE_RESOLUTION = 512;          /* original 1440: reduzido para celular */
+const PRESSURE_ITERATIONS = 20;
+
+const V_SHADER = `
+precision highp float; attribute vec2 aPosition;
+varying vec2 vUv, vL, vR, vT, vB; uniform vec2 texelSize;
+void main(){ vUv=aPosition*0.5+0.5;
+ vL=vUv-vec2(texelSize.x,0.0); vR=vUv+vec2(texelSize.x,0.0);
+ vT=vUv+vec2(0.0,texelSize.y); vB=vUv-vec2(0.0,texelSize.y);
+ gl_Position=vec4(aPosition,0.0,1.0); }`;
+
+const COPY_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv; uniform sampler2D uTexture;
+void main(){ gl_FragColor=texture2D(uTexture,vUv); }`;
+
+const CLEAR_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv; uniform sampler2D uTexture; uniform float value;
+void main(){ gl_FragColor=value*texture2D(uTexture,vUv); }`;
+
+const DISPLAY_SHADER = `
+precision highp float; precision highp sampler2D;
+varying vec2 vUv, vL, vR, vT, vB;
+uniform sampler2D uTexture; uniform sampler2D uMask;
+uniform vec2 texelSize; uniform vec4 uBase;
+void main(){
+ float mask=texture2D(uMask,vUv).a;
+ if(mask<=0.0) discard;
+ vec3 c=texture2D(uTexture,vUv).rgb;
+ #ifdef SHADING
+  vec3 lc=texture2D(uTexture,vL).rgb, rc=texture2D(uTexture,vR).rgb;
+  vec3 tc=texture2D(uTexture,vT).rgb, bc=texture2D(uTexture,vB).rgb;
+  float dx=length(rc)-length(lc), dy=length(tc)-length(bc);
+  vec3 n=normalize(vec3(dx,dy,length(texelSize)));
+  float diffuse=clamp(dot(n,vec3(0.0,0.0,1.0))+0.7,0.7,1.0);
+  c*=diffuse;
+ #endif
+ float d=clamp(max(c.r,max(c.g,c.b)),0.0,1.0);
+ vec3 color=uBase.rgb*uBase.a*(1.0-d)+c;
+ float m=max(color.r,max(color.g,color.b));
+ if(m>1.0) color/=m;
+ gl_FragColor=vec4(color, mask*max(uBase.a,d)); }`;
+
+const SPLAT_SHADER = `
+precision highp float; precision highp sampler2D; varying vec2 vUv;
+uniform sampler2D uTarget; uniform float aspectRatio;
+uniform vec3 color; uniform vec2 point; uniform float radius;
+void main(){ vec2 p=vUv-point.xy; p.x*=aspectRatio;
+ vec3 splat=exp(-dot(p,p)/radius)*color;
+ gl_FragColor=vec4(texture2D(uTarget,vUv).xyz+splat,1.0); }`;
+
+const ADVECTION_SHADER = `
+precision highp float; precision highp sampler2D; varying vec2 vUv;
+uniform sampler2D uVelocity; uniform sampler2D uSource;
+uniform vec2 texelSize, dyeTexelSize; uniform float dt, dissipation;
+vec4 bilerp(sampler2D sam, vec2 uv, vec2 tsize){
+ vec2 st=uv/tsize-0.5; vec2 iuv=floor(st), fuv=fract(st);
+ vec4 a=texture2D(sam,(iuv+vec2(0.5,0.5))*tsize), b=texture2D(sam,(iuv+vec2(1.5,0.5))*tsize);
+ vec4 c=texture2D(sam,(iuv+vec2(0.5,1.5))*tsize), d=texture2D(sam,(iuv+vec2(1.5,1.5))*tsize);
+ return mix(mix(a,b,fuv.x),mix(c,d,fuv.x),fuv.y); }
+void main(){
+ #ifdef MANUAL_FILTERING
+  vec2 coord=vUv-dt*bilerp(uVelocity,vUv,texelSize).xy*texelSize;
+  vec4 result=bilerp(uSource,coord,dyeTexelSize);
+ #else
+  vec2 coord=vUv-dt*texture2D(uVelocity,vUv).xy*texelSize;
+  vec4 result=texture2D(uSource,coord);
+ #endif
+ gl_FragColor=result/(1.0+dissipation*dt); }`;
+
+const DIVERGENCE_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
+void main(){ float L=texture2D(uVelocity,vL).x, R=texture2D(uVelocity,vR).x;
+ float T=texture2D(uVelocity,vT).y, B=texture2D(uVelocity,vB).y;
+ vec2 C=texture2D(uVelocity,vUv).xy;
+ if(vL.x<0.0){L=-C.x;} if(vR.x>1.0){R=-C.x;}
+ if(vT.y>1.0){T=-C.y;} if(vB.y<0.0){B=-C.y;}
+ gl_FragColor=vec4(0.5*(R-L+T-B),0.0,0.0,1.0); }`;
+
+const CURL_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
+void main(){ float L=texture2D(uVelocity,vL).y, R=texture2D(uVelocity,vR).y;
+ float T=texture2D(uVelocity,vT).x, B=texture2D(uVelocity,vB).x;
+ gl_FragColor=vec4(0.5*(R-L-T+B),0.0,0.0,1.0); }`;
+
+const VORTICITY_SHADER = `
+precision highp float; precision highp sampler2D;
+varying vec2 vUv,vL,vR,vT,vB;
+uniform sampler2D uVelocity; uniform sampler2D uCurl;
+uniform float curl, dt;
+void main(){ float L=texture2D(uCurl,vL).x, R=texture2D(uCurl,vR).x;
+ float T=texture2D(uCurl,vT).x, B=texture2D(uCurl,vB).x, C=texture2D(uCurl,vUv).x;
+ vec2 force=0.5*vec2(abs(T)-abs(B),abs(R)-abs(L));
+ force/=length(force)+0.0001; force*=curl*C; force.y*=-1.0;
+ vec2 velocity=texture2D(uVelocity,vUv).xy+force*dt;
+ gl_FragColor=vec4(min(max(velocity,-1000.0),1000.0),0.0,1.0); }`;
+
+const PRESSURE_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv,vL,vR,vT,vB;
+uniform sampler2D uPressure; uniform sampler2D uDivergence;
+void main(){ float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x;
+ float T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
+ float divergence=texture2D(uDivergence,vUv).x;
+ gl_FragColor=vec4((L+R+B+T-divergence)*0.25,0.0,0.0,1.0); }`;
+
+const GRADIENT_SHADER = `
+precision mediump float; precision mediump sampler2D;
+varying highp vec2 vUv,vL,vR,vT,vB;
+uniform sampler2D uPressure; uniform sampler2D uVelocity;
+void main(){ float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x;
+ float T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
+ vec2 velocity=texture2D(uVelocity,vUv).xy-vec2(R-L,T-B);
+ gl_FragColor=vec4(velocity,0.0,1.0); }`;
+
+function splashColor(hex, mult){
+  let v=String(hex).replace('#','');
+  if(v.length===3) v=v.split('').map(c=>c+c).join('');
+  const n=parseInt(v.slice(0,6),16);
+  if(!Number.isFinite(n)) return {r:0,g:0,b:0};
+  return {r:((n>>16&255)/255)*mult, g:((n>>8&255)/255)*mult, b:((n&255)/255)*mult};
+}
+
+let splashStop=null;
+
+function startSplash(){
+  const wrap=document.createElement('div');
+  wrap.id='splash';
+  wrap.innerHTML='<canvas id="splashC"></canvas>'+
+    '<div id="splashHint"></div>';
+  document.body.appendChild(wrap);
+
+  const canvas=document.getElementById('splashC');
+  const params={alpha:true,depth:false,stencil:false,antialias:false,premultipliedAlpha:false};
+  let isWebGL2=true;
+  let gl=canvas.getContext('webgl2',params);
+  if(!gl){ isWebGL2=false; gl=canvas.getContext('webgl',params)||canvas.getContext('experimental-webgl',params); }
+  if(!gl){ finishSplash(true); return; }        /* sem WebGL: fecha na hora */
+  const g=gl;
+
+  let halfFloat, linear;
+  if(isWebGL2){ g.getExtension('EXT_color_buffer_float'); linear=g.getExtension('OES_texture_float_linear'); }
+  else { halfFloat=g.getExtension('OES_texture_half_float'); linear=g.getExtension('OES_texture_half_float_linear'); }
+  g.clearColor(0,0,0,0);
+  const halfType = isWebGL2? g.HALF_FLOAT : (halfFloat && halfFloat.HALF_FLOAT_OES);
+
+  const supports=(inFmt,fmt,type)=>{
+    const tex=g.createTexture(); g.bindTexture(g.TEXTURE_2D,tex);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.NEAREST);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.NEAREST);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+    g.texImage2D(g.TEXTURE_2D,0,inFmt,4,4,0,fmt,type,null);
+    const fbo=g.createFramebuffer(); g.bindFramebuffer(g.FRAMEBUFFER,fbo);
+    g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
+    const ok=g.checkFramebufferStatus(g.FRAMEBUFFER)===g.FRAMEBUFFER_COMPLETE;
+    g.deleteFramebuffer(fbo); g.deleteTexture(tex); return ok;
+  };
+  const fmtOf=(inFmt,fmt,type)=>{
+    if(!supports(inFmt,fmt,type)){
+      if(inFmt===g.R16F) return fmtOf(g.RG16F,g.RG,type);
+      if(inFmt===g.RG16F) return fmtOf(g.RGBA16F,g.RGBA,type);
+      return null;
+    }
+    return {internalFormat:inFmt,format:fmt};
+  };
+  const fRGBA = isWebGL2? fmtOf(g.RGBA16F,g.RGBA,halfType) : fmtOf(g.RGBA,g.RGBA,halfType);
+  const fRG   = isWebGL2? fmtOf(g.RG16F,g.RG,halfType)     : fmtOf(g.RGBA,g.RGBA,halfType);
+  const fR    = isWebGL2? fmtOf(g.R16F,g.RED,halfType)     : fmtOf(g.RGBA,g.RGBA,halfType);
+  if(!fRGBA||!fRG||!fR){ finishSplash(true); return; }
+
+  const compile=(type,src,defs)=>{
+    const sh=g.createShader(type);
+    g.shaderSource(sh,(defs? defs.map(d=>`#define ${d}\n`).join('') : '')+src);
+    g.compileShader(sh); return sh;
+  };
+  const program=(vs,fs)=>{ const p=g.createProgram();
+    g.attachShader(p,vs); g.attachShader(p,fs); g.linkProgram(p); return p; };
+  const uniformsOf=p=>{ const u={}; const n=g.getProgramParameter(p,g.ACTIVE_UNIFORMS);
+    for(let i=0;i<n;i++){ const nm=g.getActiveUniform(p,i).name; u[nm]=g.getUniformLocation(p,nm); } return u; };
+  const mk=(vs,src,defs)=>{ const p=program(vs,compile(g.FRAGMENT_SHADER,src,defs));
+    return {p, u:uniformsOf(p), bind(){ g.useProgram(p); }}; };
+
+  const vs=compile(g.VERTEX_SHADER,V_SHADER);
+  const copyP=mk(vs,COPY_SHADER), clearP=mk(vs,CLEAR_SHADER), splatP=mk(vs,SPLAT_SHADER);
+  const advP=mk(vs,ADVECTION_SHADER, linear? undefined : ['MANUAL_FILTERING']);
+  const divP=mk(vs,DIVERGENCE_SHADER), curlP=mk(vs,CURL_SHADER),
+        vortP=mk(vs,VORTICITY_SHADER), pressP=mk(vs,PRESSURE_SHADER), gradP=mk(vs,GRADIENT_SHADER);
+  const dispP=mk(vs,DISPLAY_SHADER, (linear&&SHADING)? ['SHADING'] : undefined);
+
+  const buf=g.createBuffer(), idx=g.createBuffer();
+  g.bindBuffer(g.ARRAY_BUFFER,buf);
+  g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,-1,1,1,1,1,-1]),g.STATIC_DRAW);
+  g.bindBuffer(g.ELEMENT_ARRAY_BUFFER,idx);
+  g.bufferData(g.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3]),g.STATIC_DRAW);
+  g.vertexAttribPointer(0,2,g.FLOAT,false,0,0); g.enableVertexAttribArray(0);
+
+  const blit=(target,clear)=>{
+    if(target==null){ g.viewport(0,0,g.drawingBufferWidth,g.drawingBufferHeight); g.bindFramebuffer(g.FRAMEBUFFER,null); }
+    else { g.viewport(0,0,target.width,target.height); g.bindFramebuffer(g.FRAMEBUFFER,target.fbo); }
+    if(clear){ g.clearColor(0,0,0,target==null?0:1); g.clear(g.COLOR_BUFFER_BIT); }
+    g.drawElements(g.TRIANGLES,6,g.UNSIGNED_SHORT,0);
+  };
+  const createFBO=(w,h,inFmt,fmt,type,param)=>{
+    g.activeTexture(g.TEXTURE0);
+    const tex=g.createTexture(); g.bindTexture(g.TEXTURE_2D,tex);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,param);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,param);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+    g.texImage2D(g.TEXTURE_2D,0,inFmt,w,h,0,fmt,type,null);
+    const fbo=g.createFramebuffer(); g.bindFramebuffer(g.FRAMEBUFFER,fbo);
+    g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
+    g.viewport(0,0,w,h); g.clear(g.COLOR_BUFFER_BIT);
+    return {texture:tex,fbo,width:w,height:h,texelSizeX:1/w,texelSizeY:1/h,
+      attach(id){ g.activeTexture(g.TEXTURE0+id); g.bindTexture(g.TEXTURE_2D,tex); return id; }};
+  };
+  const killFBO=t=>{ if(!t)return; g.deleteFramebuffer(t.fbo); g.deleteTexture(t.texture); };
+  const createDouble=(w,h,inFmt,fmt,type,param)=>{
+    let a=createFBO(w,h,inFmt,fmt,type,param), b=createFBO(w,h,inFmt,fmt,type,param);
+    return {width:w,height:h,texelSizeX:a.texelSizeX,texelSizeY:a.texelSizeY,
+      get read(){return a}, set read(v){a=v}, get write(){return b}, set write(v){b=v},
+      swap(){ const t=a; a=b; b=t; }};
+  };
+  const killDouble=t=>{ if(!t)return; killFBO(t.read); killFBO(t.write); };
+
+  const resolutionOf=res=>{
+    let ar=g.drawingBufferWidth/g.drawingBufferHeight;
+    if(ar<1) ar=1/ar;
+    const min=Math.round(res), max=Math.round(res*ar);
+    return g.drawingBufferWidth>g.drawingBufferHeight? {width:max,height:min} : {width:min,height:max};
+  };
+
+  let dye,velocity,divergence,curlF,pressureF;
+  const initFBOs=()=>{
+    const simRes=resolutionOf(SIM_RESOLUTION);
+    const dyeRes=resolutionOf(linear? DYE_RESOLUTION : Math.min(DYE_RESOLUTION,256));
+    const filt = linear? g.LINEAR : g.NEAREST;
+    g.disable(g.BLEND);
+    killDouble(dye); killDouble(velocity);
+    dye=createDouble(dyeRes.width,dyeRes.height,fRGBA.internalFormat,fRGBA.format,halfType,filt);
+    velocity=createDouble(simRes.width,simRes.height,fRG.internalFormat,fRG.format,halfType,filt);
+    killFBO(divergence); killFBO(curlF); killDouble(pressureF);
+    divergence=createFBO(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
+    curlF=createFBO(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
+    pressureF=createDouble(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
+  };
+
+  /* mascara: o texto da marca, desenhado num canvas 2D */
+  const MASK_UNIT=8;
+  const maskCanvas=document.createElement('canvas');
+  const maskTex=g.createTexture();
+  g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
+  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);
+  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
+  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
+  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
+
+  let maskKey='';
+  const paintMask=()=>{
+    const w=Math.max(1,canvas.width), h=Math.max(1,canvas.height);
+    const key=w+'x'+h;
+    if(key===maskKey) return;
+    maskKey=key;
+    maskCanvas.width=w; maskCanvas.height=h;
+    const ctx=maskCanvas.getContext('2d'); if(!ctx) return;
+    ctx.clearRect(0,0,w,h);
+    const f=SPLASH.font;
+    /* corpo proporcional a largura, para caber em qualquer tela */
+    let size=Math.min(f.size, w/(SPLASH.text.length*0.34));
+    ctx.fillStyle='#fff'; ctx.textBaseline='middle'; ctx.textAlign='center';
+    ctx.font=`${f.weight} ${size}px ${f.family}`;
+    ctx.fillText(SPLASH.text, w/2, h/2);
+    g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
+    g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,true);
+    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,maskCanvas);
+    g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);
+  };
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ maskKey=''; });
+
+  let phase=Math.random();
+  const paletteAt=p=>{
+    const list=SPLASH.palette, scaled=p*list.length;
+    const i=Math.floor(scaled)%list.length;
+    const a=splashColor(list[i],0.5), b=splashColor(list[(i+1)%list.length],0.5);
+    const f=scaled-Math.floor(scaled);
+    return {r:a.r+(b.r-a.r)*f, g:a.g+(b.g-a.g)*f, b:a.b+(b.b-a.b)*f};
+  };
+
+  const pointer={texcoordX:.5,texcoordY:.5,prevTexcoordX:.5,prevTexcoordY:.5,
+                 deltaX:0,deltaY:0,moved:false,color:paletteAt(phase)};
+  const radius=SPLASH.splatRadius/20, force=SPLASH.splatForce*1000;
+  const dissip=SPLASH.densityDissipation*0.5;
+
+  const correctRadius=r=>{ const ar=canvas.width/canvas.height; return ar>1? r*ar : r; };
+  const splat=(x,y,dx,dy,c)=>{
+    g.disable(g.BLEND); splatP.bind();
+    g.uniform1i(splatP.u.uTarget, velocity.read.attach(0));
+    g.uniform1f(splatP.u.aspectRatio, canvas.width/canvas.height);
+    g.uniform2f(splatP.u.point,x,y);
+    g.uniform3f(splatP.u.color,dx,dy,0);
+    g.uniform1f(splatP.u.radius, correctRadius(radius/100));
+    blit(velocity.write); velocity.swap();
+    g.uniform1i(splatP.u.uTarget, dye.read.attach(0));
+    g.uniform3f(splatP.u.color,c.r,c.g,c.b);
+    blit(dye.write); dye.swap();
+  };
+
+  const texcoords=(cx,cy)=>{ const r=canvas.getBoundingClientRect();
+    return {x:r.width>0?(cx-r.left)/r.width:0, y:r.height>0?1-(cy-r.top)/r.height:0}; };
+  const onMove=e=>{
+    const tc=texcoords(e.clientX,e.clientY);
+    pointer.prevTexcoordX=pointer.texcoordX; pointer.prevTexcoordY=pointer.texcoordY;
+    pointer.texcoordX=tc.x; pointer.texcoordY=tc.y;
+    const ar=canvas.width/canvas.height;
+    pointer.deltaX=(pointer.texcoordX-pointer.prevTexcoordX)*(ar<1?ar:1);
+    pointer.deltaY=(pointer.texcoordY-pointer.prevTexcoordY)*(ar>1?1/ar:1);
+    pointer.moved=Math.abs(pointer.deltaX)>0||Math.abs(pointer.deltaY)>0;
+  };
+  const onDown=e=>{
+    const tc=texcoords(e.clientX,e.clientY);
+    pointer.texcoordX=tc.x; pointer.texcoordY=tc.y;
+    pointer.prevTexcoordX=tc.x; pointer.prevTexcoordY=tc.y;
+    const c=paletteAt(phase);
+    splat(tc.x,tc.y,10*(Math.random()-0.5),30*(Math.random()-0.5),
+          {r:c.r*10,g:c.g*10,b:c.b*10});
+  };
+  wrap.addEventListener('pointermove',onMove,{passive:true});
+  wrap.addEventListener('pointerdown',onDown,{passive:true});
+
+  const step=dt=>{
+    g.disable(g.BLEND);
+    curlP.bind();
+    g.uniform2f(curlP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    g.uniform1i(curlP.u.uVelocity,velocity.read.attach(0)); blit(curlF);
+
+    vortP.bind();
+    g.uniform2f(vortP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    g.uniform1i(vortP.u.uVelocity,velocity.read.attach(0));
+    g.uniform1i(vortP.u.uCurl,curlF.attach(1));
+    g.uniform1f(vortP.u.curl,SPLASH.curl); g.uniform1f(vortP.u.dt,dt);
+    blit(velocity.write); velocity.swap();
+
+    divP.bind();
+    g.uniform2f(divP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    g.uniform1i(divP.u.uVelocity,velocity.read.attach(0)); blit(divergence);
+
+    clearP.bind();
+    g.uniform1i(clearP.u.uTexture,pressureF.read.attach(0));
+    g.uniform1f(clearP.u.value,PRESSURE);
+    blit(pressureF.write); pressureF.swap();
+
+    pressP.bind();
+    g.uniform2f(pressP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    g.uniform1i(pressP.u.uDivergence,divergence.attach(0));
+    for(let i=0;i<PRESSURE_ITERATIONS;i++){
+      g.uniform1i(pressP.u.uPressure,pressureF.read.attach(1));
+      blit(pressureF.write); pressureF.swap();
+    }
+
+    gradP.bind();
+    g.uniform2f(gradP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    g.uniform1i(gradP.u.uPressure,pressureF.read.attach(0));
+    g.uniform1i(gradP.u.uVelocity,velocity.read.attach(1));
+    blit(velocity.write); velocity.swap();
+
+    advP.bind();
+    g.uniform2f(advP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
+    if(!linear) g.uniform2f(advP.u.dyeTexelSize,velocity.texelSizeX,velocity.texelSizeY);
+    const vId=velocity.read.attach(0);
+    g.uniform1i(advP.u.uVelocity,vId); g.uniform1i(advP.u.uSource,vId);
+    g.uniform1f(advP.u.dt,dt); g.uniform1f(advP.u.dissipation,VELOCITY_DISSIPATION);
+    blit(velocity.write); velocity.swap();
+
+    if(!linear) g.uniform2f(advP.u.dyeTexelSize,dye.texelSizeX,dye.texelSizeY);
+    g.uniform1i(advP.u.uVelocity,velocity.read.attach(0));
+    g.uniform1i(advP.u.uSource,dye.read.attach(1));
+    g.uniform1f(advP.u.dissipation,dissip);
+    blit(dye.write); dye.swap();
+  };
+
+  const base=splashColor(SPLASH.color,1);
+  const render=()=>{
+    g.blendFunc(g.SRC_ALPHA,g.ONE_MINUS_SRC_ALPHA); g.enable(g.BLEND);
+    dispP.bind();
+    if(linear&&SHADING) g.uniform2f(dispP.u.texelSize,1/g.drawingBufferWidth,1/g.drawingBufferHeight);
+    g.uniform1i(dispP.u.uTexture,dye.read.attach(0));
+    g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
+    g.uniform1i(dispP.u.uMask,MASK_UNIT);
+    g.uniform4f(dispP.u.uBase,base.r,base.g,base.b,1);
+    blit(null,true);
+  };
+
+  const resize=()=>{
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    const w=Math.floor(canvas.clientWidth*dpr), h=Math.floor(canvas.clientHeight*dpr);
+    if(w>0&&h>0&&(canvas.width!==w||canvas.height!==h)){
+      canvas.width=w; canvas.height=h; initFBOs(); maskKey='';
+    }
+  };
+  resize(); initFBOs();
+
+  /* jatos automaticos: o efeito precisa se mostrar mesmo sem toque */
+  let auto=0;
+  const autoSplat=()=>{
+    const c=paletteAt(phase);
+    const x=0.15+Math.random()*0.7, y=0.35+Math.random()*0.3;
+    splat(x,y,(Math.random()-0.5)*3000,(Math.random()-0.5)*1500,
+          {r:c.r*8,g:c.g*8,b:c.b*8});
+  };
+
+  let last=performance.now(), raf=0, morto=false;
+  const frame=()=>{
+    if(morto||g.isContextLost()) return;
+    const now=performance.now();
+    const dt=Math.min((now-last)/1000,0.016666); last=now;
+    resize(); paintMask();
+    phase=(phase+dt*COLOR_SPEED)%1;
+    pointer.color=paletteAt(phase);
+    if(pointer.moved){
+      pointer.moved=false;
+      splat(pointer.texcoordX,pointer.texcoordY,
+            pointer.deltaX*force,pointer.deltaY*force,pointer.color);
+    }
+    auto+=dt;
+    if(auto>0.55){ auto=0; autoSplat(); }
+    step(dt); render();
+    raf=requestAnimationFrame(frame);
+  };
+  autoSplat(); autoSplat();
+  raf=requestAnimationFrame(frame);
+
+  splashStop=()=>{
+    morto=true;
+    if(raf) cancelAnimationFrame(raf);
+    wrap.removeEventListener('pointermove',onMove);
+    wrap.removeEventListener('pointerdown',onDown);
+    killDouble(dye); killDouble(velocity); killDouble(pressureF);
+    killFBO(divergence); killFBO(curlF);
+    g.deleteTexture(maskTex); g.deleteBuffer(buf); g.deleteBuffer(idx);
+    /* devolve o contexto ao navegador antes da caixa 3D pedir o dela */
+    try{ g.getExtension('WEBGL_lose_context')?.loseContext(); }catch(e){}
+  };
+}
+
+function finishSplash(imediato){
+  const wrap=document.getElementById('splash');
+  if(!wrap) return;
+  if(splashStop){ splashStop(); splashStop=null; }
+  if(imediato){ wrap.remove(); return; }
+  wrap.classList.add('out');
+  setTimeout(()=>wrap.remove(), 620);
+}
+
+function initSplash(){
+  /* uma vez por sessao: quem ja viu vai direto ao app */
+  try{ if(sessionStorage.getItem('cw-splash')){ return; } }catch(e){}
+  try{ sessionStorage.setItem('cw-splash','1'); }catch(e){}
+  startSplash();
+  const dica=document.getElementById('splashHint');
+  if(dica) dica.textContent=t('splashHint');
+  setTimeout(()=>finishSplash(false), 3200);
+  document.getElementById('splash')?.addEventListener('click',()=>finishSplash(false));
+}
+
+/* =========================================================
+   SCAN GRID BUTTON — porte do componente Originkit (preset custom-style-2)
+   Mesma geometria do original: getCornerPaths, armFor, IDLE/HOVER_BRACKET,
+   SCAN_BAND e a velocidade. Reescrito sem React/framer-motion e com
+   gatilho de toque, porque no celular nao existe hover.
+   ========================================================= */
+const SCAN_BAND = 65;                       /* altura da faixa, em % */
+const IDLE_BRACKET = 8;                     /* abertura dos colchetes parado */
+const HOVER_BRACKET = 65;                   /* abertura quando ativo */
+const SECONDS_AT_SPEED_1 = 10;
+const SCAN_SPEED_PCT = 50;                  /* preset custom-style-2 */
+const SCAN_COLOR = '#c9a127';               /* preset custom-style-2 */
+
+const armFor = (pct,w,h) => ((pct/100) * Math.min(w,h)) / 2;
+
+/* traduzido linha a linha do componente original */
+function getCornerPaths(w,h,r,arm){
+  const clampedR = Math.min(r, w/2, h/2);
+  const strokeOffset = 0.75;
+  const R = Math.max(0.01, clampedR - strokeOffset);
+  const R_orig = clampedR;
+
+  const availH = Math.max(0, h/2 - R_orig);
+  const availW = Math.max(0, w/2 - R_orig);
+  const armH = Math.min(arm, availH);
+  const armW = Math.min(arm, availW);
+
+  const tl = `M ${strokeOffset} ${R_orig+armH} L ${strokeOffset} ${R_orig} A ${R} ${R} 0 0 1 ${R_orig} ${strokeOffset} L ${R_orig+armW} ${strokeOffset}`;
+  const tr = `M ${w-R_orig-armW} ${strokeOffset} L ${w-R_orig} ${strokeOffset} A ${R} ${R} 0 0 1 ${w-strokeOffset} ${R_orig} L ${w-strokeOffset} ${R_orig+armH}`;
+  const br = `M ${w-strokeOffset} ${h-R_orig-armH} L ${w-strokeOffset} ${h-R_orig} A ${R} ${R} 0 0 1 ${w-R_orig} ${h-strokeOffset} L ${w-R_orig-armW} ${h-strokeOffset}`;
+  const bl = `M ${R_orig+armW} ${h-strokeOffset} L ${R_orig} ${h-strokeOffset} A ${R} ${R} 0 0 1 ${strokeOffset} ${h-R_orig} L ${strokeOffset} ${h-R_orig-armH}`;
+  return {tl,tr,br,bl};
+}
+
+/* aplica o efeito a um botao existente, sem mexer no HTML */
+const FRAME_PAD = 7;      /* folga entre o botao redondo e o quadro de colchetes */
+const FRAME_R  = 13;      /* raio do quadro: precisa sobrar reta para os bracos */
+
+function makeScanButton(btn){
+  if(!btn || btn.dataset.scan) return;
+  btn.dataset.scan='1';
+  btn.classList.add('scanbtn');
+
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('class','scanbrackets');
+  svg.setAttribute('aria-hidden','true');
+  const paths={};
+  ['tl','tr','br','bl'].forEach(k=>{
+    const p=document.createElementNS(NS,'path');
+    p.setAttribute('stroke',SCAN_COLOR);
+    p.setAttribute('stroke-width','1.5');
+    p.setAttribute('stroke-linecap','round');
+    p.setAttribute('stroke-linejoin','round');
+    p.setAttribute('fill','none');
+    svg.appendChild(p); paths[k]=p;
+  });
+
+  /* a faixa precisa de recorte redondo proprio: o quadro fica por fora */
+  const clip=document.createElement('span');
+  clip.className='scanclip';
+  const line=document.createElement('i');
+  line.className='scanline';
+  line.innerHTML='<b class="scanfade"></b><b class="scanedge"></b>';
+  clip.appendChild(line);
+
+  btn.insertBefore(clip, btn.firstChild);
+  btn.insertBefore(svg, btn.firstChild);
+
+  let W=0,H=0;
+  const desenhar=(pct)=>{
+    if(!W||!H) return;
+    const d=getCornerPaths(W,H,FRAME_R,armFor(pct,W,H));
+    paths.tl.setAttribute('d',d.tl);
+    paths.tr.setAttribute('d',d.tr);
+    paths.br.setAttribute('d',d.br);
+    paths.bl.setAttribute('d',d.bl);
+  };
+  const medir=()=>{
+    const w=btn.clientWidth+FRAME_PAD*2, h=btn.clientHeight+FRAME_PAD*2;
+    if(w<4||h<4||(w===W&&h===H)) return;
+    W=w; H=h;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    line.style.height=SCAN_BAND+'%';
+    desenhar(btn.classList.contains('scanning')? HOVER_BRACKET : IDLE_BRACKET);
+  };
+  medir();
+  if(window.ResizeObserver){
+    let pend=false;
+    new ResizeObserver(()=>{ if(pend)return; pend=true;
+      requestAnimationFrame(()=>{ pend=false; medir(); }); }).observe(btn);
+  }
+
+  /* velocidade: mesma conta do original */
+  const speed = 5 * (Math.max(0,Math.min(100,Math.round(SCAN_SPEED_PCT)))/50);
+  line.style.animationDuration = (SECONDS_AT_SPEED_1/Math.max(1,speed)) + 's';
+
+  let saida=null;
+  const ligar=()=>{
+    clearTimeout(saida);
+    btn.classList.add('scanning');
+    desenhar(HOVER_BRACKET);
+  };
+  const desligar=(atraso)=>{
+    clearTimeout(saida);
+    const parar=()=>{ btn.classList.remove('scanning'); desenhar(IDLE_BRACKET); };
+    if(atraso) saida=setTimeout(parar,atraso); else parar();
+  };
+
+  /* no celular nao ha hover: o toque liga, e o efeito segue por um instante
+     enquanto a camera abre. no desktop, o hover continua valendo. */
+  btn.addEventListener('pointerdown',ligar);
+  btn.addEventListener('pointerup',()=>desligar(900));
+  btn.addEventListener('pointercancel',()=>desligar(0));
+  btn.addEventListener('mouseenter',ligar);
+  btn.addEventListener('mouseleave',()=>desligar(0));
+}
+
+/* aplica aos botoes de camera da Home, da Coleção e da caixa 3D */
+function initScanButtons(){
+  document.querySelectorAll('.iconbtn').forEach(b=>{
+    const acao=b.getAttribute('onclick')||'';
+    if(acao.includes('openScan')) makeScanButton(b);
+  });
+}
+
+/* =========================================================
    SCANNER (identificação simulada)
    ========================================================= */
 let stream=null;
@@ -1990,7 +2604,7 @@ function initDockScroll(){
   }
 
   document.getElementById('cbrl').classList.add('on');
-  commTab(1); setYear(2023); applyLang();
+  commTab(1); setYear(2023); applyLang(); initScanButtons(); initSplash();
   syncTabInd(false);
   requestAnimationFrame(()=>syncTabInd(false));
   window.addEventListener('resize',()=>syncTabInd(false)); initDockScroll(); renderNews(); startNewsAutoScroll();
