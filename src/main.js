@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 window.THREE = THREE;
 
 /* =========================================================
@@ -24,10 +25,10 @@ const WATCHES = [
    pt:'O 58 do nome é 1958, ano da referência 7924, o primeiro Tudor com 200 metros de estanqueidade. A caixa de 39 mm e 11,9 mm de espessura foi a resposta direta ao público que achava a linha Black Bay grande demais — e virou o relógio que reposicionou a marca inteira. O calibre MT5402 é próprio, com espiral em silício e certificação COSC. É o argumento mais forte de que herança e preço acessível podem coexistir.',
    en:'The 58 stands for 1958, the year of reference 7924, the first Tudor waterproof to 200 metres. The 39 mm case, 11.9 mm thick, answered everyone who found the Black Bay line too large — and became the watch that repositioned the entire brand. The MT5402 is in-house, with a silicon hairspring and COSC certification. It is the strongest argument that heritage and accessible pricing can coexist.'},
 
-  {id:'w4', brand:'Cartier', model:'Tank Must', ref:'WSTA0041', year:2023, cat:'Dress', paid:19800, date:'2023-05-09',
+  {id:'w4', brand:'Cartier', model:'Santos', ref:'WSSA0018', year:2023, cat:'Dress', paid:19800, date:'2023-05-09',
    mkt:21400, dial:'#EFEDE6', bezel:'#C9C6BE', metal:'#C6C3BB', strap:'leather', strapColor:'#1A1A1D', papers:true, img:'/watches/w4.png',
-   pt:'Louis Cartier desenhou o Tank em 1917 inspirado na vista superior dos tanques Renault FT que cruzavam a frente ocidental: as brancards laterais são as esteiras, o mostrador é o compartimento da tripulação. Foi um dos primeiros relógios de pulso pensados como objeto de design, não como instrumento reduzido. O Must nasceu nos anos 1970 como a porta de entrada da marca, e a versão atual mantém os algarismos romanos, o trilho ferroviário dos minutos e a cabochão azul na coroa.',
-   en:'Louis Cartier drew the Tank in 1917 after the overhead view of the Renault FT tanks crossing the Western Front: the side brancards are the treads, the dial is the crew compartment. It was among the first wristwatches conceived as a design object rather than a shrunken instrument. The Must line began in the 1970s as the brand\'s entry point, and today\'s version keeps the Roman numerals, the railway minute track and the blue cabochon on the crown.'},
+   pt:'Louis Cartier criou o Santos em 1904 para o aviador Alberto Santos-Dumont, cansado de tirar o relógio de bolso do casaco em pleno voo para cronometrar suas manobras. É considerado o primeiro relógio de pulso masculino moderno: caixa quadrada de cantos arredondados, parafusos aparentes na luneta e pulseira integrada — um vocabulário que nenhuma outra marca ousava usar na época. A versão atual, relançada em 2018, adicionou o sistema QuickSwitch/SmartLink, que troca a pulseira sem ferramentas.',
+   en:'Louis Cartier built the Santos in 1904 for aviator Alberto Santos-Dumont, who was tired of pulling a pocket watch out mid-flight to time his maneuvers. It is considered the first modern men\'s wristwatch: a square case with rounded corners, exposed screws on the bezel and an integrated bracelet — a vocabulary no other maker dared use at the time. The current version, relaunched in 2018, added the QuickSwitch/SmartLink system, letting the bracelet be swapped without tools.'},
 
   {id:'w5', brand:'Seiko', model:'SKX007', ref:'7S26-0020', year:1998, cat:'Diver', paid:1900, date:'2018-02-11',
    mkt:3600, dial:'#0A0A0C', bezel:'#131317', metal:'#A9ACB2', strap:'rubber', strapColor:'#151518', papers:false, img:'/watches/w5.png',
@@ -316,7 +317,7 @@ function pic(w, size){
 }
 
 function getSvgPic(w, s){
-  const isRect = ((w&&w.model)||'').includes('Tank');
+  const isRect = ((w&&w.model)||'').includes('Santos');
   const dialC = (w&&w.dial) || '#0B0B0D';
   const metalC = (w&&w.metal) || '#B9BCC2';
   const bezelC = (w&&w.bezel) || '#111114';
@@ -2035,6 +2036,29 @@ function initBox(){
   addEventListener('resize',sizeBox);
 }
 
+/* modelo 3D real do Cartier Santos (GLB), carregado uma vez e clonado por instância */
+let santosModel = null;
+const pendingSantosSwaps = [];
+
+function normalizeSantosModel(root){
+  root.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; } });
+  const caseNode = root.getObjectByName('case') || root;
+  const caseBox = new THREE.Box3().setFromObject(caseNode);
+  const center = caseBox.getCenter(new THREE.Vector3());
+  const size = caseBox.getSize(new THREE.Vector3());
+  const scale = 0.8 / Math.max(size.x, size.z, 0.0001);
+  root.position.set(-center.x, -center.y, -center.z);
+  const wrap = new THREE.Group();
+  wrap.add(root);
+  wrap.scale.setScalar(scale);
+  return wrap;
+}
+
+new GLTFLoader().load('/models/cartier-santos.glb', gltf=>{
+  santosModel = normalizeSantosModel(gltf.scene);
+  pendingSantosSwaps.splice(0).forEach(g=>{ g.clear(); g.add(santosModel.clone(true)); });
+}, undefined, err=>console.warn('Não foi possível carregar o modelo 3D do Cartier Santos:', err));
+
 function mat(c,rough){ return new THREE.MeshStandardMaterial({color:c,roughness:rough??0.92,metalness:0.05}); }
 
 function makeCushion(){
@@ -2049,24 +2073,34 @@ function makeCushion(){
   return g;
 }
 
+function makeSantosPlaceholder(w){
+  const g=new THREE.Group();
+  const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial);
+  const body=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.2,0.92), new THREE.MeshStandardMaterial({color:caseC,roughness:0.28,metalness:0.85}));
+  const dial=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.06,0.74), new THREE.MeshStandardMaterial({color:dialC,roughness:0.5,metalness:0.1}));
+  dial.position.y=0.11; g.add(body); g.add(dial);
+  return g;
+}
+
 function makeWatch(w){
   const g=new THREE.Group();
-  const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial), bezC=new THREE.Color(w.bezel);
-  const isRect = w.model.includes('Tank');
+  g.userData={id:w.id,name:w.brand+' '+w.model,ref:w.ref+' · '+w.year};
 
-  let body, dial;
-  if(isRect){
-    body=new THREE.Mesh(new THREE.BoxGeometry(0.72,0.2,0.92), new THREE.MeshStandardMaterial({color:caseC,roughness:0.28,metalness:0.85}));
-    dial=new THREE.Mesh(new THREE.BoxGeometry(0.54,0.06,0.74), new THREE.MeshStandardMaterial({color:dialC,roughness:0.5,metalness:0.1}));
-  }else{
-    body=new THREE.Mesh(new THREE.CylinderGeometry(0.44,0.42,0.2,32), new THREE.MeshStandardMaterial({color:caseC,roughness:0.26,metalness:0.88}));
-    dial=new THREE.Mesh(new THREE.CylinderGeometry(0.33,0.33,0.06,32), new THREE.MeshStandardMaterial({color:dialC,roughness:0.45,metalness:0.12}));
-    const bez=new THREE.Mesh(new THREE.TorusGeometry(0.395,0.055,10,40), new THREE.MeshStandardMaterial({color:bezC,roughness:0.35,metalness:0.7}));
-    bez.rotation.x=Math.PI/2; bez.position.y=0.1; g.add(bez);
+  if(w.model.includes('Santos')){
+    if(santosModel) g.add(santosModel.clone(true));
+    else{ g.add(makeSantosPlaceholder(w)); pendingSantosSwaps.push(g); }
+    return g;
   }
+
+  const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial), bezC=new THREE.Color(w.bezel);
+
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.44,0.42,0.2,32), new THREE.MeshStandardMaterial({color:caseC,roughness:0.26,metalness:0.88}));
+  const dial=new THREE.Mesh(new THREE.CylinderGeometry(0.33,0.33,0.06,32), new THREE.MeshStandardMaterial({color:dialC,roughness:0.45,metalness:0.12}));
+  const bez=new THREE.Mesh(new THREE.TorusGeometry(0.395,0.055,10,40), new THREE.MeshStandardMaterial({color:bezC,roughness:0.35,metalness:0.7}));
+  bez.rotation.x=Math.PI/2; bez.position.y=0.1; g.add(bez);
   dial.position.y=0.11; g.add(body); g.add(dial);
 
-  const crys=new THREE.Mesh(isRect?new THREE.BoxGeometry(0.56,0.04,0.76):new THREE.CylinderGeometry(0.34,0.34,0.04,32),
+  const crys=new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.34,0.04,32),
     new THREE.MeshStandardMaterial({color:0xE6EAF0,roughness:0.06,metalness:0.1,transparent:true,opacity:0.22}));
   crys.position.y=0.15; g.add(crys);
 
@@ -2084,7 +2118,7 @@ function makeWatch(w){
   }
 
   const cr=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.09,14), new THREE.MeshStandardMaterial({color:caseC,roughness:0.3,metalness:0.85}));
-  cr.rotation.z=Math.PI/2; cr.position.set(isRect?0.4:0.47,0.06,0); g.add(cr);
+  cr.rotation.z=Math.PI/2; cr.position.set(0.47,0.06,0); g.add(cr);
 
   const bandC = w.strap==='metal' ? new THREE.Color(w.metal) : new THREE.Color(w.strapColor||0x2A1E14);
   const bandM = new THREE.MeshStandardMaterial({color:bandC,roughness:w.strap==='metal'?0.32:0.9,metalness:w.strap==='metal'?0.8:0.05});
@@ -2095,7 +2129,6 @@ function makeWatch(w){
     b.position.set(0,-0.28,s*0.86); b.rotation.x=s*1.05; g.add(b);
   });
 
-  g.userData={id:w.id,name:w.brand+' '+w.model,ref:w.ref+' · '+w.year};
   return g;
 }
 
