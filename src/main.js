@@ -520,6 +520,7 @@ function openActivity(){
 }
 
 function renderBars(){
+  if(!document.getElementById('bars')) return;
   const M = S.lang==='pt' ? ['J','F','M','A','M','J','J','A','S','O','N','D'] : ['J','F','M','A','M','J','J','A','S','O','N','D'];
   const vals = new Array(12).fill(0);
   active().forEach(w=>{ const [y,m]=w.date.split('-').map(Number); if(y===S.year) vals[m-1]+=w.paid; });

@@ -44,6 +44,15 @@ export function mountScanOrb(CW) {
   if (homeTop) homeTop.classList.add('ui-hide');
 
   if (typeof window.syncTabInd === 'function') window.syncTabInd(false);
+
+  /* a fonte do Google Fonts carrega depois do primeiro layout (display=swap) e muda
+     a largura dos rótulos das abas; sem isto a pílula fica com o tamanho errado
+     por um instante, até o usuário trocar de aba */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      if (typeof window.syncTabInd === 'function') window.syncTabInd(false);
+    });
+  }
 }
 
 /* Rótulo do orbe acompanha a troca de idioma. */
