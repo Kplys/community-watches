@@ -132,10 +132,33 @@ const REVIEWS = [
 let S = {theme:'dark', lang:'pt', cur:'BRL', priv:false, demo:true, sort:'recent', year:2023, hidden:new Set(), friends:new Set(), filter:null,
          req:{}, viewing:null};
 
-/* logo — caixa isométrica em linha, igual à identidade da marca */
-/* marca oficial em PNG, fundo transparente; o wordmark segue em texto */
-const LOGO_BOX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARIAAADuCAMAAADCznjHAAAAflBMVEVpY1Y0LyWOhXWEemlEOitrZViak4RdUjpqZFNpY1ODcWGKhHSJgnBTTTlOSTiDem2DfG2Jg3Obk4dPSjSAgIA/QDVCPTM7NCUpIxQWFRIAAAARDQciGg4sJRdvZlZORjYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABuRljrAAAAIHRSTlP9/vz9/h36+51eGKAepV9WnFmpKAT/h3Wp/gD+/v7+/kThMRoAACnNSURBVHja7X2JYiM5jix4SLKrz5npfbspgOT//+UDQDJPkkqVj3J1j3ene6bKtpQQCAQCARDun/31+vLnH/ev/AWfbRAbU7Lu8l+TlK9LjIGmafIOLv81iXy9WI9T/rrZ1/+a5H4Bxx6C/H/iKMHF13+6SV4BaFp/JXi5/JNNcgEbcGORCSl+ydPzSSb55mDKh2ZlkWky8AXD7OeY5CWmaXtq1CjTRPD1Ts9nmOTi5iiCB7tMEV7/cSZ5tWlqf+FkOP14+7VOz8eb5AXC1P1iiyDJ6fkHmeTi0sAe8kX8r/CVwuwHm+TFGpoefyEl9/KPMAmn3rB3Cv03Hm3C+fj1728SLmmO/oAdP0GG+Pby9zbJBSDgmVNTv2hK9uXvbJJXSDscgvkfKPQAtYNt+Aog5aNM8lLQmdlZJCR75SSEPVcxPx6kwAcdmtiAq/LfIQYILoZeWsYAP7oW/AiTXF7AtB/ZAxCC/rsfUn706fkAk1xs7DwtaE7mI4UE1rRLnsyk/MjT8/4meZGSZnlWNBWIMPLQP4YaNIijLOHx7JCcr9e/jUkuEQI2kTvU0wSluAFI1PATNeGPdBT4ABdpfQU+TfnxcQ4jBC40WRQU32GQcvn5TXLhZyzk2S6+pqscGn1+XKUb3ykK+bTxfyBefnaTCOHchKshZjNkN6kmQXUUMO0giz+MsH5Hk3SIEfaYayrVjXz6U9yE1AB7kIIrMuVHtHvezSQX16OKcuqdqB6nuD1UCO34ozHlR6BZeDcXSTsAXxMI7FHKAboG6EG70u75GU1ysdVFNs+GYQJn9uXwziSSs430NDq4jSi615/OJK8WOg8EEA61zs4lcnMndh0FP7sWfAeTXNjvW8QIYWpGicbDy2PHGLoE7acS1vAOLpKGJc0Zk+SgYfunZ6L4aY7yVpNcXqzp4VVoc4vdIyLwJXR4/Ik+Dc3CWw9Nx90Fg3U+cUi9/oVUhqFTIKMkptevb5KeizAY7xMikAYEbHKDfBzgMxRd8La4GtofaGqaKpMElEYmEUehQbvH/vbXFzbJqxT3NChpmseD81AqNAkeMbx8gxilG2U/QX4Bb3GR46mX/+2vqd/ulLLFOv5Ka9fZlX7Q7xHy97pf/vqSJslsYuvD5OfBQTSwV7ZIjNaCaftYOT2DswUfi2a/0yQv+inj8eEHoSCkGFPy+evmbBRajaZewmIn7JnWfKhGFL7fRY4SGpzgGqa9Amt+yGTA8j9TAvYTL5xacr4dMnAE8eVw2pdvX8kkglebvV2Oq+Us4CEsOrZEpgXkR8nwEwdIIeZQGva2pQmT6+ceYov9/mVMcqk4HY9l/NLz3P4lpeiVp14JtIQ74lPGtmn9LiyO1U3H+GG5B553EejE1Qjdww+3tKl3sPQtgr+JtKQnU0IDjR9bFUUvX8EkL0593KwbNVj6Mv0UAb7R7TIcJtkREENMO5yycq9VV2hPKnwQmn3OJBe35pW3XZow9dp3iS1CTecPESOxn0BMTT/Imq0wqw72r0wf0e55yiStkgbn1l3P+wMEO/8t7HhXHyTd+pigm3r6/kfTRxDW8FxcxWZgNc6UvNvImwTsJYsNdlAUkFMOepsiYK8EmGD5KI5FwLtL/86bREsaTRlbAM7eD2bqS30DmIgr7cBWqgYhGa56XIKrb/w0zo8d+iXCO7d7TptkEyzW791fTVuSVxORXx8qgrVcnOHFzYBPgZOVZ6DSOhoLxN++yDqyvCvEh7NxtXeeozVDBVqyFHHDqeGkKiRjJDGnGBznHc047d7F/NgP0Ozlc03y4npxtUOZrLo4Djd4JVm4Snkj+J4LP++CNdFg4c1iom0Y2YIUGnFPL399nkl2LrI6O9H2U6/Cz6vnn01zyUMeopWn1m6o/FNNAqugsdCvoh7YekZaUwrHauKdcs8Jk3BJg/synjQ/SiOvwZjU+idEx/9/m8MHuwwflUoP5cgAN1+Va/xjDPxttrK+IDgTN3F1biC33IXz1sunmOSv7tGovVzcYdIlwQJF4NpNKwCOHMnsHQ0ZmKQ4+yDDkxCMq/Sz/IXZtURSj0mRT43eReX2yCR/XBO2PhQZj6Aem6hOJSmKAygHz6jmMbiRi5eZAocx+jmA6l8UbjbJR5E23UJcfxLNVw7v0O4Zm+Tbi+sEi+BgPCcAjOFDpCgZJ/SyCDsJzkcDEuKSp+XnN80xeeAx5WayxV4+0iSvHcYC5ZR3C9T8tr2YLQRHLnhoUvVawGCqASkDDxFQsDEM3PQcbBurNUzDoO9Bbz49MCxpAmH7gSNOg1Sjny5NLnCGwWjxiCiwYtfJpTxOPRc5bG/+qAPnZ2uwTdULk9LtAZB48OVDTHLZBYsVKG+eZrPWi+iTMewX6syGVdm36/OiYlvxFzvVIonPXAxESeY0qNu86B1cDVlvOj0wJpyno+6BYqRBU2IGE1zR4cQ4TaKK2bJEOWSQ45rPRdAIsmp8eucp8F84a11MAxLG9COKeUOYhW6vN0upjijxmponBucx1xxNySLyk5lEjm1orKctaGFf8wTWR6fwxKwelRhhOHdle9wAoglYggju1fadzwa5dnrDECUM2MSsttt6QbOhtbKJqeqbKCGCS1x5auA4awW1z6FBgmAgZ28xSWmcddOFi0ITXe5uMAiJjv/jp3ZQAfD9qUH63q560yQvUCW6uKeKIk2DmoZmIYFREoADiQ+RkYdLQoBJrav0PEcLw8CMoVnklIsAtbA1kcsfzzmKDSF9nhCS/M/YZB/k22FQhn8nYd0wya+2gdPlFHHECyMswjHSxpKjyknQ85cYpHM1hOSjND+5tmPLCI4P7npjbzK1LpTmaJx8Kf5EzwhiS44t0fUEpNltTUMiStIs/Y4CGRqp13f1HYSjCVfRt3KeUCcvIEPfLwmEJa73pGtBhCisPLtTsIk9hQPO0h21iSvlkAGwNnMmNUhif/OdsyoN157r8u9+vt2zN8m37fgQrmdpBuMiWREvP1o4tlgeMn9eHEcTSRnMoTZyMRwNaQnHBsrZSPMv//lGR43zYWRgO0FsExQYYhwxKU9TbjuT/NHr2ZMOL3YNQiguIlCbMuCGnbqGQykbhUsWkr6NUutBebWguAQloPAftWZGOSsL2N/Ae9zXgqOP6kmQsjXJnzL6gO3GNLWTcvlART3E+RU0MAuVOlNoC3fkHINS/kzlEy8ScsGhJZVFExECtbseQlrzi7ShCGLoJ8LnCeu1SV4jdA4llzSEddyo/aK0iKG1rlfqeoN/OT0k/s5EcgSwsEiQkZph43HymX8/7NXDjHAkCzUqPn41DbOxK3LT0/M9Jrm89PJJsDBMNJO/+gV6Z1FWbr7Ebc50bIJAc+dYT0sWAlsOv+vwvWv3GDtpkGG4AgdVChY/tdCctc2O+gRhPZvk9y6zaRZVUY9LCpJJFsYPdCiL8dm2S8zJlj/uNX3NZwU1SHBMccEt372ckPxfrE8JUWLzgak/qdM5r7CGCuBF6YEd9IXTIIqIJCJJKnGcR3Ixn1RL4x0cGDHw6xLWaIg14Ak5sK4DhVJrlZ/VHyXhXpSVSlOvojC2uxhEDH9y0wOUthVDrKZihF0EV6TFkWlNV67PrlKhWeB/eH0KHVHTYnYTTJxlhEFzig3qlxp8vLXk1r/+OisvNCiRJVnbl0qLGY9HpNYbJrQhXc49l5MmudzsrX0mAlwNjiWZNvoQAv/H3+z15m8lXiZ7Y5uEzXwsCE7btXQyu3hzjOyFhls4E0b7qtIBcJzMxCTOQP28+y2dnqOUItv+djljkkvsDZMZF/tllQbymDQNaEUSk5EP0GfPzkM2orVBxaFywlYckJAMSYkE9ql4I8dHavnoGbtos8cbU6hmNkniAFuQe2XqW+86DQgFmRd8fWySX7dzvRs6MXVkH6bIsPiT9GGlVgS6RenRmozOpHjPtDXObPNsEYF1Ss4LdONf5Uu+4VMUudQzG4VXuLJJYKOMhLWvrnoFqlVfn5c9xH+kSYG7u3WPhu8cm6xVhQQlVqzYI61YBNiJb+SBUOFhaTtOID0ttogOJkkYSxzdC0ObjhW/sAyOD86sB+PfD1WArVF108og9A56KRJlJOa3Byaxvl+4FJYGG2SeYbSZCA8CmWRysyGVfBzmQTXY9uZy0aSZ06fgEv+J9jba/uoZHJXEh3JqsJRRaMxNUuIK06hHjrZfPFhqAN8cjMTMpjXJK3wZwwgzTbt9afJGvXGkikPSIph/u3w31EpwDq0xKr4ysncBY4pTXK8G2r0RS0IT5P9dW2FQ63MFwdNuyqUyKZ2s8MvAJBdpLvVZMgwNCMego4T/AxXNp2FKSeCDl/OCuV6Us59gZTnpkvPf6u8O1xAcOoqmgzckqE2utklSxMxXamoxWqcCHGUe2tnA3rEfNJDFJHxSYZBY4IgKCfziW7tZKx85RrhbiCHHQyybOcr22wzvrvKA2uGcBM5KXWcEnjV7veJGHmwuxE3lJElqRDmYaNqCYoIOaZBRTbcWZJOo0fr74I5CZUrXtURxf/ytYZDBcNTNtoRS9qSFaZixq4wNEwM7xmo9lWiw7EYphzxzrSmLPwrSUwkO+ym3L78g00GzcLGlWEuDXhUUpi13G5RMDQtTshPC8klxyiRJC2eWoWQCIGjrSV9LpcGoLS0+bPwzDE484vFdyLfzR6DVUFhmFtiv5GiScwMaB6wfAM12LchJmDZyMGz0ikgaBKFEr8RxzvqVvop2I2uGsTkfGw0TZaWAfJSiMsnskjh7fbkgmYILnxs6jgox4SHAGsd/zqUC4s4jJXuTd/Z2GwzUjmaDkExsgBROwpWMV5roqIHHVZ2JWvaSiL8XpImcLYLQZcF4MYHWI15gqa65jYWVUqOKMD5OsyIA8zOmwF4ADPuwrLZYqipBesFZFaHgtFKkE38y0u+JzkUpJToOjrNGFA/TDhL8zZFyW0xCOC3DhmG/pqZ+rvrRxAQri1C42utVQkdkVEKSMR3n2BrIfOXNhCbiX1MLG+WQVYCEELhs9MkL7ezE2rSAVM+FEkRLScHHtDTGAgbP5aa9OWfdzUI/6aqQowTnQ/I4Um5skrDE4bYcDBdaDDTIuZUWgPiRudQKq84Pe0nQ9RNy5JQ5MRVpC11ISi5iRl2aeDkUByEYPKdu0lIveSn5JKyL54uPxCIQnRmLm7R5vDfeiHdG/u+QeoxPa6h9oRR2RuFYYhYh8lRVEo0fVa5HUQDpGyxWkkS35RWCW2KNSvKiTOnoKdJfrn1/LO2eqiCQ4MnfxkWTkC6BLcKPyi6mPTDrpJMRABdeJGZdtY73RAlUIsRvcrOYGe0WoTDjhk3ugXvpRWBJ96nJKmJpbsnBJFSTKN+ZGut+OQW7OSGZDKii+EvQ8RORWXibH68Ux6W3gel6k/YX+xybUvzGSgRJ0txQsrEsjzLSVZXacH5xkpgvEoUGsbZkDxyMga3C7OIlWyjcr3q4/pdCvlePqOD55paedwbhOVAKV6SEQ6lWi0n+p5hENldy0AxJiIFopc0RbrJ2mqNLsKGkCaEbZVsdrdGcYT8QyUH/9PihRnTV7oF79EeEA/kk4bZRXosmTie+W1Uhg7hYoS3/osIGE8mol0Y6LZtCkEkEk3JD2ywsnr2CUcwepe/jKpWTv0esxi7qVZG9H4MSPGSEoemQgBkI9EFKzT1sknRE0DG3Ragz48nnojenJOmDauZaBK0gjXIs0hT99YHDofHZ92FbfIMVJZERWU3AGUBXFw9yT0gzWkYOL0GqSN9oV+K0rJdpc8n8Ib32TLJ4WYuPJTUZ3EKDXiLhj6QAwhzKZ5AjoIQkxlF2iwyBIHNU06ZXh2INz+ci8+D5AapFuL7mojLWNL0bWoqGX5LP3VLcbPrnCjPSEM1CDq/QzLjQ08YjaXxsLxTkh+X3nPScGzBVHCMeS/HqHOdNFAI2yPYb+QstdtKOSucPjAKE+QNBRf2o0J7TnVuFrc375ggMnH88zGDC4F5Epc/V7TcIYX0wyZrYHQhJgjQzj3/MLs3ZJIPv+aPSwiTZGyMPZ+seQj4VuanFwcXgVqHAyTq5lRcG0F6pkXgbffSIG6Xs8lkpgSUsjChSqMMA2TRRt0K+OTFJjy0hGNQOMjeUwjHyiiCKsaaGx9rMjHp9hWhL4k11A8nUwQrRxm5fhh3/KlBmRRQEdQaNUHz4zGqiJ+yKYJl4klAVk7yHXmXTrPoxe723F7j/FvstiTaPslo2sgo2UtqZcHOcNfmRZ2URO7vO7gX54qSaOM+avCqIlHk7CCSF9F+rasOVtAKTZAxXv2mIb7UEJOybVJxeAlc6qpZKnOx9zlJ7xT/YJG4ktBrt1Ze2VlqYI3kjQtpbGa/xuZ2jg69OeAJBGtLZuIXACLW4fFLil9bVKuIuQEyKQIRcEcm1DbA5qIwB62iGNLUc45jK5XScPE/ut7Nx4kj4Avff7QDBUMEo2ANuNpYvPkX8jr2osJIo8LJFxEQgyrMqKQspQ3HK4oKQF3/61YYBgl3ES1rTkLZavQsbVogPmb2KjkfqIiPkgcQRmmuJfShlzJVoAENpEpO8Xuvb6TXBTVeSy3WthDz9SkoQ8XsXyUThjriQc2Ffc2m9z+glaSwxuT1YEhzm7LL5UOXwef0LQruUVxlnqKBplSfN7bZyOfa/KazZcnmZ1j7VXDnJv29skotNdnTJggTMaYTwHZ8IziQ3iRQCH2nK6gDkAp6hpC27LNcDklzFsJ2UoMGiLs8Jjjab6LQ3gqWdJPVAdLcAi3BPasEte+7Ipbh670EqTprB2UhbUNhQNYkTtdc00qGB7BrpLp7hiiQJ+jYz1yoRRqmAdAuZbNq1Iai0e5QqxNzt4fJOyx43I0QdJsm20OYH/5SNJG+VIRn8j9kNsijvi7LzonZWdFguhhUL0K+GYwGGt1fxEjliVxgISAp32g5KMhrBGU9ogiJj1m/218QHVx+wARCCcNazfIlSnojNAyvbmVlNH6gQnr0iusnNIHAP6iXNcRG++K/m4bp6iZ3WtN8+lr4mrUyiFow0taq80riBoZ6Rk8qi6VKLJGG9XFgmvmAnXIoTuziA8xnGiisorZHW4Y+9j/+aHzWbj5GrnWJ39RqSE9XkfDqpNCBrNunL2dIyoxjZJN9KxunA/wJh+nvSlWqZh+601lN5O+kYOe1bG6a4Oki5L90StgkJrywTSkpbr9tkut5EHEVbF/zIUaZ7sLuZfC6bFN8VmgpzNdmX9601epGh2n2meyIMr6BYVT3m2Oir+D/MA3ng1hjCrLvL6pbIiTomuNmr9NTF64N0F/NYlAYKGWHQP5c/sUEfmeN1oGY5y8Fd0NGMZqpi35X+Wc/LzXXNGcRvi0k0E/ppLPcamkxTBj+X166EFX3ZKpw5ovKxUfYAxt7gOeVKywfzYU9F5FYPv4xIKaEgjXIBYiI876BP9jovDGeZLC1zEZwBY2/PW2XwNydxbRIZnQtxiFYJRr1nRficegR9CTsYya03PEkXw6j6l4y8UwaKDL2gcCRGKSsZqlB4KE4itqjdU6VeyE2R8Sqm2BSquRScK2MPBdyomDROEfqtnAhbPS9sTMKnFlUygj1WoLHjd10nsqeb4DypwPcGZDch2EZRFtnrFbTEsZKlYcFUKk5T9YYgFq8NM0quHLersK8i3oouoneHddNsuyC1pe7ImExcMQaDFQBoDpDMiUm2zeTdaKfZP3Z0YSDWMpZjphb+HPrJraff4Oq4Hlx+mKsVFeLVYkzFUKhlz1T4lClW1YgkNJKRYgb0/Kn4/b4Ujed8qKJKNFY1gaymDlOvRSqC3V0qzybx+5gwYJ4wY84hXc1InROI1KSVUNUiZ3XmUD93EZUUJ5CZg/yYghvzE3AZlOaiW37GOxnN4MQsYmlXs5lgRDmrnivgm2iZON/NAqWSClvkYNV5bLm3yR5MUi7uGYXR9rbNSvgIuSSAlF+QVBKctCRc9Q/mp4TSJM2NZnnZoqQt6SF/hLUVzCcHnCQgF/U2GemFgbRNLdeR8lEgWi0Kg11wLWeE7lVWhfrALQgVvuS+dgpc8m0XwE/UTD24cFtOtB+cYxVoplCnBHH1yjIznt0NM+pcYRdfcgAf9PI8UKfxtWlgnVD3ytWQdBkpJD5QMrIj3cjiI0i1kusK8ZpaiYNJ1skDBzGjI7ktTUOFwlyMxEH6glngjfOMCvgCqqSIz3sYsgeXEwhltlrOmASWlKRRGq2swM9toinvhpi1BWEAGdp/pya53doYN7XbIXM8G1WKAgTkxFMv7HCWhFiQbO2ji1KFFDjJcI5+wJldCksirq9+FS/hD8Z43VngJRxjHn9ZmhCesOPL0kVqyuMnK1Lg39qRI9hlCLHdzQmjIMwnPJGj3CFrvCXyscxhpLl/7E3QakOMxOdDP2O4mkzh40pcgiEJ3S8qd4myyc3CejMXu7n91bQImpa18t+PTPJg1U5e2tm/hY6POwPNjJwOry6tGoX7WLrG+ZtSXleSdXDa6M0cd0p5UmVTS4PUcfLDsxBYhX7lUWm0wz0/GLWsBWqS19jPqHE77nysekYkJdskuQNXou2bQMIHaoZyiwojH5ZbXEgxeQEZ9NJ3sd/JBiiT+5sdj1UQFVo6s2arY0sSxmySS+z7P4yXPxmbhvjfZVVjtSpWRYrRJgbhLEqvJTpOtflam1WparDWpGyOuSSJbYVBciGUeXLTTQ3hmkbk68gkVToUR3xb/4YOoWaEV/K7sklXQ4usTvYJYA2toUA0aQwGmZ9Ofi7cTeGwOExssiBXUYzczMqLZ5HwoNfSrQBFMscvOvYS1F5nGjgKjqqe8g68X/HRRoAWg32B+zJAvYxumswVOZIeh6LZCgO0MOMQGndqBWttrIxDDhFRmbFgOxQgzomyEzolGahJvsXBI+OM8rpfEUYzO4ETB0daxpk3UXDdMtBk35H5m2UvnxheIZsI+4TRNgmueag85zaSp1mnCY6vN0+rGtW7YvX+Rxiu0I98aoZskvv4iafBuoNZj0LDn04USKaYOEGZm+AnI91s8YQyjk+FCOD6NynDxugrJVepZSEPSIdSVq8DaX/EqZzk7jxzGow21V93yiRYlrT0Xkg17P5QP617FFd+Ql00YTlUiAxwEm2azB9ghQlSwXAR4EWZpb2q6GTEJCrbr+wVLtty9Wq/3VXFUBidTH8fVKqY8S01ixCd2CwJQ03iHllkKkLJoaNMDS5+6RZzJGCbCM06y4OxKowUmYijIOTuMaP0lFSQEnMHTJZ7xLWIdS9KyfWR0h/YaSUEaMuEsDQTa0g7d3CyLHwYRsOQcNN0osp5WdNRJiUKns8ZVikHUYtKpQ83WUMujILobgrVnZdMT/Uynl1WUWeCwVxfch47m2jMqsqbTUL42CrD8jgfLrmNvvOWOEgz6kj6cJlNVkCCCmQl/5HCGJEn1cVsYkhnOCtTYStSBSkCX9blBKlIOEBPiylk1KYTuoV8bhV9DJz1kpmOpv7Kpmmoo9ROqfQlsIYfrdJy+S5PhFFmt/JK9vlZdC+7rkYy+f7yEiVp2gwTCDMjIyjYFvuWOaZB7sVpZxLCCU8ZRfoHOOxw0QjCFP5j1Z3VsK30jywVaAxpy8kRcq0Q5Xl/g5Q9m1YZH4rUW1m8qeqPQxM7hDGb5KSb5Hw7WutyrHrWD0nRFesnmzOmKZJr4lIH0vFTllpQeBfZuT0fGxla2gwg87FzcQSc+jzS/gKOapIwnf+KQAP526Nej88cZR4/K4BV6CaKJrVv2pIwzKhOuhe5bZXLHlq/DzAujbBi/2EOBIeP2STmCZNMu3X5G2XponDrjoIIc0waIHVoI9/YR7eY/SZP8u1+xsksncitimo0x9clmjImNd1M4/cjfruVeG2TvHh8xiZTvQ+2x1gBdPm4HFHE91X4qYuMBIJdpa1J9XbdzZSvClBkuRSfHAIV0ZdZXUEsqIMbHbelqWCwpl6vWbylbJK/bHjKJJO5Nqab131V7e52OUqOKHmwT5FKkJ3rtwTLhQW0RWFsvcmqulNWKpVY5DINCfP6w+cY1rnFjYcfyJspfnUjQVrzEMaww8x+pQcaVT2YxxAVnpXp3sRQfqNAKz1i/UsxgeVEfFMpgMmiCyziD2Erc+ejWWj43lxsActNG9b9JbrXlZ5xFLvWV8pMqItLvKPt9tMWwg8qoyE1L8OKuOKYRHxCIsaT5jEUUd6tklE1rhpRQw5YcSpTcaEZYa6duYjFJPd/DfmxVjRd+6S2UfLW56qU0tnjwY1ZVo5PXpktSXR9VjBPxulULRgj8z/JhkqOM2DL8IZErwPUc2/q5F5adYpwZBLZQmjOnB0z/+Y0lwbpGmQrR1iAYAb4I0qBYvYjkQEkb2BGi+wY7BNeJ+PqZjV/Ww0k1RVvMvIaup49YHnCYHwYXtYbs/6y8MzRwYLgtSUFWSJmwK9bAxBpRFLK6+nAQDIG5uFDTSPb73TSUV8dO5/3R49omg41kgWC/Y8K48t2r9qfBz3mwCJB74TW9gIfAcvgSweI4lz5qSLc9BW1MvifZREpCdWMwUP0x6a2jAS6W5p7tyLuDBzeY7NcFUWIVpDdquM6gmF7k9zvDp7xkqoo5+dyISch0a5T6OK6Q5DWiWwPUyxDsy0GGGRnbO206/1CWvP0F42bbk083I9zPDhlg7Z5OvUg/4wjLABBFvLTwYO7b4FDPwNR1EsKOtWn6BRd5RisyS0sCNjDi4ObAwM8gBsNk9zvV5ieArPsHowt9R1q1uMMu4GFpnsltbJwwXEZLP0e6uQATElaxCXSXnVEg0ZyjwEBaB7mVXht7Xt9df6pwxM44UxZ2CLnhJK7ubWugPqpp7QjPRukN0wlmzrmFYylkWW6c4vzocEhlsUnTXK//xKfcROt4iqaBSuuslWp6b1T1DcKiZ+pCrbZZwhki2YAlS2hQaahgaIkqwUeUEM9k9z/cM8Ux8Uk9RHEnvtlKtv4sgd+DH5laQu2H1H3cePcxZOtBINOWg+DTSMC4YRJNB8/UfGISeryGRe1UbP7hErVgwO62sBuHi8jn9w+1kV/Nx0l7y9a6WAwnCMMPowCcOnvof/V+vMmMbiENOCadQr78Ef0oOqR2rbsBpq7K0kmd7hOsDdQqmWa5oaLaTHtdh1izC6MKFDqG6XAy+vwAod/9zVEe28zWKsBxl8yshWgRZQMQY9QSt46T/PeNpHeyRCWCzJ1rpssY6w3oB0fCPpb4IKFbn9nR3uM77T4djb1iEnm5+UD0jBJTY/9aE/KEQVdbihDgPK9nnGZKM9Fly8iRm0qdrbwxl4Thx5JQharJvvwMphfIJwB+LqZIRZeCer/t0nKwcXjZQtDpQm8Tl3wgYqybJqBz+gqd3Pt75Yby+o2dOGJK4N+He3m25qESls+yjJg6l7gNmqkygoTvXk5peiuRXmeh+n591d4ho1WTbp2iykSOpoQHxollG3KDy+W+uUEf5/SpFe3KyZTk0xdIX9vZ0ZdLxS1eyw6RbmLCgqzJbOffRAclvUKR2PN7PgDi6S6pfDx9WPfHnMGUsmmrKvWCxnYJLFD3yjsN9ggper2TS/L/SWGRC4gcyMNdRkF4aAL2Uwz60tVH/n6clXKmUvqfol0wktqBJVAIgenTzPMw5495Aeym6XGdvWs2CGL8IEEGm4PMszSVXjuKsNf+RmURDRTm5iRFRozmaZeUjyBejushiEqWdCNynOc7Y1u8hs6Xg86L3slAw8BqzkuZT954eXL4BJHzCapWs2YTdKXQK2Xq7TjnKg7qxhW7kGwpk/2236miSfCYF5gt1mZdfZa1G+j8WojaHwW0ZEcnBhGAvbe3a9rhJB1APyWbf82vJG2MMT4EIjg/tA8d3nuS/cRiURPU98bP6rMMVL/1sHiWu4RmA30CPM2zI6lRWZsOoe9zX4f7jO3Tl+7HywXZ6EKKaRQowmW7uM07rcN0Bf0dzWXaj8cA9bqtidR3g58u1xqdHnLRdy/9BzF2IKq8hpWcZrc1xicdOyRXMs1kNE6a6aeYH2+RWFTuogRQl4T+oDSyJPS8NYb7HtckJG9pJnQyiaJ84E23eaYkkdmJNKpe8YbdqUBRRYe5d6lIfTy1hvsC13dPtYk8pGgF3nQAujHISOUi96fky7osBt0xy7hYdt/XgXw+/3tJlG6uvkEXggWvY+eJOmscmGcP+rm5rpzip/tIliGZ91gP9o/sYYu1FmV/LxJ7q9gsryKjiWdbgST8Bo31UN+k+02TRhmpk4Gn33VrGPI3JbAU7/k5a032DfCLG5re6xIHXazMzTqnuAm9eAJdwkDGyZxH3xAj5C28X+/v6NJenR1Xcstc/ZbRATjBoo5q1vIV+H1/eCcw2kyu9zf1ST3+79jaA6CifSfjs1JLDuce+rl8a1qO57HfA8k3rzP4e1b32sSJZeaRR3XbMeZP+rdLztf72kGC0Y2pu26yKiHs+0wjm+1+G6TCF3dBUHNkN/OLaa+TxrP9ZQY6m7fC4ZXH5r7/f4xJrn/er5TWk96GsXQ8ZLa/B2ml51PJ/OH15e/xSTa1zhFWZV3Levzpm42nh6O4Q5MdoIaybyDeXhf3dtMwhHlCX0oPvZu3VxN3eA5SFmnNCCygOrhzVJvNIliFDrlJrODx3F5vCg81124aSWNa+X+M66qQp1Td2298esixASddJKQ2SEaGC04aP35IFQ8aCOu2YTf3niD/bMR5TTWGvQfUG/N2VxWm5e99seVTR2Ie9jdPGWRdzEJp55Ep4UGNKSjZRJJ2+O0xi2pe08UTfU+uYcfSoznrhZ+F5NwRHHhGYFbXWraOTx6n8F81QaNlPA0zuurV3Rnb0Z9J5Pc72epzk3LfMCjLAKZkerInIVn5vylwu9mkvufz4315MmcqadwoCIzoAbiWK7jG3cBKjrWxbv/uX++SYRcQnqGHsupp3utiGoBQzwiH7PlHB4nugDxiTuW39Mk938/GVHm7Nm7uNnZxr2wdafh+dwLt++9dfo9wmw6JUgp4Fq1BkOpFHRvhSI4O5II8NtTz/DOJrn/68mIMiB9xBNcA/GQXpgA8ZxDUptz/kSTcERJZ0Rhi6tAmVRqNijrViCzIwoDwLnca+DpJ3x/k9z/5cwTEYWGF2h3ejVwVpebnjw0H2QSxijxWYzip5Y36MFpWPFEL2/Kwy9P5N6PNYk4SucZWyzKiu3Yc+stk4STEzKyYPg7LPJBJhHgFp45PL3xCHfkvP15PtF811v/KJMUdfW5KFtI84ZHuLCXg+ho8YOQWtaR/t/9a5lEOIPwZEQ5Osp+J0AY7zRbYbmnc+9nmEQ6pecpSGymHrddeGRi6q4C3OXe26/3L2iSykI+5SjbjsfW0c6Q8NSXBHwJk9z/Zc2zVc+mcoT1hXPnu5vfk3s/yyS1pX6+QF7doLTdFGbgZNeID82b3vGHm0TU1c/xKGtngHnhIJyZcNB9n/D/7l/cJJmu/k7CrcJUinD6h1/vX98kjFHSaTBbOqGFRqrX7wGcO33hO2qaH2ISmdd4hjPA2VF0ewWacmn3wwI72df7z2ISAbMnmz25k5npaHRhVo8+tiMBXO4/j0kk9Rg6Qc3OSCzqQjm5esSfy1gmvs/DfJ5JshbyjJOsxAAupM2Y+WDiy9vf7j+dSU5NgG37c+6EDidDmAc6mq9qElFXP2MS8vb20D2q0OJy/zlNcv/Dysg4mpOZx51zK+Ne3+8tfrZJnnAUnfA9ZRKw72iRH2AS7WvgSTzrTpCsp3Q0X9skQleHk3WgowdRVS5evr3vu/shJrn/acMpafjDWILvmGl+rEnO5mN88F34XAP8a5vkJLk0Mgk+pRr5CUwijkLfaRIz9wlf738rk3Dq8fQGL2Fw+xEW+aEmObGH6miSGd+TS/+5//1MwhHFf5eXyC5Ec7n/HU2iqWewWqRtElLW+j/3v6lJdMfDs14SIP3vh72hH28SmQCj50wSbLrc/9YmkR0PRM3BJhcaLOSb2xI/gUlUe4Etbnarpi+Z5kPQyJczyf3Xa3MT5dokpghuPvLQfCWT6DKQI1u9Mkm+VPUGv330G/k6JmnS1euecKbtX+//JJPM5TF2vITgM97ulzKJsJChqy8hDy/3f55J7n9sO6VrkwBc7v9Ek8wRJZd3MO9gD/BZb/XrmeT+KqMGtLBquk7IfEJc/bomWaur640Q0V3u/2iTqJC4Hhzpb8SXT3zxr2mS+7d8PYFKbtDE1/t/TSI39kinVLR88ImH5kub5H6RAWvZSPbZb/HrmkR2ZSYX4eX+X5OsQ8rrH5//ov8f2ROjF3rNNioAAAAASUVORK5CYII=';
-const LOGO_SVG = `<img class="logo-box" src="${LOGO_BOX}" alt="">`;
+/* marca — caixa com tampa e três relógios, geometria da identidade visual
+   (mesma malha usada no board/ícone/splash: viewBox 100x100, unidade 25) */
+let brandMarkSeq=0;
+function brandMarkSVG(lidFill, bodyFill, cls){
+  const id='bmk'+(++brandMarkSeq);
+  return `<svg class="${cls||''}" viewBox="-4 -4 108 108" aria-hidden="true">
+<defs><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+<path d="M6.25 41 H93.75 V68.75 A12.5 12.5 0 0 1 81.25 81.25 H18.75 A12.5 12.5 0 0 1 6.25 68.75 Z" fill="#fff"/>
+<g fill="#000">
+<g transform="translate(25 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+<g transform="translate(50 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+<g transform="translate(75 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+</g>
+<g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+<g transform="translate(25 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+<g transform="translate(50 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+<g transform="translate(75 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+</g>
+</mask></defs>
+<path data-part="body" mask="url(#${id})" fill="${bodyFill}" d="M6.25 41 H93.75 V68.75 A12.5 12.5 0 0 1 81.25 81.25 H18.75 A12.5 12.5 0 0 1 6.25 68.75 Z"/>
+<path data-part="lid" fill="${lidFill}" d="M18.75 25 H81.25 A12.5 12.5 0 0 1 93.75 37.5 H6.25 A12.5 12.5 0 0 1 18.75 25 Z"/>
+</svg>`;
+}
+/* wordmark da marca: "COMMUNITY" em --text, "WATCHES" em --gold, colado sem espaço */
+function brandWordmarkHTML(){
+  return '<div class="wm">Community<span>Watches</span></div>';
+}
 
 const T = {
  pt:{searchPh:'Buscar relógios no catálogo',kPieces:'Peças',kMarket:'Valor de mercado',heroT:'Abrir minha caixa',
@@ -1270,471 +1293,123 @@ function addGrail(model){
 }
 
 /* =========================================================
-   TELA DE ABERTURA — porte do "Fluid Text" (Originkit)
-   Simulacao de fluidos Navier-Stokes em WebGL. Os shaders e a
-   logica sao os do componente original; o React foi trocado por
-   JS puro e o contexto e destruido ao sair, para nao concorrer
-   com o WebGL da caixa 3D.
+   TELA DE ABERTURA — mark + wordmark caindo sobre a caixa
+   Ver handoff de identidade visual: tampa gira de -100deg até 0,
+   hinge em (6.25, 39) no espaço 100x100 do SVG, revelação do
+   wordmark da esquerda pra direita, glow + glint no impacto.
    ========================================================= */
-const SPLASH = {
-  text:'Community Watches',
-  color:'#C9A127',
-  palette:['#C9A127','#FFD966','#f7d87a'],
-  splatRadius:7, splatForce:10, curl:50, densityDissipation:5,
-  font:{ family:'Parisienne, cursive', weight:400, size:96 }
-};
+let splashStop=null;
 
-const SHADING = true;
-const COLOR_SPEED = 0.125;
-const VELOCITY_DISSIPATION = 2;
-const PRESSURE = 1/20;
-const SIM_RESOLUTION = 128;
-const DYE_RESOLUTION = 512;          /* original 1440: reduzido para celular */
-const PRESSURE_ITERATIONS = 20;
-
-const V_SHADER = `
-precision highp float; attribute vec2 aPosition;
-varying vec2 vUv, vL, vR, vT, vB; uniform vec2 texelSize;
-void main(){ vUv=aPosition*0.5+0.5;
- vL=vUv-vec2(texelSize.x,0.0); vR=vUv+vec2(texelSize.x,0.0);
- vT=vUv+vec2(0.0,texelSize.y); vB=vUv-vec2(0.0,texelSize.y);
- gl_Position=vec4(aPosition,0.0,1.0); }`;
-
-const COPY_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv; uniform sampler2D uTexture;
-void main(){ gl_FragColor=texture2D(uTexture,vUv); }`;
-
-const CLEAR_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv; uniform sampler2D uTexture; uniform float value;
-void main(){ gl_FragColor=value*texture2D(uTexture,vUv); }`;
-
-const DISPLAY_SHADER = `
-precision highp float; precision highp sampler2D;
-varying vec2 vUv, vL, vR, vT, vB;
-uniform sampler2D uTexture; uniform sampler2D uMask;
-uniform vec2 texelSize; uniform vec4 uBase;
-void main(){
- float mask=texture2D(uMask,vUv).a;
- if(mask<=0.0) discard;
- vec3 c=texture2D(uTexture,vUv).rgb;
- #ifdef SHADING
-  vec3 lc=texture2D(uTexture,vL).rgb, rc=texture2D(uTexture,vR).rgb;
-  vec3 tc=texture2D(uTexture,vT).rgb, bc=texture2D(uTexture,vB).rgb;
-  float dx=length(rc)-length(lc), dy=length(tc)-length(bc);
-  vec3 n=normalize(vec3(dx,dy,length(texelSize)));
-  float diffuse=clamp(dot(n,vec3(0.0,0.0,1.0))+0.7,0.7,1.0);
-  c*=diffuse;
- #endif
- float d=clamp(max(c.r,max(c.g,c.b)),0.0,1.0);
- vec3 color=uBase.rgb*uBase.a*(1.0-d)+c;
- float m=max(color.r,max(color.g,color.b));
- if(m>1.0) color/=m;
- gl_FragColor=vec4(color, mask*max(uBase.a,d)); }`;
-
-const SPLAT_SHADER = `
-precision highp float; precision highp sampler2D; varying vec2 vUv;
-uniform sampler2D uTarget; uniform float aspectRatio;
-uniform vec3 color; uniform vec2 point; uniform float radius;
-void main(){ vec2 p=vUv-point.xy; p.x*=aspectRatio;
- vec3 splat=exp(-dot(p,p)/radius)*color;
- gl_FragColor=vec4(texture2D(uTarget,vUv).xyz+splat,1.0); }`;
-
-const ADVECTION_SHADER = `
-precision highp float; precision highp sampler2D; varying vec2 vUv;
-uniform sampler2D uVelocity; uniform sampler2D uSource;
-uniform vec2 texelSize, dyeTexelSize; uniform float dt, dissipation;
-vec4 bilerp(sampler2D sam, vec2 uv, vec2 tsize){
- vec2 st=uv/tsize-0.5; vec2 iuv=floor(st), fuv=fract(st);
- vec4 a=texture2D(sam,(iuv+vec2(0.5,0.5))*tsize), b=texture2D(sam,(iuv+vec2(1.5,0.5))*tsize);
- vec4 c=texture2D(sam,(iuv+vec2(0.5,1.5))*tsize), d=texture2D(sam,(iuv+vec2(1.5,1.5))*tsize);
- return mix(mix(a,b,fuv.x),mix(c,d,fuv.x),fuv.y); }
-void main(){
- #ifdef MANUAL_FILTERING
-  vec2 coord=vUv-dt*bilerp(uVelocity,vUv,texelSize).xy*texelSize;
-  vec4 result=bilerp(uSource,coord,dyeTexelSize);
- #else
-  vec2 coord=vUv-dt*texture2D(uVelocity,vUv).xy*texelSize;
-  vec4 result=texture2D(uSource,coord);
- #endif
- gl_FragColor=result/(1.0+dissipation*dt); }`;
-
-const DIVERGENCE_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
-void main(){ float L=texture2D(uVelocity,vL).x, R=texture2D(uVelocity,vR).x;
- float T=texture2D(uVelocity,vT).y, B=texture2D(uVelocity,vB).y;
- vec2 C=texture2D(uVelocity,vUv).xy;
- if(vL.x<0.0){L=-C.x;} if(vR.x>1.0){R=-C.x;}
- if(vT.y>1.0){T=-C.y;} if(vB.y<0.0){B=-C.y;}
- gl_FragColor=vec4(0.5*(R-L+T-B),0.0,0.0,1.0); }`;
-
-const CURL_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv,vL,vR,vT,vB; uniform sampler2D uVelocity;
-void main(){ float L=texture2D(uVelocity,vL).y, R=texture2D(uVelocity,vR).y;
- float T=texture2D(uVelocity,vT).x, B=texture2D(uVelocity,vB).x;
- gl_FragColor=vec4(0.5*(R-L-T+B),0.0,0.0,1.0); }`;
-
-const VORTICITY_SHADER = `
-precision highp float; precision highp sampler2D;
-varying vec2 vUv,vL,vR,vT,vB;
-uniform sampler2D uVelocity; uniform sampler2D uCurl;
-uniform float curl, dt;
-void main(){ float L=texture2D(uCurl,vL).x, R=texture2D(uCurl,vR).x;
- float T=texture2D(uCurl,vT).x, B=texture2D(uCurl,vB).x, C=texture2D(uCurl,vUv).x;
- vec2 force=0.5*vec2(abs(T)-abs(B),abs(R)-abs(L));
- force/=length(force)+0.0001; force*=curl*C; force.y*=-1.0;
- vec2 velocity=texture2D(uVelocity,vUv).xy+force*dt;
- gl_FragColor=vec4(min(max(velocity,-1000.0),1000.0),0.0,1.0); }`;
-
-const PRESSURE_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv,vL,vR,vT,vB;
-uniform sampler2D uPressure; uniform sampler2D uDivergence;
-void main(){ float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x;
- float T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
- float divergence=texture2D(uDivergence,vUv).x;
- gl_FragColor=vec4((L+R+B+T-divergence)*0.25,0.0,0.0,1.0); }`;
-
-const GRADIENT_SHADER = `
-precision mediump float; precision mediump sampler2D;
-varying highp vec2 vUv,vL,vR,vT,vB;
-uniform sampler2D uPressure; uniform sampler2D uVelocity;
-void main(){ float L=texture2D(uPressure,vL).x, R=texture2D(uPressure,vR).x;
- float T=texture2D(uPressure,vT).x, B=texture2D(uPressure,vB).x;
- vec2 velocity=texture2D(uVelocity,vUv).xy-vec2(R-L,T-B);
- gl_FragColor=vec4(velocity,0.0,1.0); }`;
-
-function splashColor(hex, mult){
-  let v=String(hex).replace('#','');
-  if(v.length===3) v=v.split('').map(c=>c+c).join('');
-  const n=parseInt(v.slice(0,6),16);
-  if(!Number.isFinite(n)) return {r:0,g:0,b:0};
-  return {r:((n>>16&255)/255)*mult, g:((n>>8&255)/255)*mult, b:((n&255)/255)*mult};
+function splashLidSVG(){
+  return `<svg id="splashMark" viewBox="-4 -4 108 108" style="width:1.42em;height:1.42em;flex:none;overflow:visible">
+<defs><mask id="splashMask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+<path d="M6.25 41 H93.75 V68.75 A12.5 12.5 0 0 1 81.25 81.25 H18.75 A12.5 12.5 0 0 1 6.25 68.75 Z" fill="#fff"/>
+<g fill="#000">
+<g transform="translate(25 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+<g transform="translate(50 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+<g transform="translate(75 57.5)"><path d="M-4.6 -3 H4.6 L3.9 -11.5 A3.6 3.6 0 0 0 -3.9 -11.5 Z"/><path d="M-4.6 3 H4.6 L3.9 11.5 A3.6 3.6 0 0 1 -3.9 11.5 Z"/><rect x="7" y="-2" width="3.4" height="4" rx="1.2"/><circle r="7.4"/></g>
+</g>
+<g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">
+<g transform="translate(25 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+<g transform="translate(50 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+<g transform="translate(75 57.5)"><path d="M0 0V-4.4"/><path d="M0 0 3.2 2"/></g>
+</g>
+</mask></defs>
+<path data-part="body" mask="url(#splashMask)" fill="#8A74237E" d="M6.25 41 H93.75 V68.75 A12.5 12.5 0 0 1 81.25 81.25 H18.75 A12.5 12.5 0 0 1 6.25 68.75 Z"/>
+<g class="splash-lid" data-part="lid" style="transform-box:view-box;transform-origin:6.25px 39px;transform:rotate(-100deg)">
+<path d="M18.75 25 H81.25 A12.5 12.5 0 0 1 93.75 37.5 H6.25 A12.5 12.5 0 0 1 18.75 25 Z" fill="#00000059"/>
+</g>
+</svg>`;
 }
 
-let splashStop=null;
+/* som de fechamento sintetizado (thunk + click + shimmer), so como referencia de
+   carater; navegador so toca depois de um gesto do usuario, entao costuma falhar
+   silenciosamente no primeiro load — isso e esperado, nunca trava a animacao */
+let splashAC=null;
+function splashThunk(){
+  try{
+    splashAC = splashAC || new (window.AudioContext||window.webkitAudioContext)();
+    if(splashAC.state==='suspended') splashAC.resume();
+    if(splashAC.state!=='running') return;
+    const ac=splashAC, t=ac.currentTime;
+
+    const o=ac.createOscillator(), g=ac.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(190,t); o.frequency.exponentialRampToValueAtTime(54,t+.13);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.42,t+.008); g.gain.exponentialRampToValueAtTime(.0008,t+.24);
+    o.connect(g).connect(ac.destination); o.start(t); o.stop(t+.26);
+
+    const len=Math.floor(ac.sampleRate*.085);
+    const buf=ac.createBuffer(1,len,ac.sampleRate), d=buf.getChannelData(0);
+    for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3.2);
+    const src=ac.createBufferSource(); src.buffer=buf;
+    const f=ac.createBiquadFilter(); f.type='bandpass'; f.frequency.value=2300; f.Q.value=.9;
+    const ng=ac.createGain(); ng.gain.value=.16;
+    src.connect(f).connect(ng).connect(ac.destination); src.start(t);
+
+    const s=ac.createOscillator(), sg=ac.createGain();
+    s.type='sine'; s.frequency.setValueAtTime(2600,t+.06); s.frequency.exponentialRampToValueAtTime(5400,t+.42);
+    sg.gain.setValueAtTime(.0001,t+.06); sg.gain.exponentialRampToValueAtTime(.045,t+.14); sg.gain.exponentialRampToValueAtTime(.0005,t+.5);
+    s.connect(sg).connect(ac.destination); s.start(t+.06); s.stop(t+.52);
+  }catch(e){}
+}
+
+/* SPEED < 1 alonga todos os tempos abaixo na mesma proporcao (divide por SPEED),
+   dando folga pra animacao inteira ser vista antes da splash sair */
+const SPLASH_SPEED = 0.62;
+let splashHoldMs = 0;
 
 function startSplash(){
   const wrap=document.createElement('div');
   wrap.id='splash';
-  wrap.innerHTML='<canvas id="splashC"></canvas>'+
-    '<div id="splashHint"></div>';
+  wrap.innerHTML = '<div id="splashStage">' + splashLidSVG() +
+    '<div class="splash-word-clip"><div class="splash-word">Community<span>Watches</span><div class="splash-glint"></div></div></div></div>';
   document.body.appendChild(wrap);
 
-  const canvas=document.getElementById('splashC');
-  const params={alpha:true,depth:false,stencil:false,antialias:false,premultipliedAlpha:false};
-  let isWebGL2=true;
-  let gl=canvas.getContext('webgl2',params);
-  if(!gl){ isWebGL2=false; gl=canvas.getContext('webgl',params)||canvas.getContext('experimental-webgl',params); }
-  if(!gl){ finishSplash(true); return; }        /* sem WebGL: fecha na hora */
-  const g=gl;
+  const lid=wrap.querySelector('.splash-lid'), clip=wrap.querySelector('.splash-word-clip'),
+        word=wrap.querySelector('.splash-word'), mark=wrap.querySelector('#splashMark'),
+        glint=wrap.querySelector('.splash-glint');
+  const timers=[]; const ms=n=>Math.round(n/SPLASH_SPEED);
+  const at=(t,fn)=>timers.push(setTimeout(fn,ms(t)));
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let halfFloat, linear;
-  if(isWebGL2){ g.getExtension('EXT_color_buffer_float'); linear=g.getExtension('OES_texture_float_linear'); }
-  else { halfFloat=g.getExtension('OES_texture_half_float'); linear=g.getExtension('OES_texture_half_float_linear'); }
-  g.clearColor(0,0,0,0);
-  const halfType = isWebGL2? g.HALF_FLOAT : (halfFloat && halfFloat.HALF_FLOAT_OES);
+  if(reduce){
+    clip.style.clipPath='inset(0)';
+    word.style.transform='none';
+    lid.style.transform='rotate(0deg)';
+    splashHoldMs=700;
+    splashStop=()=>timers.forEach(clearTimeout);
+    return;
+  }
 
-  const supports=(inFmt,fmt,type)=>{
-    const tex=g.createTexture(); g.bindTexture(g.TEXTURE_2D,tex);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.NEAREST);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.NEAREST);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
-    g.texImage2D(g.TEXTURE_2D,0,inFmt,4,4,0,fmt,type,null);
-    const fbo=g.createFramebuffer(); g.bindFramebuffer(g.FRAMEBUFFER,fbo);
-    g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
-    const ok=g.checkFramebufferStatus(g.FRAMEBUFFER)===g.FRAMEBUFFER_COMPLETE;
-    g.deleteFramebuffer(fbo); g.deleteTexture(tex); return ok;
-  };
-  const fmtOf=(inFmt,fmt,type)=>{
-    if(!supports(inFmt,fmt,type)){
-      if(inFmt===g.R16F) return fmtOf(g.RG16F,g.RG,type);
-      if(inFmt===g.RG16F) return fmtOf(g.RGBA16F,g.RGBA,type);
-      return null;
-    }
-    return {internalFormat:inFmt,format:fmt};
-  };
-  const fRGBA = isWebGL2? fmtOf(g.RGBA16F,g.RGBA,halfType) : fmtOf(g.RGBA,g.RGBA,halfType);
-  const fRG   = isWebGL2? fmtOf(g.RG16F,g.RG,halfType)     : fmtOf(g.RGBA,g.RGBA,halfType);
-  const fR    = isWebGL2? fmtOf(g.R16F,g.RED,halfType)     : fmtOf(g.RGBA,g.RGBA,halfType);
-  if(!fRGBA||!fRG||!fR){ finishSplash(true); return; }
+  at(80,()=>{
+    clip.style.transition='clip-path '+ms(760)+'ms cubic-bezier(.16,.84,.3,1)';
+    clip.style.clipPath='inset(0)';
+    word.style.transition='transform '+ms(880)+'ms cubic-bezier(.16,.84,.3,1)';
+    word.style.transform='translateX(0)';
+  });
+  at(960,()=>{
+    lid.style.transition='transform '+ms(270)+'ms cubic-bezier(.5,0,.85,.5)';
+    lid.style.transform='rotate(3deg)';
+  });
+  at(1230,()=>{
+    lid.style.transition='transform '+ms(150)+'ms cubic-bezier(.25,1.4,.5,1)';
+    lid.style.transform='rotate(0deg)';
+    splashThunk();
+    mark.style.transition='filter '+ms(220)+'ms ease-out';
+    mark.style.filter='drop-shadow(0 0 16px rgba(235,210,124,.75)) brightness(1.3)';
+    glint.style.transition='transform '+ms(700)+'ms cubic-bezier(.3,.1,.3,1), opacity '+ms(700)+'ms ease-out';
+    glint.style.opacity='1';
+    glint.style.transform='rotate(14deg) translateX(420%)';
+  });
+  at(1560,()=>{
+    mark.style.transition='filter '+ms(520)+'ms ease-in';
+    mark.style.filter='none';
+    glint.style.opacity='0';
+  });
 
-  const compile=(type,src,defs)=>{
-    const sh=g.createShader(type);
-    g.shaderSource(sh,(defs? defs.map(d=>`#define ${d}\n`).join('') : '')+src);
-    g.compileShader(sh); return sh;
-  };
-  const program=(vs,fs)=>{ const p=g.createProgram();
-    g.attachShader(p,vs); g.attachShader(p,fs); g.linkProgram(p); return p; };
-  const uniformsOf=p=>{ const u={}; const n=g.getProgramParameter(p,g.ACTIVE_UNIFORMS);
-    for(let i=0;i<n;i++){ const nm=g.getActiveUniform(p,i).name; u[nm]=g.getUniformLocation(p,nm); } return u; };
-  const mk=(vs,src,defs)=>{ const p=program(vs,compile(g.FRAGMENT_SHADER,src,defs));
-    return {p, u:uniformsOf(p), bind(){ g.useProgram(p); }}; };
-
-  const vs=compile(g.VERTEX_SHADER,V_SHADER);
-  const copyP=mk(vs,COPY_SHADER), clearP=mk(vs,CLEAR_SHADER), splatP=mk(vs,SPLAT_SHADER);
-  const advP=mk(vs,ADVECTION_SHADER, linear? undefined : ['MANUAL_FILTERING']);
-  const divP=mk(vs,DIVERGENCE_SHADER), curlP=mk(vs,CURL_SHADER),
-        vortP=mk(vs,VORTICITY_SHADER), pressP=mk(vs,PRESSURE_SHADER), gradP=mk(vs,GRADIENT_SHADER);
-  const dispP=mk(vs,DISPLAY_SHADER, (linear&&SHADING)? ['SHADING'] : undefined);
-
-  const buf=g.createBuffer(), idx=g.createBuffer();
-  g.bindBuffer(g.ARRAY_BUFFER,buf);
-  g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,-1,1,1,1,1,-1]),g.STATIC_DRAW);
-  g.bindBuffer(g.ELEMENT_ARRAY_BUFFER,idx);
-  g.bufferData(g.ELEMENT_ARRAY_BUFFER,new Uint16Array([0,1,2,0,2,3]),g.STATIC_DRAW);
-  g.vertexAttribPointer(0,2,g.FLOAT,false,0,0); g.enableVertexAttribArray(0);
-
-  const blit=(target,clear)=>{
-    if(target==null){ g.viewport(0,0,g.drawingBufferWidth,g.drawingBufferHeight); g.bindFramebuffer(g.FRAMEBUFFER,null); }
-    else { g.viewport(0,0,target.width,target.height); g.bindFramebuffer(g.FRAMEBUFFER,target.fbo); }
-    if(clear){ g.clearColor(0,0,0,target==null?0:1); g.clear(g.COLOR_BUFFER_BIT); }
-    g.drawElements(g.TRIANGLES,6,g.UNSIGNED_SHORT,0);
-  };
-  const createFBO=(w,h,inFmt,fmt,type,param)=>{
-    g.activeTexture(g.TEXTURE0);
-    const tex=g.createTexture(); g.bindTexture(g.TEXTURE_2D,tex);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,param);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,param);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
-    g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
-    g.texImage2D(g.TEXTURE_2D,0,inFmt,w,h,0,fmt,type,null);
-    const fbo=g.createFramebuffer(); g.bindFramebuffer(g.FRAMEBUFFER,fbo);
-    g.framebufferTexture2D(g.FRAMEBUFFER,g.COLOR_ATTACHMENT0,g.TEXTURE_2D,tex,0);
-    g.viewport(0,0,w,h); g.clear(g.COLOR_BUFFER_BIT);
-    return {texture:tex,fbo,width:w,height:h,texelSizeX:1/w,texelSizeY:1/h,
-      attach(id){ g.activeTexture(g.TEXTURE0+id); g.bindTexture(g.TEXTURE_2D,tex); return id; }};
-  };
-  const killFBO=t=>{ if(!t)return; g.deleteFramebuffer(t.fbo); g.deleteTexture(t.texture); };
-  const createDouble=(w,h,inFmt,fmt,type,param)=>{
-    let a=createFBO(w,h,inFmt,fmt,type,param), b=createFBO(w,h,inFmt,fmt,type,param);
-    return {width:w,height:h,texelSizeX:a.texelSizeX,texelSizeY:a.texelSizeY,
-      get read(){return a}, set read(v){a=v}, get write(){return b}, set write(v){b=v},
-      swap(){ const t=a; a=b; b=t; }};
-  };
-  const killDouble=t=>{ if(!t)return; killFBO(t.read); killFBO(t.write); };
-
-  const resolutionOf=res=>{
-    let ar=g.drawingBufferWidth/g.drawingBufferHeight;
-    if(ar<1) ar=1/ar;
-    const min=Math.round(res), max=Math.round(res*ar);
-    return g.drawingBufferWidth>g.drawingBufferHeight? {width:max,height:min} : {width:min,height:max};
-  };
-
-  let dye,velocity,divergence,curlF,pressureF;
-  const initFBOs=()=>{
-    const simRes=resolutionOf(SIM_RESOLUTION);
-    const dyeRes=resolutionOf(linear? DYE_RESOLUTION : Math.min(DYE_RESOLUTION,256));
-    const filt = linear? g.LINEAR : g.NEAREST;
-    g.disable(g.BLEND);
-    killDouble(dye); killDouble(velocity);
-    dye=createDouble(dyeRes.width,dyeRes.height,fRGBA.internalFormat,fRGBA.format,halfType,filt);
-    velocity=createDouble(simRes.width,simRes.height,fRG.internalFormat,fRG.format,halfType,filt);
-    killFBO(divergence); killFBO(curlF); killDouble(pressureF);
-    divergence=createFBO(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
-    curlF=createFBO(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
-    pressureF=createDouble(simRes.width,simRes.height,fR.internalFormat,fR.format,halfType,g.NEAREST);
-  };
-
-  /* mascara: o texto da marca, desenhado num canvas 2D */
-  const MASK_UNIT=8;
-  const maskCanvas=document.createElement('canvas');
-  const maskTex=g.createTexture();
-  g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
-  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MIN_FILTER,g.LINEAR);
-  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_MAG_FILTER,g.LINEAR);
-  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE);
-  g.texParameteri(g.TEXTURE_2D,g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE);
-
-  let maskKey='';
-  const paintMask=()=>{
-    const w=Math.max(1,canvas.width), h=Math.max(1,canvas.height);
-    const key=w+'x'+h;
-    if(key===maskKey) return;
-    maskKey=key;
-    maskCanvas.width=w; maskCanvas.height=h;
-    const ctx=maskCanvas.getContext('2d'); if(!ctx) return;
-    ctx.clearRect(0,0,w,h);
-    const f=SPLASH.font;
-    /* corpo proporcional a largura, para caber em qualquer tela */
-    let size=Math.min(f.size, w/(SPLASH.text.length*0.34));
-    ctx.fillStyle='#fff'; ctx.textBaseline='middle'; ctx.textAlign='center';
-    ctx.font=`${f.weight} ${size}px ${f.family}`;
-    ctx.fillText(SPLASH.text, w/2, h/2);
-    g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
-    g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,true);
-    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,maskCanvas);
-    g.pixelStorei(g.UNPACK_FLIP_Y_WEBGL,false);
-  };
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(()=>{ maskKey=''; });
-
-  let phase=Math.random();
-  const paletteAt=p=>{
-    const list=SPLASH.palette, scaled=p*list.length;
-    const i=Math.floor(scaled)%list.length;
-    const a=splashColor(list[i],0.5), b=splashColor(list[(i+1)%list.length],0.5);
-    const f=scaled-Math.floor(scaled);
-    return {r:a.r+(b.r-a.r)*f, g:a.g+(b.g-a.g)*f, b:a.b+(b.b-a.b)*f};
-  };
-
-  const pointer={texcoordX:.5,texcoordY:.5,prevTexcoordX:.5,prevTexcoordY:.5,
-                 deltaX:0,deltaY:0,moved:false,color:paletteAt(phase)};
-  const radius=SPLASH.splatRadius/20, force=SPLASH.splatForce*1000;
-  const dissip=SPLASH.densityDissipation*0.5;
-
-  const correctRadius=r=>{ const ar=canvas.width/canvas.height; return ar>1? r*ar : r; };
-  const splat=(x,y,dx,dy,c)=>{
-    g.disable(g.BLEND); splatP.bind();
-    g.uniform1i(splatP.u.uTarget, velocity.read.attach(0));
-    g.uniform1f(splatP.u.aspectRatio, canvas.width/canvas.height);
-    g.uniform2f(splatP.u.point,x,y);
-    g.uniform3f(splatP.u.color,dx,dy,0);
-    g.uniform1f(splatP.u.radius, correctRadius(radius/100));
-    blit(velocity.write); velocity.swap();
-    g.uniform1i(splatP.u.uTarget, dye.read.attach(0));
-    g.uniform3f(splatP.u.color,c.r,c.g,c.b);
-    blit(dye.write); dye.swap();
-  };
-
-  const texcoords=(cx,cy)=>{ const r=canvas.getBoundingClientRect();
-    return {x:r.width>0?(cx-r.left)/r.width:0, y:r.height>0?1-(cy-r.top)/r.height:0}; };
-  const onMove=e=>{
-    const tc=texcoords(e.clientX,e.clientY);
-    pointer.prevTexcoordX=pointer.texcoordX; pointer.prevTexcoordY=pointer.texcoordY;
-    pointer.texcoordX=tc.x; pointer.texcoordY=tc.y;
-    const ar=canvas.width/canvas.height;
-    pointer.deltaX=(pointer.texcoordX-pointer.prevTexcoordX)*(ar<1?ar:1);
-    pointer.deltaY=(pointer.texcoordY-pointer.prevTexcoordY)*(ar>1?1/ar:1);
-    pointer.moved=Math.abs(pointer.deltaX)>0||Math.abs(pointer.deltaY)>0;
-  };
-  const onDown=e=>{
-    const tc=texcoords(e.clientX,e.clientY);
-    pointer.texcoordX=tc.x; pointer.texcoordY=tc.y;
-    pointer.prevTexcoordX=tc.x; pointer.prevTexcoordY=tc.y;
-    const c=paletteAt(phase);
-    splat(tc.x,tc.y,10*(Math.random()-0.5),30*(Math.random()-0.5),
-          {r:c.r*10,g:c.g*10,b:c.b*10});
-  };
-  wrap.addEventListener('pointermove',onMove,{passive:true});
-  wrap.addEventListener('pointerdown',onDown,{passive:true});
-
-  const step=dt=>{
-    g.disable(g.BLEND);
-    curlP.bind();
-    g.uniform2f(curlP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    g.uniform1i(curlP.u.uVelocity,velocity.read.attach(0)); blit(curlF);
-
-    vortP.bind();
-    g.uniform2f(vortP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    g.uniform1i(vortP.u.uVelocity,velocity.read.attach(0));
-    g.uniform1i(vortP.u.uCurl,curlF.attach(1));
-    g.uniform1f(vortP.u.curl,SPLASH.curl); g.uniform1f(vortP.u.dt,dt);
-    blit(velocity.write); velocity.swap();
-
-    divP.bind();
-    g.uniform2f(divP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    g.uniform1i(divP.u.uVelocity,velocity.read.attach(0)); blit(divergence);
-
-    clearP.bind();
-    g.uniform1i(clearP.u.uTexture,pressureF.read.attach(0));
-    g.uniform1f(clearP.u.value,PRESSURE);
-    blit(pressureF.write); pressureF.swap();
-
-    pressP.bind();
-    g.uniform2f(pressP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    g.uniform1i(pressP.u.uDivergence,divergence.attach(0));
-    for(let i=0;i<PRESSURE_ITERATIONS;i++){
-      g.uniform1i(pressP.u.uPressure,pressureF.read.attach(1));
-      blit(pressureF.write); pressureF.swap();
-    }
-
-    gradP.bind();
-    g.uniform2f(gradP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    g.uniform1i(gradP.u.uPressure,pressureF.read.attach(0));
-    g.uniform1i(gradP.u.uVelocity,velocity.read.attach(1));
-    blit(velocity.write); velocity.swap();
-
-    advP.bind();
-    g.uniform2f(advP.u.texelSize,velocity.texelSizeX,velocity.texelSizeY);
-    if(!linear) g.uniform2f(advP.u.dyeTexelSize,velocity.texelSizeX,velocity.texelSizeY);
-    const vId=velocity.read.attach(0);
-    g.uniform1i(advP.u.uVelocity,vId); g.uniform1i(advP.u.uSource,vId);
-    g.uniform1f(advP.u.dt,dt); g.uniform1f(advP.u.dissipation,VELOCITY_DISSIPATION);
-    blit(velocity.write); velocity.swap();
-
-    if(!linear) g.uniform2f(advP.u.dyeTexelSize,dye.texelSizeX,dye.texelSizeY);
-    g.uniform1i(advP.u.uVelocity,velocity.read.attach(0));
-    g.uniform1i(advP.u.uSource,dye.read.attach(1));
-    g.uniform1f(advP.u.dissipation,dissip);
-    blit(dye.write); dye.swap();
-  };
-
-  const base=splashColor(SPLASH.color,1);
-  const render=()=>{
-    g.blendFunc(g.SRC_ALPHA,g.ONE_MINUS_SRC_ALPHA); g.enable(g.BLEND);
-    dispP.bind();
-    if(linear&&SHADING) g.uniform2f(dispP.u.texelSize,1/g.drawingBufferWidth,1/g.drawingBufferHeight);
-    g.uniform1i(dispP.u.uTexture,dye.read.attach(0));
-    g.activeTexture(g.TEXTURE0+MASK_UNIT); g.bindTexture(g.TEXTURE_2D,maskTex);
-    g.uniform1i(dispP.u.uMask,MASK_UNIT);
-    g.uniform4f(dispP.u.uBase,base.r,base.g,base.b,1);
-    blit(null,true);
-  };
-
-  const resize=()=>{
-    const dpr=Math.min(window.devicePixelRatio||1,2);
-    const w=Math.floor(canvas.clientWidth*dpr), h=Math.floor(canvas.clientHeight*dpr);
-    if(w>0&&h>0&&(canvas.width!==w||canvas.height!==h)){
-      canvas.width=w; canvas.height=h; initFBOs(); maskKey='';
-    }
-  };
-  resize(); initFBOs();
-
-  /* jatos automaticos: o efeito precisa se mostrar mesmo sem toque */
-  let auto=0;
-  const autoSplat=()=>{
-    const c=paletteAt(phase);
-    const x=0.15+Math.random()*0.7, y=0.35+Math.random()*0.3;
-    splat(x,y,(Math.random()-0.5)*3000,(Math.random()-0.5)*1500,
-          {r:c.r*8,g:c.g*8,b:c.b*8});
-  };
-
-  let last=performance.now(), raf=0, morto=false;
-  const frame=()=>{
-    if(morto||g.isContextLost()) return;
-    const now=performance.now();
-    const dt=Math.min((now-last)/1000,0.016666); last=now;
-    resize(); paintMask();
-    phase=(phase+dt*COLOR_SPEED)%1;
-    pointer.color=paletteAt(phase);
-    if(pointer.moved){
-      pointer.moved=false;
-      splat(pointer.texcoordX,pointer.texcoordY,
-            pointer.deltaX*force,pointer.deltaY*force,pointer.color);
-    }
-    auto+=dt;
-    if(auto>0.55){ auto=0; autoSplat(); }
-    step(dt); render();
-    raf=requestAnimationFrame(frame);
-  };
-  autoSplat(); autoSplat();
-  raf=requestAnimationFrame(frame);
-
-  splashStop=()=>{
-    morto=true;
-    if(raf) cancelAnimationFrame(raf);
-    wrap.removeEventListener('pointermove',onMove);
-    wrap.removeEventListener('pointerdown',onDown);
-    killDouble(dye); killDouble(velocity); killDouble(pressureF);
-    killFBO(divergence); killFBO(curlF);
-    g.deleteTexture(maskTex); g.deleteBuffer(buf); g.deleteBuffer(idx);
-    /* devolve o contexto ao navegador antes da caixa 3D pedir o dela */
-    try{ g.getExtension('WEBGL_lose_context')?.loseContext(); }catch(e){}
-  };
+  /* tempo total ate a marca assentar (ultimo beat + sua duracao) + repouso antes de sair */
+  splashHoldMs = ms(1560) + ms(520) + 900;
+  splashStop=()=>timers.forEach(clearTimeout);
 }
 
 function finishSplash(imediato){
@@ -1747,13 +1422,13 @@ function finishSplash(imediato){
 }
 
 function initSplash(){
-  /* uma vez por sessao: quem ja viu vai direto ao app */
-  try{ if(sessionStorage.getItem('cw-splash')){ return; } }catch(e){}
+  /* uma vez por sessao: quem ja viu vai direto ao app.
+     ?splash=1 na URL força a repetição, para testar sem mexer no DevTools */
+  const forcar = location.search.indexOf('splash=1')!==-1;
+  try{ if(!forcar && sessionStorage.getItem('cw-splash')){ return; } }catch(e){}
   try{ sessionStorage.setItem('cw-splash','1'); }catch(e){}
   startSplash();
-  const dica=document.getElementById('splashHint');
-  if(dica) dica.textContent=t('splashHint');
-  setTimeout(()=>finishSplash(false), 3200);
+  setTimeout(()=>finishSplash(false), splashHoldMs);
   document.getElementById('splash')?.addEventListener('click',()=>finishSplash(false));
 }
 
@@ -2591,10 +2266,10 @@ function initDockScroll(){
    BOOT
    ========================================================= */
 (function boot(){
-  document.getElementById('logoSm').innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
+  document.getElementById('logoSm').innerHTML = brandMarkSVG('#00000059','#8A74237E','brand-mark') + brandWordmarkHTML();
   const mark=document.createElement('div');
   mark.className='logoBig'; mark.style.opacity='.5'; mark.style.marginTop='34px';
-  mark.innerHTML = LOGO_SVG + `<div class="wm">Community Watches</div>`;
+  mark.innerHTML = brandMarkSVG('#00000059','#8A74237E','brand-mark') + brandWordmarkHTML();
   document.getElementById('s-prof').appendChild(mark);
 
   /* seletor de aparência, inserido como primeira preferência do Perfil */
