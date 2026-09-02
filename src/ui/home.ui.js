@@ -20,7 +20,7 @@ function ensureMounts() {
 
   const kpis = home.querySelector('.kpis');
   const search = home.querySelector('.search');
-  const profileHead = home.querySelector('[data-i="secProfile"]');
+  const addedHead = home.querySelector('[data-i="secAdded"]');
 
   let val = document.getElementById('uiValuation');
   if (!val) {
@@ -44,7 +44,7 @@ function ensureMounts() {
   if (!alloc) {
     alloc = document.createElement('div');
     alloc.id = 'uiAlloc';
-    if (profileHead) home.insertBefore(alloc, profileHead);
+    if (addedHead) home.insertBefore(alloc, addedHead);
     else home.appendChild(alloc);
   }
 
