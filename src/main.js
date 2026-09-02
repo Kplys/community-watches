@@ -2622,7 +2622,7 @@ function initDockScroll(){
     a.className='kpilink';
     a.dataset.i='seeCharts';
     a.textContent=t('seeCharts');
-    a.addEventListener('click',openPerformance);
+    a.addEventListener('click',()=>window.openPerformance());
     mktCard.appendChild(a);
   }
 

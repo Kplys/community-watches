@@ -12,6 +12,7 @@ import { mountScanOrb, refreshScanOrb } from './dock.ui.js';
 import { renderHomeUI } from './home.ui.js';
 import { renderCollStats } from './collection.ui.js';
 import { enhanceDetail } from './detail.ui.js';
+import { enhancePerformance } from './performance.ui.js';
 
 /* funções de main.js que, ao rodar, mudam números na tela */
 const REDRAW_AFTER = [
@@ -55,6 +56,9 @@ function boot() {
     const w = override || CW.WATCHES.find(x => x.id === id);
     enhanceDetail(CW, w);
   });
+
+  /* desempenho: a lista por relógio é montada por main.js, os indicadores extras entram depois */
+  wrap('openPerformance', () => enhancePerformance(CW));
 
   /* o idioma troca o dicionário inteiro; redesenha tudo o que é nosso */
   wrap('setLang', () => renderUI(CW));

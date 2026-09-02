@@ -131,7 +131,7 @@ export function renderValuation(CW) {
 const ICON = {
   grails: '<circle cx="12" cy="12.5" r="5"/><path d="M8.7 7.8 9 3.5h6l.3 4.3M8.7 17.2 9 21.5h6l.3-4.3"/>',
   catalog: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/>',
-  add: '<path d="M12 5v14M5 12h14"/>',
+  perf: '<path d="M4 18V9M10 18V5M16 18v-6M22 18H2"/>',
   julios: '<path d="M21 12a8 8 0 1 1-3.2-6.4"/><path d="M8 11h8M8 15h5"/>'
 };
 
@@ -142,7 +142,7 @@ export function renderQuickActions(CW) {
   const items = [
     { k: 'secGrails', icon: 'grails', fn: 'openGrails' },
     { k: 'uiQuickCatalog', icon: 'catalog', fn: 'openCatalog' },
-    { k: 'uiQuickAdd', icon: 'add', fn: 'openScan' },
+    { k: 'uiQuickPerf', icon: 'perf', fn: 'openPerformance' },
     { k: 'uiQuickJulios', icon: 'julios', fn: 'openChat' }
   ];
 
