@@ -246,8 +246,8 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 .hero{position:relative;width:100%;margin-top:14px;border-radius:26px;overflow:hidden;
   background:linear-gradient(120deg,var(--hero-a),var(--hero-b) 60%);border:1px solid var(--hero-line);
   padding:20px;display:flex;align-items:center;gap:16px;text-align:left;
-  transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
-.hero:active{transform:scale(.97)}
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1)}
+.hero:active{transform:scale(.92);transition:transform .08s ease-out}
 .hero .t{flex:1}
 .hero .t b{display:block;font-size:17px;font-weight:900;letter-spacing:-.3px}
 .hero .t span{font-size:13px;color:var(--muted);font-weight:600}

@@ -39,11 +39,11 @@
 .ui-tile{
   display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 2px 12px;
   border-radius:var(--r);background:var(--surface);border:1px solid var(--line);color:var(--text);
-  transition:transform .32s cubic-bezier(.34,1.56,.64,1),border-color .16s ease;
+  transition:transform .38s cubic-bezier(.34,1.56,.64,1),border-color .16s ease;
 }
 .ui-tile svg{width:21px;height:21px}
 .ui-tile span{font-size:11.5px;font-weight:800;letter-spacing:-.1px;text-align:center}
-.ui-tile:active{transform:scale(.96);border-color:var(--gold-dim)}
+.ui-tile:active{transform:scale(.88);border-color:var(--gold-dim);transition:transform .08s ease-out,border-color .16s ease}
 
 /* ---------------- roscas + legendas ---------------- */
 .ui-alloc{display:flex;align-items:center;gap:18px}
