@@ -7,6 +7,9 @@
 
 .ui-hide{display:none !important}
 
+/* ---------------- Desempenho: botão de detalhe por card ---------------- */
+.ui-perf-detail{margin-top:10px}
+
 /* ---------------- Home: card de valorização ---------------- */
 .ui-val{
   margin-top:14px;border-radius:26px;padding:20px;

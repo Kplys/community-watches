@@ -41,6 +41,22 @@ function allocationHTML(CW, list) {
     '</div>';
 }
 
+/* ---------- botão "Ver detalhes" em cada card, mesma tela do detalhe refatorado ---------- */
+function mountDetailButtons(CW, body) {
+  body.querySelectorAll('.perfcard').forEach(card => {
+    if (card.querySelector('.ui-perf-detail')) return;
+    const m = (card.getAttribute('onclick') || '').match(/openDetail\('([^']+)'\)/);
+    if (!m) return;
+    const id = m[1];
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'linkbtn ui-perf-detail';
+    btn.textContent = CW.t('seeDetails');
+    btn.addEventListener('click', e => { e.stopPropagation(); window.openDetail(id); });
+    card.appendChild(btn);
+  });
+}
+
 export function enhancePerformance(CW) {
   const body = document.getElementById('perfBody');
   if (!body) return;
@@ -52,4 +68,6 @@ export function enhancePerformance(CW) {
 
   box.querySelectorAll('[data-cat]').forEach(b =>
     b.addEventListener('click', () => window.filterBy('cat', b.dataset.cat)));
+
+  mountDetailButtons(CW, body);
 }
