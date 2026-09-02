@@ -40,17 +40,6 @@
         <div class="arrow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#181200" stroke-width="3" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></div>
       </button>
 
-      <!-- BOTÃO DEDICADO GRAILS -->
-      <button class="hero" style="margin-top:12px; background: linear-gradient(120deg,#1A1710,#131316 60%); border: 1px solid #2E2716;" onclick="openGrails()">
-        <div class="t">
-          <b data-i="secGrails" style="color:var(--gold-hi)">Grails</b>
-          <span data-i="secGrailsSub">Ver seus grails</span>
-        </div>
-        <div class="arrow" style="background:var(--gold)">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#181200" stroke-width="3" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg>
-        </div>
-      </button>
-
       <h2 class="sec" data-i="secSpend">Gastos por mês</h2>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -61,9 +50,6 @@
         <div class="blabs" id="blabs"></div>
       </div>
 
-      <h2 class="sec" data-i="secProfile">Perfil da coleção</h2>
-      <div id="spots"></div>
-
       <h2 class="sec" data-i="secAdded">Peças adicionadas por mês</h2>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -73,6 +59,9 @@
         <div class="bars" id="cbars" style="height:86px"></div>
         <div class="blabs" id="cblabs"></div>
       </div>
+
+      <h2 class="sec" data-i="secProfile">Perfil da coleção</h2>
+      <div id="spots"></div>
 
       <h2 class="sec" data-i="secActivity">Atividade recente</h2>
       <div class="card">
@@ -274,5 +263,6 @@
 </div>
 
     <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/ui/index.js"></script>
   </body>
 </html>

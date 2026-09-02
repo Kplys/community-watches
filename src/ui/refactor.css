@@ -1,0 +1,125 @@
+/* =========================================================
+   Community Watches — estilos da UI refatorada
+   Só tokens do design system: nenhuma cor literal fora de
+   var(--…), então o tema claro continua funcionando.
+   Carregado por src/ui/index.js (Vite injeta o CSS).
+   ========================================================= */
+
+.ui-hide{display:none !important}
+
+/* ---------------- Home: card de valorização ---------------- */
+.ui-val{
+  margin-top:14px;border-radius:26px;padding:20px;
+  background:linear-gradient(150deg,var(--hero-a),var(--hero-b) 62%);
+  border:1px solid var(--hero-line);
+}
+.ui-val-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.ui-val-figure{min-width:0}
+.ui-val-figure .lab{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ui-val-total{display:block;font-size:31px;font-weight:900;letter-spacing:-1.3px;line-height:1;margin-top:10px;white-space:nowrap}
+.ui-val-delta{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:13px;font-weight:800}
+.ui-val-since{font-size:12.5px;font-weight:600;color:var(--muted)}
+.ui-val-seg{width:118px;flex:none}
+.ui-val-chart{margin-top:18px}
+.ui-val-chart .ui-spark{display:block;overflow:visible}
+.ui-val-labels{display:flex;justify-content:space-between;margin-top:8px}
+.ui-val-labels span{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted)}
+.ui-val-foot{
+  display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:14px;
+  border-top:1px solid var(--line);font-size:12px;font-weight:700;color:var(--muted);
+}
+.ui-val-foot b{font-size:13px;font-weight:800;color:var(--text)}
+.ui-val-sep{flex:1}
+
+/* ---------------- Home: ações rápidas ---------------- */
+.ui-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}
+.ui-tile{
+  display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 2px 12px;
+  border-radius:var(--r);background:var(--surface);border:1px solid var(--line);color:var(--text);
+  transition:transform .16s ease,border-color .16s ease;
+}
+.ui-tile svg{width:21px;height:21px}
+.ui-tile span{font-size:11.5px;font-weight:800;letter-spacing:-.1px;text-align:center}
+.ui-tile:active{transform:scale(.96);border-color:var(--gold-dim)}
+
+/* ---------------- roscas + legendas ---------------- */
+.ui-alloc{display:flex;align-items:center;gap:18px}
+.ui-donut{flex:none}
+.ui-legend{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.ui-legend-row{
+  display:flex;align-items:center;gap:10px;width:100%;padding:0;
+  background:none;text-align:left;color:var(--text);
+}
+.ui-legend-row i{width:9px;height:9px;border-radius:3px;flex:none}
+.ui-legend-row b{flex:1;min-width:0;font-size:13px;font-weight:800;letter-spacing:-.2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ui-legend-row > span{font-size:12px;font-weight:800;color:var(--muted)}
+.ui-legend-txt{flex:1;min-width:0}
+.ui-legend-txt b{display:block}
+.ui-legend-txt span{font-size:11.5px;font-weight:700;color:var(--muted)}
+.ui-legend-row:not(.ui-legend-static):active b{color:var(--gold)}
+
+/* ---------------- Coleção: faixa de indicadores ---------------- */
+.ui-stats{
+  display:flex;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r);padding:16px 4px;margin-bottom:16px;
+}
+.ui-stat{flex:1;text-align:center;padding:0 6px;border-right:1px solid var(--line)}
+.ui-stat:last-child{border-right:0}
+.ui-stat .lab{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.ui-stat b{display:block;font-size:17px;font-weight:900;letter-spacing:-.5px;margin-top:7px}
+.ui-stat span{font-size:11.5px;font-weight:700}
+.ui-stat-sub{color:var(--muted)}
+
+/* ---------------- Detalhe ---------------- */
+.ui-rail{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;z-index:2}
+.ui-rail .iconbtn{width:40px;height:40px;background:var(--glass);backdrop-filter:blur(14px)}
+.ui-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.ui-mkt-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.ui-mkt-figure b{display:block;font-size:20px;font-weight:900;letter-spacing:-.6px}
+.ui-mkt-delta{font-size:12.5px;font-weight:700;color:var(--muted)}
+.ui-mkt-delta.up{color:var(--up)}
+.ui-mkt-delta.down{color:var(--down)}
+.ui-range{width:136px;flex:none}
+.ui-substats{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.ui-substat{flex:1}
+.ui-substat .lab{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ui-substat b{display:block;font-size:15px;font-weight:900;letter-spacing:-.3px;margin-top:5px}
+
+.ui-tl{display:flex;flex-direction:column;gap:16px;position:relative}
+.ui-tl-row{display:flex;gap:12px;align-items:flex-start;position:relative}
+.ui-tl-row i{width:9px;height:9px;border-radius:50%;background:var(--track);flex:none;margin-top:5px}
+.ui-tl-row i.hot{background:var(--gold)}
+.ui-tl-row:not(:last-child):after{
+  content:"";position:absolute;left:4px;top:16px;bottom:-16px;width:1px;background:var(--line);
+}
+.ui-tl-row b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.2px}
+.ui-tl-row span{font-size:12px;font-weight:700;color:var(--muted)}
+
+/* ---------------- Dock: orbe de escanear ---------------- */
+.ui-tabgap{width:72px;flex:none;pointer-events:none}
+
+#dock.ui-has-orb #tabs{
+  -webkit-mask-image:radial-gradient(circle 34px at 50% 0, transparent 0 33.4px, #000 34px);
+          mask-image:radial-gradient(circle 34px at 50% 0, transparent 0 33.4px, #000 34px);
+}
+/* o orbe fura 31px acima da pilula: sem folga extra ele cobre a barra do Julios,
+   que por padrao so tem 11px de margem abaixo */
+#dock.ui-has-orb:not(.mini) #julios{margin-bottom:40px}
+.ui-orbslot{height:0;display:flex;justify-content:center;position:relative;z-index:3;pointer-events:none}
+.ui-orb{
+  position:absolute;top:-31px;width:62px;height:62px;border-radius:50%;pointer-events:auto;
+  background:radial-gradient(circle at 34% 28%,var(--gold-hi),var(--gold) 52%,var(--gold-dim));
+  border:1px solid var(--gold-hi);display:grid;place-items:center;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  transition:transform .18s cubic-bezier(.2,.9,.2,1);
+}
+.ui-orb:active{transform:scale(.94)}
+#dock.mini .ui-orbslot{display:none}
+#dock.mini.ui-has-orb #tabs{-webkit-mask-image:none;mask-image:none}
+#dock.mini .ui-tabgap{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .ui-orb,.ui-tile{transition:none}
+}

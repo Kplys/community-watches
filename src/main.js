@@ -293,14 +293,14 @@ const totalMkt  = () => active().reduce((s,w)=>s+w.mkt,0);
 function toast(msg){ const e=document.getElementById('toast'); e.textContent=msg; e.classList.add('on');
   clearTimeout(e._t); e._t=setTimeout(()=>e.classList.remove('on'),1900); }
 
-/* histórico de mercado determinístico (36 meses) */
+/* histórico de mercado determinístico (60 meses / 5 anos) */
 function history(w){
   const out=[]; let seed = (w.ref||w.model).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
   const rnd = ()=> (seed = (seed*9301+49297)%233280)/233280;
-  const growth = Math.pow((w.mkt||1000)/(w.paid||1000), 1/36);
+  const growth = Math.pow((w.mkt||1000)/(w.paid||1000), 1/60);
   let v = w.paid||w.mkt||1000;
-  for(let i=0;i<36;i++){ v = v*growth*(0.985+rnd()*0.03); out.push(v); }
-  out[35]=w.mkt||v; return out;
+  for(let i=0;i<60;i++){ v = v*growth*(0.985+rnd()*0.03); out.push(v); }
+  out[59]=w.mkt||v; return out;
 }
 
 /* miniatura com fallback SVG embutido */
@@ -797,7 +797,7 @@ function openDetailByModel(modelName){
       };
     }
   }
-  if(w) openDetail(w.id, w);
+  if(w) window.openDetail(w.id, w);
 }
 
 function openDetail(id, overrideObj){
@@ -843,13 +843,13 @@ function openDetail(id, overrideObj){
 function toggleHide(id){
   S.hidden.has(id)?S.hidden.delete(id):S.hidden.add(id);
   toast(S.hidden.has(id)?t('hidden'):t('shown'));
-  renderColl(); buildBox(); openDetail(id);
+  renderColl(); buildBox(); window.openDetail(id);
 }
 
-function openDetailFromBox(){ 
+function openDetailFromBox(){
   if(!focused) return;
   const id = focused.userData.id;
-  openDetail(id); 
+  window.openDetail(id);
 }
 
 function drawLine(h, canvas){
@@ -2671,6 +2671,15 @@ function initDockScroll(){
     grailBtn.insertBefore(gc, grailBtn.firstChild);
     heroAnim(gc, Math.PI*0.6);
   }
+
+  /* ponte de leitura para a camada de UI (src/ui) — apenas leitura */
+  window.CW = {
+    S, T, t,
+    WATCHES, CATALOG,
+    active, visible,
+    money, moneyAlt, totalPaid, totalMkt,
+    history, fmtDate, pic, toast, drawLine
+  };
 
   Object.assign(window, {
     go,
