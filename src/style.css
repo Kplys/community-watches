@@ -123,15 +123,18 @@ input,textarea{font-family:inherit}
 .brand{font-weight:900;font-size:19px;letter-spacing:-.4px}
 .brand em{font-style:normal;color:var(--gold)}
 
-/* logo */
+/* logo — mark + wordmark da identidade visual (case, tampa, 3 relógios) */
 .logo{display:flex;align-items:center;gap:9px}
-.logo .logo-box{height:36px;width:auto;flex:none}
-.logo .wm{font-family:'Parisienne',cursive;font-size:23px;color:var(--gold-hi);line-height:1;
-  letter-spacing:.4px;white-space:nowrap;padding-bottom:3px}
+.logo .brand-mark{width:34px;height:34px;flex:none;overflow:visible}
+.logo .wm{font-weight:900;font-size:20px;letter-spacing:-.5px;line-height:1;
+  text-transform:uppercase;white-space:nowrap;color:var(--text)}
+.logo .wm span{color:var(--gold)}
 
 .logoBig{text-align:center;padding:6px 0 2px}
-.logoBig .logo-box{display:block;margin:0 auto;height:104px;width:auto}
-.logoBig .wm{font-family:'Parisienne',cursive;font-size:33px;color:var(--gold-hi);margin-top:6px}
+.logoBig .brand-mark{display:block;margin:0 auto;width:88px;height:88px;overflow:visible}
+.logoBig .wm{display:block;margin-top:10px;font-weight:900;font-size:26px;letter-spacing:-.6px;
+  text-transform:uppercase;color:var(--text)}
+.logoBig .wm span{color:var(--gold)}
 
 /* destaques da Home */
 .spot{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--r);
@@ -385,7 +388,7 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 
 #julios{position:relative;pointer-events:auto;background:var(--glass2);backdrop-filter:blur(24px);
   border:1px solid transparent;background-clip:padding-box;
-  border-radius:999px;display:flex;align-items:center;gap:11px;padding:12px 16px;margin-bottom:11px;
+  border-radius:999px;display:flex;align-items:center;gap:11px;padding:12px 16px;margin-bottom:40px;
   transition:padding .22s ease, margin .22s ease}
 
 /* anel de 1.5px: o conic-gradient preenche o retangulo e a mascara
@@ -600,16 +603,27 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 .toast.on{opacity:1;transform:none}
 .hint{font-size:12.5px;color:var(--muted);line-height:1.55;font-weight:600}
 
-/* ---- tela de abertura (Fluid Text portado) ---- */
-#splash{position:fixed;inset:0;z-index:9999;background:#08080A;
+/* ---- tela de abertura: mark + wordmark, tampa caindo sobre a caixa ---- */
+#splash{position:fixed;inset:0;z-index:9999;
   display:flex;align-items:center;justify-content:center;
   touch-action:none;cursor:pointer;
+  background:
+    radial-gradient(110% 90% at 82% 74%, rgba(201,162,39,.55) 0%, rgba(201,162,39,0) 58%),
+    radial-gradient(80% 70% at 22% 24%, rgba(235,210,124,.28) 0%, rgba(235,210,124,0) 62%),
+    radial-gradient(90% 80% at 12% 88%, rgba(138,116,35,.45) 0%, rgba(138,116,35,0) 60%),
+    radial-gradient(70% 60% at 58% 6%, rgba(201,162,39,.2) 0%, rgba(201,162,39,0) 60%),
+    linear-gradient(120deg,#0B0B0E 0%,#121116 45%,#1A160F 75%,#241C0C 100%);
   transition:opacity .6s ease}
 #splash.out{opacity:0;pointer-events:none}
-#splash canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#splashHint{position:absolute;left:0;right:0;bottom:14%;text-align:center;
-  font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
-  color:#6A6558;pointer-events:none;
-  animation:splashPulse 2.4s ease-in-out infinite}
-@keyframes splashPulse{0%,100%{opacity:.35}50%{opacity:.9}}
-@media (prefers-reduced-motion:reduce){#splashHint{animation:none;opacity:.6}}
+#splashStage{position:relative;display:flex;align-items:center;justify-content:center;
+  gap:.34em;padding:0 5vw;font-size:min(6.2vw,72px)}
+.splash-word-clip{clip-path:inset(0 100% 0 0)}
+.splash-word{position:relative;font-size:1em;font-weight:900;letter-spacing:-.025em;line-height:1;
+  text-transform:uppercase;white-space:nowrap;color:#F4F4F6;transform:translateX(-24px);
+  font-family:var(--font)}
+.splash-word span{color:var(--gold)}
+.splash-glint{position:absolute;top:-40%;left:0;width:26%;height:180%;opacity:0;pointer-events:none;
+  transform:rotate(14deg) translateX(-160%);
+  background:linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.08) 35%,
+    rgba(255,255,255,.55) 50%, rgba(255,255,255,.08) 65%, rgba(255,255,255,0) 100%)}
+@media (prefers-reduced-motion:reduce){#splash{transition:opacity .3s ease}}

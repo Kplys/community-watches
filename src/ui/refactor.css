@@ -107,9 +107,6 @@
   -webkit-mask-image:radial-gradient(circle 34px at 50% 0, transparent 0 33.4px, #000 34px);
           mask-image:radial-gradient(circle 34px at 50% 0, transparent 0 33.4px, #000 34px);
 }
-/* o orbe fura 31px acima da pilula: sem folga extra ele cobre a barra do Julios,
-   que por padrao so tem 11px de margem abaixo */
-#dock.ui-has-orb:not(.mini) #julios{margin-bottom:40px}
 .ui-orbslot{height:0;display:flex;justify-content:center;position:relative;z-index:3;pointer-events:none}
 .ui-orb{
   position:absolute;top:-31px;width:62px;height:62px;border-radius:50%;pointer-events:auto;
