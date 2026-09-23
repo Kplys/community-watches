@@ -175,7 +175,7 @@ const T = {
   paid:'Pago',market:'Mercado',cats:'categorias',recent:'Recentes',value:'Valor',brand:'Marca',oldest:'Mais antigos',
   detRef:'Referência',detYear:'Ano',detCat:'Categoria',detPaid:'Valor pago',detDate:'Data da compra',detPapers:'Caixa e documentos',
   yes:'Declarado pelo dono',no:'Não informado',secStory:'A história',secPerf:'Desempenho',secModel:'Modelo 3D',
-  modelSlot:'Espaço do modelo Sketchfab',addGrail:'Adicionar aos Grails',hideW:'Ocultar da caixa',showW:'Mostrar na caixa',
+  modelSlot:'Arraste para girar',addGrail:'Adicionar aos Grails',hideW:'Ocultar da caixa',showW:'Mostrar na caixa',
   identified:'Identificado',conf:'confiança',notSure:'Não é este relógio?',editRef:'Informar a referência manualmente',
   addToColl:'Adicionar à coleção',scanning:'Lendo a caixa e o mostrador…',noData:'Sem dados de mercado para esta referência',
   noDataSub:'Nossa equipe vai analisar as fotos e atualizar o catálogo. Você recebe um aviso quando o histórico estiver disponível.',
@@ -240,7 +240,7 @@ const T = {
   paid:'Paid',market:'Market',cats:'categories',recent:'Recent',value:'Value',brand:'Brand',oldest:'Oldest',
   detRef:'Reference',detYear:'Year',detCat:'Category',detPaid:'Price paid',detDate:'Purchase date',detPapers:'Box and papers',
   yes:'Declared by the owner',no:'Not provided',secStory:'The story',secPerf:'Performance',secModel:'3D model',
-  modelSlot:'Sketchfab model slot',addGrail:'Add to Grails',hideW:'Hide from box',showW:'Show in box',
+  modelSlot:'Drag to rotate',addGrail:'Add to Grails',hideW:'Hide from box',showW:'Show in box',
   identified:'Identified',conf:'confidence',notSure:'Not this watch?',editRef:'Enter the reference manually',
   addToColl:'Add to collection',scanning:'Reading the case and dial…',noData:'No market data for this reference',
   noDataSub:'Our team will review your photos and update the catalogue. You will be notified when the history is ready.',
@@ -1708,11 +1708,18 @@ function initBox(){
   addEventListener('resize',sizeBox);
 }
 
-/* modelo 3D real do Cartier Santos (GLB), carregado uma vez e clonado por instância */
-let santosModel = null;
-const pendingSantosSwaps = [];
+/* modelos 3D reais (GLB): cada peça é baixada uma vez, normalizada e clonada por
+   instância. O download só começa quando algum relógio em cena precisa dela. */
+const MODELS = [
+  {url:'/models/cartier-santos.glb', pending:[],
+   match:w => /santos/i.test(w.model||''),          placeholder:w => makeSantosPlaceholder(w)},
+  {url:'/models/seiko-skx007.glb',   pending:[],
+   match:w => /skx\s*-?\s*007/i.test(w.model||''),  placeholder:w => makeProceduralWatch(w)},
+];
 
-function normalizeSantosModel(root){
+/* os GLB vêm em metros e com a caixa centrada na origem; aqui ela é recentrada e
+   escalada para os mesmos 0.8 de largura que os relógios procedurais ocupam */
+function normalizeModel(root){
   root.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; } });
   const caseNode = root.getObjectByName('case') || root;
   const caseBox = new THREE.Box3().setFromObject(caseNode);
@@ -1726,10 +1733,17 @@ function normalizeSantosModel(root){
   return wrap;
 }
 
-new GLTFLoader().load('/models/cartier-santos.glb', gltf=>{
-  santosModel = normalizeSantosModel(gltf.scene);
-  pendingSantosSwaps.splice(0).forEach(g=>{ g.clear(); g.add(santosModel.clone(true)); });
-}, undefined, err=>console.warn('Não foi possível carregar o modelo 3D do Cartier Santos:', err));
+function loadModel(src){
+  if(src.loading) return;
+  src.loading = true;
+  new GLTFLoader().load(src.url, gltf=>{
+    src.model = normalizeModel(gltf.scene);
+    src.pending.splice(0).forEach(g=>{ g.clear(); g.add(src.model.clone(true)); });
+  }, undefined, err=>{
+    src.loading = false;
+    console.warn('Não foi possível carregar o modelo 3D '+src.url+':', err);
+  });
+}
 
 function mat(c,rough){ return new THREE.MeshStandardMaterial({color:c,roughness:rough??0.92,metalness:0.05}); }
 
@@ -1758,12 +1772,21 @@ function makeWatch(w){
   const g=new THREE.Group();
   g.userData={id:w.id,name:w.brand+' '+w.model,ref:w.ref+' · '+w.year};
 
-  if(w.model.includes('Santos')){
-    if(santosModel) g.add(santosModel.clone(true));
-    else{ g.add(makeSantosPlaceholder(w)); pendingSantosSwaps.push(g); }
+  const src = MODELS.find(m=>m.match(w));
+  if(src){
+    if(src.model) g.add(src.model.clone(true));
+    else{ g.add(src.placeholder(w)); src.pending.push(g); loadModel(src); }
     return g;
   }
 
+  g.add(makeProceduralWatch(w));
+  return g;
+}
+
+/* relógio montado em código: serve quem ainda não tem modelo próprio e também
+   ocupa o lugar do GLB enquanto ele não termina de baixar */
+function makeProceduralWatch(w){
+  const g=new THREE.Group();
   const caseC=new THREE.Color(w.metal), dialC=new THREE.Color(w.dial), bezC=new THREE.Color(w.bezel);
 
   const body=new THREE.Mesh(new THREE.CylinderGeometry(0.44,0.42,0.2,32), new THREE.MeshStandardMaterial({color:caseC,roughness:0.26,metalness:0.88}));
@@ -2113,6 +2136,21 @@ function disposeMini(){
   miniR=null;
 }
 
+/* caixa envolvente medida no referencial da própria peça: assim a medida não muda
+   quando o pivô de rotação já está girando */
+function localBox(root){
+  root.updateWorldMatrix(true,true);
+  const inv=new THREE.Matrix4().copy(root.matrixWorld).invert();
+  const m=new THREE.Matrix4(), b=new THREE.Box3(), out=new THREE.Box3();
+  root.traverse(o=>{
+    if(!o.isMesh||!o.geometry) return;
+    if(!o.geometry.boundingBox) o.geometry.computeBoundingBox();
+    b.copy(o.geometry.boundingBox).applyMatrix4(m.multiplyMatrices(inv,o.matrixWorld));
+    out.union(b);
+  });
+  return out;
+}
+
 function miniScene(canvas,w){
   if(!canvas)return;
   disposeMini();
@@ -2121,22 +2159,53 @@ function miniScene(canvas,w){
   catch(err){ console.warn('mini 3D indisponivel:',err.message); return; }
   const r=miniR;
   r.setPixelRatio(Math.min(devicePixelRatio,2));
-  const sc=new THREE.Scene(), c=new THREE.PerspectiveCamera(34,canvas.clientWidth/230,0.1,50);
+  const H=230, W=canvas.clientWidth||H;
+  const sc=new THREE.Scene(), c=new THREE.PerspectiveCamera(34,W/H,0.1,50);
   sc.add(new THREE.HemisphereLight(0xCED3DB,0x101014,1.1));
   const d=new THREE.DirectionalLight(0xFFF4DC,1.6); d.position.set(4,8,6); sc.add(d);
-  const g=makeWatch(w); g.scale.set(2.4,2.4,2.4); sc.add(g);
-  c.position.set(0,2.6,3.6); c.lookAt(0,0,0);
-  r.setSize(canvas.clientWidth,230,false);
+
+  /* a rotação fica no pivô e o deslocamento que centra a peça fica no grupo de
+     dentro, para o relógio girar em torno de si mesmo */
+  const spinner=new THREE.Group(); sc.add(spinner);
+  const g=makeWatch(w); spinner.add(g);
+
+  /* enquadra a peça inteira, pulseira incluída. O giro de apresentação é em torno de
+     Y, então o que a câmera precisa cobrir é o cilindro varrido por esse giro: raio no
+     plano XZ e a altura da caixa, projetados na inclinação em que a câmera olha. */
+  const VIEW=new THREE.Vector3(0,0.72,1).normalize();
+  function frame(){
+    g.position.set(0,0,0);
+    const box=localBox(g);
+    if(box.isEmpty()) return;
+    const size=box.getSize(new THREE.Vector3());
+    g.position.copy(box.getCenter(new THREE.Vector3())).negate();
+    const rxz=0.5*Math.hypot(size.x,size.z), el=Math.asin(VIEW.y);
+    const halfV=size.y/2*Math.cos(el)+rxz*Math.sin(el);
+    const fovV=THREE.MathUtils.degToRad(c.fov);
+    const fovH=2*Math.atan(Math.tan(fovV/2)*c.aspect);
+    const dist=Math.max(halfV/Math.tan(fovV/2), rxz/Math.tan(fovH/2))*1.08;
+    c.position.copy(VIEW).multiplyScalar(dist);
+    c.lookAt(0,0,0);
+    c.near=dist/50; c.far=dist*4; c.updateProjectionMatrix();
+  }
+  let framed=g.children[0];
+  frame();
+
+  r.setSize(W,H,false);
   let dragL=false,lx=0,ly=0,spin=true;
   canvas.addEventListener('pointerdown',e=>{dragL=true;spin=false;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
   canvas.addEventListener('pointermove',e=>{ if(!dragL)return;
-    g.rotation.y+=(e.clientX-lx)/120; g.rotation.x=Math.max(-1.2,Math.min(1.2,g.rotation.x+(e.clientY-ly)/150));
+    spinner.rotation.y+=(e.clientX-lx)/120; spinner.rotation.x=Math.max(-1.2,Math.min(1.2,spinner.rotation.x+(e.clientY-ly)/150));
     lx=e.clientX; ly=e.clientY; });
   canvas.addEventListener('pointerup',()=>dragL=false);
   (function loop(){
     if(my!==miniToken) return;
     if(!document.getElementById('detail').classList.contains('on')){ disposeMini(); return; }
-    requestAnimationFrame(loop); if(spin) g.rotation.y+=0.006; r.render(sc,c); })();
+    requestAnimationFrame(loop);
+    /* o GLB pode chegar depois do primeiro quadro; quando entrar, reenquadra */
+    if(g.children[0]!==framed){ framed=g.children[0]; frame(); }
+    if(spin) spinner.rotation.y+=0.006;
+    r.render(sc,c); })();
 }
 
 /* =========================================================
