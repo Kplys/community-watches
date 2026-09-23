@@ -417,10 +417,9 @@ h2.sec{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:upperc
 #julios .av{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 32% 30%,var(--gold-hi),var(--gold) 45%,#6B5613);flex:none}
 #julios span{font-size:14px;color:var(--julios-txt);font-weight:600;flex:1}
 #tabs{position:relative;pointer-events:auto;background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--line);
-  border-radius:999px;display:flex;padding:7px;
-  transition:padding .22s ease}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border-radius:999px;color:var(--muted);
-  transition:padding .22s ease}
+  border-radius:999px;display:flex;padding:7px}
+/* padding sem transition: syncTabInd mede a aba no mesmo frame da troca mini/cheia */
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border-radius:999px;color:var(--muted)}
 .tab{position:relative;z-index:1;background:none}
 .tab.on{color:var(--gold)}
 

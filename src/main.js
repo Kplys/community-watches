@@ -329,14 +329,10 @@ function history(w){
 /* miniatura com fallback SVG embutido */
 function pic(w, size){
   const s = size || 52;
-  const svg = getSvgPic(w, s);
   if(w && w.img){
-    return `<div style="position:relative;width:${s}px;height:${s}px;display:flex;align-items:center;justify-content:center;">
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">${svg}</div>
-      <img src="${w.img}" alt="${w.model||''}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:transparent;border-radius:12px;" onerror="this.style.display='none';">
-    </div>`;
+    return `<img src="${w.img}" alt="${w.model||''}" style="width:${s}px;height:${s}px;object-fit:contain;background:transparent;border-radius:12px;">`;
   }
-  return svg;
+  return getSvgPic(w, s);
 }
 
 function getSvgPic(w, s){
