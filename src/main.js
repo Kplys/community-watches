@@ -1722,10 +1722,12 @@ const MODELS = [
    match:w => /skx\s*-?\s*007/i.test(w.model||''),  placeholder:w => makeProceduralWatch(w)},
   {url:'/models/tissot-prx.glb',     pending:[],
    match:w => /\bprx\b/i.test(w.model||''),         placeholder:w => makeProceduralWatch(w)},
+  {url:'/models/omega-speedmaster.glb', pending:[],
+   match:w => /speedmaster/i.test(w.model||''),     placeholder:w => makeProceduralWatch(w)},
 ];
 
-/* o PRX vem com compressão meshopt (12,5 MB → 1,3 MB); os outros GLB não usam e
-   carregam pelo mesmo loader sem diferença */
+/* o PRX (12,5 MB → 1,3 MB) e o Speedmaster (6,2 MB → 1 MB) vêm com compressão
+   meshopt; os outros GLB não usam e carregam pelo mesmo loader sem diferença */
 const gltfLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 
 /* metal de verdade (metalness 1) quase não tem cor própria: ele é o que reflete. Sem
