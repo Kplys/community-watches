@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 window.THREE = THREE;
 
 /* =========================================================
@@ -175,7 +176,7 @@ const T = {
   paid:'Pago',market:'Mercado',cats:'categorias',recent:'Recentes',value:'Valor',brand:'Marca',oldest:'Mais antigos',
   detRef:'Referência',detYear:'Ano',detCat:'Categoria',detPaid:'Valor pago',detDate:'Data da compra',detPapers:'Caixa e documentos',
   yes:'Declarado pelo dono',no:'Não informado',secStory:'A história',secPerf:'Desempenho',secModel:'Modelo 3D',
-  modelSlot:'Arraste para girar',addGrail:'Adicionar aos Grails',hideW:'Ocultar da caixa',showW:'Mostrar na caixa',
+  modelSlot:'Arraste para girar · pinça para aproximar',seeMovement:'Ver o movimento',seeWatch:'Ver o relógio',addGrail:'Adicionar aos Grails',hideW:'Ocultar da caixa',showW:'Mostrar na caixa',
   identified:'Identificado',conf:'confiança',notSure:'Não é este relógio?',editRef:'Informar a referência manualmente',
   addToColl:'Adicionar à coleção',scanning:'Lendo a caixa e o mostrador…',noData:'Sem dados de mercado para esta referência',
   noDataSub:'Nossa equipe vai analisar as fotos e atualizar o catálogo. Você recebe um aviso quando o histórico estiver disponível.',
@@ -240,7 +241,7 @@ const T = {
   paid:'Paid',market:'Market',cats:'categories',recent:'Recent',value:'Value',brand:'Brand',oldest:'Oldest',
   detRef:'Reference',detYear:'Year',detCat:'Category',detPaid:'Price paid',detDate:'Purchase date',detPapers:'Box and papers',
   yes:'Declared by the owner',no:'Not provided',secStory:'The story',secPerf:'Performance',secModel:'3D model',
-  modelSlot:'Drag to rotate',addGrail:'Add to Grails',hideW:'Hide from box',showW:'Show in box',
+  modelSlot:'Drag to rotate · pinch to zoom',seeMovement:'See the movement',seeWatch:'See the watch',addGrail:'Add to Grails',hideW:'Hide from box',showW:'Show in box',
   identified:'Identified',conf:'confidence',notSure:'Not this watch?',editRef:'Enter the reference manually',
   addToColl:'Add to collection',scanning:'Reading the case and dial…',noData:'No market data for this reference',
   noDataSub:'Our team will review your photos and update the catalogue. You will be notified when the history is ready.',
@@ -829,7 +830,11 @@ function openDetail(id, overrideObj){
   const isOwned = WATCHES.some(x=>x.id===w.id);
 
   document.getElementById('dBody').innerHTML = `
-    <div class="slot"><canvas id="detC"></canvas><div class="slotlab">${t('modelSlot')}</div></div>
+    <div class="slot"><canvas id="detC"></canvas><div class="slotlab">${t('modelSlot')}</div>
+      <button class="slotbtn" hidden><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="2.2"/>
+        <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>
+        <span>${t('seeMovement')}</span></button></div>
 
     <div class="kpis" style="margin-top:16px">
       <div class="kpi"><div class="lab">${t('paid')}</div><div class="val sm">${money(w.paid,true)}</div>
@@ -1715,12 +1720,46 @@ const MODELS = [
    match:w => /santos/i.test(w.model||''),          placeholder:w => makeSantosPlaceholder(w)},
   {url:'/models/seiko-skx007.glb',   pending:[],
    match:w => /skx\s*-?\s*007/i.test(w.model||''),  placeholder:w => makeProceduralWatch(w)},
+  {url:'/models/tissot-prx.glb',     pending:[],
+   match:w => /\bprx\b/i.test(w.model||''),         placeholder:w => makeProceduralWatch(w)},
 ];
+
+/* o PRX vem com compressão meshopt (12,5 MB → 1,3 MB); os outros GLB não usam e
+   carregam pelo mesmo loader sem diferença */
+const gltfLoader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+
+/* metal de verdade (metalness 1) quase não tem cor própria: ele é o que reflete. Sem
+   nada em volta para refletir, o aço dos GLB saía preto. Este é um estúdio pintado
+   num canvas (teto claro, horizonte cinza, chão escuro e duas softboxes) usado só
+   como reflexo desses materiais — a caixa e as almofadas não mudam. É uma textura
+   comum, não um render target, porque a caixa e o visualizador de detalhe têm cada
+   um o seu WebGLRenderer e cada renderer gera o próprio PMREM a partir dela. */
+let studioTex = null;
+function studioEnv(){
+  if(studioTex) return studioTex;
+  const cv=document.createElement('canvas'); cv.width=512; cv.height=256;
+  const x=cv.getContext('2d');
+  const sky=x.createLinearGradient(0,0,0,256);
+  sky.addColorStop(0,'#F4F5F7'); sky.addColorStop(0.32,'#D2D5DA'); sky.addColorStop(0.5,'#9A9EA5');
+  sky.addColorStop(0.6,'#55585E'); sky.addColorStop(1,'#1E1F22');
+  x.fillStyle=sky; x.fillRect(0,0,512,256);
+  x.fillStyle='#FFFFFF';
+  x.fillRect(70,30,90,60); x.fillRect(330,40,70,50);
+  x.fillRect(0,112,512,6);
+  studioTex=new THREE.CanvasTexture(cv);
+  studioTex.mapping=THREE.EquirectangularReflectionMapping;
+  studioTex.colorSpace=THREE.SRGBColorSpace;
+  return studioTex;
+}
 
 /* os GLB vêm em metros e com a caixa centrada na origem; aqui ela é recentrada e
    escalada para os mesmos 0.8 de largura que os relógios procedurais ocupam */
 function normalizeModel(root){
-  root.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; } });
+  root.traverse(o=>{
+    if(!o.isMesh) return;
+    o.castShadow=true; o.receiveShadow=true;
+    for(const m of [].concat(o.material)) if(m.metalness>=0.5){ m.envMap=studioEnv(); m.needsUpdate=true; }
+  });
   const caseNode = root.getObjectByName('case') || root;
   const caseBox = new THREE.Box3().setFromObject(caseNode);
   const center = caseBox.getCenter(new THREE.Vector3());
@@ -1736,7 +1775,7 @@ function normalizeModel(root){
 function loadModel(src){
   if(src.loading) return;
   src.loading = true;
-  new GLTFLoader().load(src.url, gltf=>{
+  gltfLoader.load(src.url, gltf=>{
     src.model = normalizeModel(gltf.scene);
     src.pending.splice(0).forEach(g=>{ g.clear(); g.add(src.model.clone(true)); });
   }, undefined, err=>{
@@ -2164,15 +2203,31 @@ function miniScene(canvas,w){
   sc.add(new THREE.HemisphereLight(0xCED3DB,0x101014,1.1));
   const d=new THREE.DirectionalLight(0xFFF4DC,1.6); d.position.set(4,8,6); sc.add(d);
 
-  /* a rotação fica no pivô e o deslocamento que centra a peça fica no grupo de
-     dentro, para o relógio girar em torno de si mesmo */
+  /* o deslocamento que centra a peça fica no grupo de dentro, então a origem do pivô
+     (spinner) é sempre o centro do relógio, mesmo depois de girado */
   const spinner=new THREE.Group(); sc.add(spinner);
   const g=makeWatch(w); spinner.add(g);
+
+  /* a câmera olha sempre na mesma direção (VIEW) para um alvo, a uma distância. Zoom
+     e arrasto mudam o alvo e a distância; girar gira a peça em torno do alvo, para o
+     que está no centro do quadro continuar ali quando o zoom está alto. */
+  const VIEW=new THREE.Vector3(0,0.72,1).normalize();
+  const target=new THREE.Vector3();
+  let home=1, dist=1, reach=1;
+  /* a caixa tem 0.8 de largura (normalizeModel): a esta distância cabem ~2,5 mm na
+     altura do quadro, o bastante para ver rubis e parafusos do movimento */
+  const CLOSEST=0.08;
+
+  function place(){
+    c.position.copy(target).addScaledVector(VIEW,dist);
+    c.lookAt(target);
+    c.near=dist/20; c.far=dist+reach*4; c.updateProjectionMatrix();
+    c.updateMatrixWorld();
+  }
 
   /* enquadra a peça inteira, pulseira incluída. O giro de apresentação é em torno de
      Y, então o que a câmera precisa cobrir é o cilindro varrido por esse giro: raio no
      plano XZ e a altura da caixa, projetados na inclinação em que a câmera olha. */
-  const VIEW=new THREE.Vector3(0,0.72,1).normalize();
   function frame(){
     g.position.set(0,0,0);
     const box=localBox(g);
@@ -2183,28 +2238,184 @@ function miniScene(canvas,w){
     const halfV=size.y/2*Math.cos(el)+rxz*Math.sin(el);
     const fovV=THREE.MathUtils.degToRad(c.fov);
     const fovH=2*Math.atan(Math.tan(fovV/2)*c.aspect);
-    const dist=Math.max(halfV/Math.tan(fovV/2), rxz/Math.tan(fovH/2))*1.08;
-    c.position.copy(VIEW).multiplyScalar(dist);
-    c.lookAt(0,0,0);
-    c.near=dist/50; c.far=dist*4; c.updateProjectionMatrix();
+    home=dist=Math.max(halfV/Math.tan(fovV/2), rxz/Math.tan(fovH/2))*1.08;
+    reach=size.length()/2;
+    target.copy(spinner.position);
+    place();
   }
   let framed=g.children[0];
   frame();
 
+  function turn(axis,ang){
+    const q=new THREE.Quaternion().setFromAxisAngle(axis,ang);
+    spinner.position.sub(target).applyQuaternion(q).add(target);
+    spinner.quaternion.premultiply(q);
+  }
+  /* VIEW não tem componente X, então o eixo horizontal da tela é o X do mundo */
+  const AXIS_X=new THREE.Vector3(1,0,0), AXIS_Y=new THREE.Vector3(0,1,0);
+
+  /* ponto da peça sob o dedo. Cristal e safira são atravessados, para o zoom mirar
+     o mostrador e o movimento que está atrás deles; fora da peça, vale o plano do alvo */
+  const ray=new THREE.Raycaster();
+  function pick(x,y){
+    const b=canvas.getBoundingClientRect();
+    ray.setFromCamera(new THREE.Vector2((x-b.left)/b.width*2-1, -(y-b.top)/b.height*2+1), c);
+    sc.updateMatrixWorld();
+    const shown=o=>{ for(;o;o=o.parent) if(!o.visible) return false; return true; };
+    const hit=ray.intersectObject(g,true).find(h=>{ const m=h.object.material; return shown(h.object)&&!(m.transparent&&m.opacity<0.5); });
+    if(hit) return hit.point;
+    return ray.ray.intersectPlane(new THREE.Plane().setFromNormalAndCoplanarPoint(VIEW,target), new THREE.Vector3()) || target.clone();
+  }
+
+  /* aproxima (k<1) ou afasta (k>1) a câmera ao longo da reta que passa pelo ponto P,
+     que assim fica parado sob o dedo, e leva o alvo para a profundidade de P. Ao
+     afastar, o alvo volta aos poucos para o centro e chega nele junto com o
+     enquadramento inicial. */
+  function zoomAt(P,k){
+    const cam=target.clone().addScaledVector(VIEW,dist);
+    const depth=cam.clone().sub(P).dot(VIEW);
+    if(depth<=0) return;
+    if(k<1) k=Math.max(k, Math.min(1, CLOSEST/depth));
+    else if(dist>=home*0.999){ target.copy(spinner.position); dist=home; place(); return; }
+    const d2=depth*k;
+    cam.sub(P).multiplyScalar(k).add(P);
+    target.copy(cam).addScaledVector(VIEW,-d2);
+    dist=d2;
+    if(k>1){
+      if(d2>=home){ target.copy(spinner.position); dist=home; }
+      else target.lerp(spinner.position,(d2-depth)/(home-depth));
+    }
+    place();
+  }
+
+  /* arrasta o alvo no plano da tela, sem deixar o relógio sair do quadro */
+  function pan(dx,dy){
+    const s=2*dist*Math.tan(THREE.MathUtils.degToRad(c.fov)/2)/canvas.clientHeight;
+    target.addScaledVector(new THREE.Vector3().setFromMatrixColumn(c.matrixWorld,0),-dx*s)
+          .addScaledVector(new THREE.Vector3().setFromMatrixColumn(c.matrixWorld,1),dy*s);
+    const off=target.clone().sub(spinner.position);
+    if(off.length()>reach) target.copy(spinner.position).addScaledVector(off.normalize(),reach);
+    place();
+  }
+
   r.setSize(W,H,false);
-  let dragL=false,lx=0,ly=0,spin=true;
-  canvas.addEventListener('pointerdown',e=>{dragL=true;spin=false;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
-  canvas.addEventListener('pointermove',e=>{ if(!dragL)return;
-    spinner.rotation.y+=(e.clientX-lx)/120; spinner.rotation.x=Math.max(-1.2,Math.min(1.2,spinner.rotation.x+(e.clientY-ly)/150));
-    lx=e.clientX; ly=e.clientY; });
-  canvas.addEventListener('pointerup',()=>dragL=false);
+  let spin=true, glide=null, homing=false, fly=null;
+  const stop=()=>{ spin=false; glide=null; homing=false; fly=null; };
+
+  /* roda do mouse: o ponto sob o cursor só é recalculado quando o cursor anda, porque
+     o raio contra o modelo inteiro é a parte cara */
+  let anchor=null, ax=0, ay=0;
+  canvas.addEventListener('wheel',e=>{
+    e.preventDefault(); stop();
+    const px=e.deltaY*(e.deltaMode===1?33:1);
+    if(!anchor||Math.hypot(e.clientX-ax,e.clientY-ay)>4){ anchor=pick(e.clientX,e.clientY); ax=e.clientX; ay=e.clientY; }
+    zoomAt(anchor, Math.exp(px*(e.ctrlKey?0.01:0.0015)));
+  },{passive:false});
+
+  /* um dedo gira; dois dedos aproximam e arrastam; botão direito ou shift arrasta.
+     Toque duplo aproxima 3x onde tocou, ou volta ao enquadramento (do relógio ou do
+     movimento) se já tem zoom. */
+  const pts=new Map();
+  let spread0=0, mid0=null, P0=null, moved=0, panning=false, lastTap=0, tapX=0, tapY=0;
+  const spread=()=>{ const a=[...pts.values()]; return Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1; };
+  const middle=()=>{ const a=[...pts.values()]; return {x:(a[0].x+a[1].x)/2, y:(a[0].y+a[1].y)/2}; };
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+  canvas.addEventListener('pointerdown',e=>{
+    stop(); anchor=null;
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+    if(!pts.size){ moved=0; panning=e.button===2||e.shiftKey; }
+    pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pts.size===2){ spread0=spread(); mid0=middle(); P0=pick(mid0.x,mid0.y); moved+=99; }
+  });
+  canvas.addEventListener('pointermove',e=>{
+    const p=pts.get(e.pointerId); if(!p) return;
+    const dx=e.clientX-p.x, dy=e.clientY-p.y;
+    p.x=e.clientX; p.y=e.clientY; moved+=Math.abs(dx)+Math.abs(dy);
+    if(pts.size>=2){
+      const s=spread(), m=middle();
+      zoomAt(P0, spread0/s);
+      pan(m.x-mid0.x, m.y-mid0.y);
+      spread0=s; mid0=m;
+      return;
+    }
+    if(panning) pan(dx,dy);
+    else{ turn(AXIS_Y,dx/120); turn(AXIS_X,dy/150); }
+    anchor=null;
+  });
+  const up=e=>{
+    if(!pts.delete(e.pointerId)) return;
+    if(pts.size||e.type!=='pointerup'||moved>6) return;
+    const now=performance.now();
+    if(now-lastTap<320 && Math.hypot(e.clientX-tapX,e.clientY-tapY)<30){
+      lastTap=0;
+      if(dist<(inMovement?moveDist:home)*0.98){ if(inMovement) setMovement(true); else homing=true; }
+      else glide={P:pick(e.clientX,e.clientY), k:Math.pow(1/3,1/14), n:14};
+    } else { lastTap=now; tapX=e.clientX; tapY=e.clientY; }
+  };
+  canvas.addEventListener('pointerup',up);
+  canvas.addEventListener('pointercancel',up);
+
+  /* "Ver o movimento": só aparece em modelos que trazem o nó `movement` (hoje, o PRX).
+     Esconde a pulseira, que fecha em anel por cima da tampa, e vira o relógio de
+     costas, com o movimento visto pela safira ocupando a altura do quadro. */
+  const moveBtn=canvas.parentElement.querySelector('.slotbtn');
+  let inMovement=false, moveDist=1;
+  function syncMoveBtn(){
+    if(!moveBtn) return;
+    moveBtn.hidden=!g.getObjectByName('movement');
+    moveBtn.classList.toggle('on',inMovement);
+    moveBtn.querySelector('span').textContent=t(inMovement?'seeWatch':'seeMovement');
+  }
+  /* leva a peça à orientação q com o ponto aim (no referencial do pivô) no centro do
+     quadro, a uma distância d. A distância anda em escala logarítmica, que é como o
+     zoom é percebido. */
+  function flyTo(q,aim,d,then){
+    fly={q0:spinner.quaternion.clone(), p0:spinner.position.clone(), t0:target.clone(), d0:dist, q, aim, d, then, k:0};
+  }
+  function stepFly(){
+    fly.k=Math.min(1,fly.k+1/45);
+    const e=fly.k*fly.k*(3-2*fly.k);
+    spinner.quaternion.slerpQuaternions(fly.q0,fly.q,e);
+    spinner.position.lerpVectors(fly.p0,new THREE.Vector3(),e);
+    target.lerpVectors(fly.t0, fly.aim.clone().applyQuaternion(spinner.quaternion).add(spinner.position), e);
+    dist=fly.d0*Math.pow(fly.d/fly.d0,e);
+    if(fly.k>=1){ const then=fly.then; fly=null; if(then) then(); }
+  }
+  function setMovement(on){
+    stop(); anchor=null; inMovement=on;
+    const bracelet=g.getObjectByName('bracelet'); if(bracelet) bracelet.visible=!on;
+    syncMoveBtn();
+    if(!on){ flyTo(new THREE.Quaternion(), new THREE.Vector3(), home, ()=>{ spin=true; }); return; }
+    const mv=g.getObjectByName('movement');
+    sc.updateMatrixWorld();
+    const rel=spinner.matrixWorld.clone().invert().multiply(mv.matrixWorld);
+    const box=localBox(mv), size=box.getSize(new THREE.Vector3());
+    const scale=new THREE.Vector3().setFromMatrixScale(rel).x;
+    const aim=box.getCenter(new THREE.Vector3()).applyMatrix4(rel);
+    moveDist=0.5*Math.max(size.x,size.z)*scale/Math.tan(THREE.MathUtils.degToRad(c.fov)/2)*1.12;
+    /* tampa virada para a câmera (-Y do relógio em VIEW) e 12h para cima na tela (-Z
+       no "para cima" da câmera). De costas, a coroa fica à esquerda, como na mão. */
+    const up=new THREE.Vector3().setFromMatrixColumn(c.matrixWorld,1);
+    const basis=new THREE.Matrix4().makeBasis(new THREE.Vector3().crossVectors(VIEW,up), VIEW.clone().negate(), up.clone().negate());
+    flyTo(new THREE.Quaternion().setFromRotationMatrix(basis), aim, moveDist);
+  }
+  if(moveBtn) moveBtn.addEventListener('click',()=>setMovement(!inMovement));
+  syncMoveBtn();
+
   (function loop(){
     if(my!==miniToken) return;
     if(!document.getElementById('detail').classList.contains('on')){ disposeMini(); return; }
     requestAnimationFrame(loop);
     /* o GLB pode chegar depois do primeiro quadro; quando entrar, reenquadra */
-    if(g.children[0]!==framed){ framed=g.children[0]; frame(); }
-    if(spin) spinner.rotation.y+=0.006;
+    if(g.children[0]!==framed){ framed=g.children[0]; frame(); syncMoveBtn(); }
+    if(spin) turn(AXIS_Y,0.006);
+    if(fly) stepFly();
+    if(glide){ zoomAt(glide.P,glide.k); if(--glide.n<=0) glide=null; }
+    if(homing){
+      target.lerp(spinner.position,0.2); dist+=(home-dist)*0.2;
+      if(Math.abs(home-dist)<home*0.002){ target.copy(spinner.position); dist=home; homing=false; }
+    }
+    place();
     r.render(sc,c); })();
 }
 
